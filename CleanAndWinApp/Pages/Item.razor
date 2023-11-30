@@ -1,0 +1,53 @@
+﻿@page "/item/{ItemID}"
+@inject NavigationManager NavManager;
+@inject IJSRuntime JSRuntime
+@using Model;
+<body>
+    <p>@ItemID</p>
+    @if (p!=null)
+    {
+        <div class="item-container">
+            <img src="@(path+base64)" alt="Item Image" class="item-image" style="width:400px;height:300px">
+            <div class="item-details">
+                <h2 class="item-name">@p.ProductName</h2>
+                <p class="item-price">@p.ProductPrice</p>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
+    }
+
+
+</body>
+
+@code {
+    [Parameter]
+    public string ItemID { get; set; }
+    Product p { get; set; }
+    string path= "data:image/png;base64,";
+    string base64 { get; set; }
+    bool b = false;
+    protected override async Task OnInitializedAsync()
+    {
+        Model.ApiServices a = new Model.ApiServices();
+        p = await a.GetProductFromPK(int.Parse(ItemID));
+
+        if (p != null)
+        {
+            base64 = Convert.ToBase64String(p.ProductPicture);
+        }
+
+
+
+    }
+
+    private async Task UpdateProductData()
+    {
+        // Your logic to update p and base64
+        if (p != null)
+        {
+            base64 = Convert.ToBase64String(p.ProductPicture);
+            StateHasChanged();
+        }
+    }
+
+}

@@ -1,4 +1,4 @@
-﻿
+﻿@inject NavigationManager NavManager;
 @inject UserService Userservice
 @inject AuthService AuthService
 @page "/store"
@@ -21,7 +21,7 @@
                 <div class="product" style="margin-top:200px;position:relative;">
                     <img src="css/imags/coin.png" style="position:absolute;width:30px;height:30px;margin-left:250px;margin-top:-150px; z-index: 1;" />
                     <div style="position:absolute;z-index:2"><h2>@i.ProductPrice</h2> </div>
-                <img src = "@(path+Convert.ToBase64String(i.ProductPicture))" style="width:300px;height:200px" alt="Product 1">
+                <img src = "@(path+Convert.ToBase64String(i.ProductPicture))" style="width:300px;height:200px" alt="Product 1" @onclick="() =>GoToProuctPage(i.ProductID)">
                     <div style="width:300px;height:100px;background-color:#ddebf4;position:absolute;margin-left:240px;margin-top:-1px;z-index:1;" class="product-name"><h2>@i.ProductName <br /><p>@i.ProductPrice</p></h2></div>
                  </div>
  
@@ -58,6 +58,10 @@
 
     }
 
+    private void GoToProuctPage(int id)
+    {
+            NavManager.NavigateTo($"/item/{id.ToString()}");
+    }
     public async Task GetC(int id, bool isphone)
     {
         l = await es.GetALLProducts();

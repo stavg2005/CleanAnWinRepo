@@ -126,5 +126,18 @@ namespace Model
 
 
         }
+
+        public async Task<Product> GetProductFromPK(int id)
+       {
+            try
+            {
+                string s = $"http://10.0.0.27:5087/GetProuctFromIndex?index={id}";
+                return await (_httpClient.GetFromJsonAsync<Product>(s));
+            }
+            catch (Exception e)
+            {
+                return new Product(-1,"null","null",-1,null);
+            }
+        }
     }
   }
