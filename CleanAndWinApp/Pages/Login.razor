@@ -1,0 +1,146 @@
+﻿@page "/"
+
+@inject AuthService AuthService
+@inject NavigationManager Nav;
+@inject UserService Userservice
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@using Model;
+
+
+<head>
+  <meta charset="UTF-8">
+
+
+</head>
+<body>
+    <title>CodePen - Finance Mobile Application-UX/UI Design Screen One</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap'>
+    <link rel="stylesheet" href="css/LoginStyle.css">
+<!-- partial:index.partial.html -->
+<div class="screen-1" style="width:@(d.Width)px;height:@(d.Height)px;">
+        <img class="logo" src="css/imags/logo.jpeg" style="width:70%;height:50%;position:relative;margin-top:10px;margin-left:45px" />
+  <div class="email" style="position:relative;margin-top:20px">
+    <label for="email">Email Address</label>
+    <div class="sec-2">
+      <ion-icon name="mail-outline"></ion-icon>
+      <input @bind-value="Email" type="email" name="email" placeholder="Username@gmail.com"/>
+    </div>
+  </div>
+        <div class="password" style="position:relative;margin-top:20px">
+    <label for="password">Password</label>
+    <div class="sec-2">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+         <input @bind-value ="password" class="pas" type="password" name="password" placeholder="············" />
+      <ion-icon class="show-hide" name="eye-outline"></ion-icon>
+    </div>
+  </div>
+        <button @onclick="LoginBitch" style=" background-color: #3e4684" class="login">Login </button>
+        <div style ="position:relative" class="footer"><span @onclick="GoMain">Signup</span><span>Forgot Password?</span></div>
+</div>
+<!-- partial -->
+  
+</body>
+@* <div class="page-container" style="width:@(d.Width)px;height:@(d.Height)px;position:absolute;margin-left:-23px;margin-top:-18px">
+    <h3>Login</h3>
+    <img src="css/imags/logo.jpeg" style="width:70%;height:50%;position:relative" />
+    <button @onclick="LoginBitch">Log In</button>
+    <input @bind-value="Email" />Email
+    <input @bind-value="password" />Password
+</div> *@
+
+
+<style>
+    .page-container {
+        background-color: #73d1f7;
+    }
+</style>
+
+<p>@error</p>
+@code {
+    string password;
+    string Email;
+    string error;
+    ApiServices api = new ApiServices();
+    public int Height { get; set; }
+    public int Width { get; set; }
+    
+    private void GoMain()
+    {
+        Nav.NavigateTo("/reg");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+      //AuthService.ClearAuthToken();
+         if (AuthService!=null &&AuthService.IsUserAuthenticated )
+          {
+
+                
+             Nav.NavigateTo("/main");
+            
+            
+         }
+
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+        }
+
+    }
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+
+    private async Task LoginBitch()
+    {
+        // Perform authentication logic (replace this with your actual logic)
+        bool isAuthenticated = await PerformLogin(Email, password);
+
+        if (isAuthenticated)
+        {
+            // Set authentication token
+            AuthService.SetAuthToken($"{Email},{password}");
+
+            // Redirect to the main page or another relevant page
+            Nav.NavigateTo("/main");
+        }
+        else
+        {
+            // Handle failed login
+        }
+    }
+
+    private async Task<bool> PerformLogin(string username, string password)
+    {
+        try
+        {
+            Users u = await api.Login(username, password);
+
+            if (u != null && u.UserID != -1)
+            {
+                Userservice.CurrentUser = u;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log or print the exception details
+            error =$"Exception: {ex.Message}";
+        }
+
+        return false;
+        
+
+        
+    }
+}

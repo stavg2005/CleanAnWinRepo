@@ -1,0 +1,56 @@
+﻿@page "/index"
+@using Microsoft.AspNetCore.Components;
+@using Model;
+@using DataLayer;
+@inject NavigationManager NavManager;
+<h1>Hello, world!</h1>
+<div>
+    <ul>
+        @if (b)
+        {
+            foreach (Product i in l)
+            {
+                <li> @i.ProductName</li>
+            }
+            <img src="@source" />
+        }
+
+    </ul>
+    <a href="uploads"> upload photo</a>
+   
+    <input @bind-value="id" /> enter id
+    <button @onclick="() =>GoToLocation(id)"> Go to Location</button>
+</div>
+
+@code {
+    List<Product> l = null;
+    bool b = false;
+    int id = -1;
+    ApiServices es = new ApiServices();
+    INavigation navigation;
+    string source = "data:image/png;base64,";
+    protected override async Task OnInitializedAsync()
+    {
+        await GetC(1, true);
+    }
+    public async Task GoToLocation(int id)
+    {
+        Tuple<string, string> LatLng = await es.GetLatLngFromAPI(id);
+
+        NavManager.NavigateTo($"/maps/{LatLng.Item1}/{LatLng.Item2}");
+    }
+    public string RemoveFirstAndLastLetter(string input)
+    {
+        return input.Substring(0, input.Length - 2);
+    }
+    public async Task GetC(int id, bool isphone)
+    {
+        l = await es.Getc(id, isphone);
+        string base64 = await es.GetProfilePhoto(id);
+        source = source + RemoveFirstAndLastLetter(base64);
+        b = true;
+    }
+
+    
+    Task Navigate() => Shell.Current.GoToAsync(nameof(Maps));
+}

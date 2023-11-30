@@ -1,0 +1,20 @@
+﻿@page "/report"
+@using Model;
+<input @bind-value="weight" /> weight
+<input  @bind-value="userid"/>user
+<input @bind-value="trashcanid" />trash
+<button @onclick="Click "></button>
+<p  style="font-size:12px;margin-top:50px;">@error</p>
+
+@code {
+    int weight;
+    int userid;
+    int trashcanid;
+    string error { get; set; }
+    ApiServices a = new ApiServices();
+    public async Task Click()
+    {
+        error= await a.ReportClean(weight, userid, trashcanid);
+    }
+
+}

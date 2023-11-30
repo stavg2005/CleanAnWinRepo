@@ -1,0 +1,138 @@
+﻿@page "/main"
+@inject UserService Userservice
+@inject AuthService AuthService
+@inject NavigationManager nav;
+@inject IJSRuntime JSRuntime
+@* <p>@AuthService.GetAuthToken()</p> *@
+<link rel="stylesheet" href="css/Proggress.css">
+<link rel="stylesheet" href="css/Store.css">
+@using Microsoft.JSInterop
+<div class="content hidden" id="content">
+@if ( AuthService.IsUserAuthenticated)
+{
+     
+    if (Userservice.CurrentUser != null)
+    {
+
+
+        <div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
+
+        @* <button @onclick="Logout">Log Out</button> *@
+        
+        
+        <img class="profile-pic"  src="@path" />
+  
+            <div class="progress-container" style="position:fixed;left:-80px;margin-top:20px">
+    <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
+        <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
+        <circle id="progress" cx="250" cy="250" r="150" stroke="#6db7c1" stroke-width="10" fill="transparent"></circle>
+    </svg>
+    </div>
+        <input style="opacity:0" @bind-value="progressValue" />
+        <button style ="opacity:0" >Update Progress</button>
+            <div class="nav-bar" style="width:300px;height:50px;margin-top:615px;height:80px">
+
+        </div>
+        <h1  style="margin-top:225px;position:fixed;margin-left:120px"> Level:@level</h1>
+            <button @onclick="Report" class="button-9" style="margin-top:430px;height:100px" role="button">Report Clean</button>
+
+            <div class="navbar">
+
+                <img src="css/imags/bin.png" style="width:50px;height:50px" />
+                <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
+                <img src="css/imags/user.png" style="width:50px;height:50px" />
+
+            </div>
+
+    }
+   
+}
+
+else
+{
+    <p>User not logged in.</p>
+
+    nav.NavigateTo("/");
+}
+</div>
+
+<div class="loader-wrapper" id="loader">
+    <div class="loader"></div>
+</div>
+
+
+<!-- HTML !-->
+
+
+
+
+  
+
+@code {
+    string path = "data:image/png;base64,";
+
+    private int progressValue  { get; set; }
+    int level { get; set; }
+    // JavaScript Interop to call the JavaScript function
+    private async Task UpdateProgressBar(int value)
+    {
+        // Call the JavaScript function passing the current progress value
+        await JSRuntime.InvokeVoidAsync("updateProgressExternally", value);
+    }
+    private void GoStroe()
+    {
+        nav.NavigateTo("/store");
+    }
+    private void Report()
+    {
+        nav.NavigateTo("/report");
+    }
+    private void GoMain()
+    {
+        nav.NavigateTo("/reg");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+        await InsertValuesToUserService();
+        progressValue = GetLastDigit(Userservice.CurrentUser.xp) * 10;
+        level = Userservice.CurrentUser.xp / 10;
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await UpdateProgressBar(progressValue);
+        }
+
+        
+    }
+    private async Task InsertValuesToUserService()
+    {
+        Userservice.CurrentUser = await AuthService.GetUserInfo();
+        path = path + Convert.ToBase64String(Userservice.CurrentUser.profile);
+    }
+    private void Logout()
+    {
+        // Perform logout logic
+        // Clear authentication token
+        AuthService.ClearAuthToken();
+    }
+
+    private  int GetLastDigit(int number)
+    {
+        // Ensure the input is a non-negative integer
+        if (number < 0)
+        {
+            throw new ArgumentException("Input must be a non-negative integer", nameof(number));
+        }
+
+        // Extract the last digit
+        int lastDigit = number % 10;
+
+        return lastDigit;
+    }
+
+}

@@ -1,0 +1,254 @@
+﻿ @page "/reg"
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@using Model;
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        #steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            margin-top: 50px;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .step.active {
+            background-color: #555;
+        }
+
+        #formSteps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .form-step {
+            display: none;
+            width: 100%;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="width:@(d.Width)px;height:@(d.Height)px; background-color:#73d1f7">
+
+    <div class="container" style="margin-top:150px;">
+    <div style="opacity:0" id="steps">
+        <div  class="step active" onclick="showStep(1)">Step 1</div>
+        <div class="step" onclick="showStep(2)">Step 2</div>
+        <div class="step" onclick="showStep(3)">Step 3</div>
+    </div>
+
+    <div id="formSteps" >
+        <div class="form-step active">
+            <h2>Please Enter Your ID and UserName</h2>
+                <div class="form-group">
+                    <label for="id">id:</label>
+                    <input @bind-value="id" type="text" id="id">
+                </div>
+            <div class="form-group">
+                <label for="firstName">UserName:</label>
+                <input @bind-value="UserName" type="text" id="firstName">
+            </div>
+                <div class="form-group">
+                    <label for="cities">Select a city:</label>
+                    <select id="cities" name="cities" @bind="location">
+                        @{
+                            if (b)
+                            {
+                                foreach (Locations l in list)
+                                {
+                                    <option value="@l.ID" @key="@l.ID">@l.Name</option>
+                                }
+                            }
+                    
+                    }
+                    </select>
+                        <!-- Add more options as needed -->
+                    
+                </div>
+                <div class="form-group">
+                    <label for="cities">Add Profile Photo:</label>
+                    <InputFile OnChange="HandleFileChange" />
+                </div>
+            <button onclick="nextStep()">Next</button>
+        </div>
+
+        <div class="form-step">
+            <h2>Please Enter Password</h2>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input @bind-value="Email" type="email" id="email">
+            </div>
+            <button onclick="prevStep()">Previous</button>
+            <button onclick="nextStep()">Next</button>
+        </div>
+
+        <div class="form-step">
+            <h2>Please EnterPasswor</h2>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input @bind-value="Password" type="password" id="password">
+            </div>
+            <button onclick="prevStep()">Previous</button>
+                <button @onclick="() => Reg()">Submit</button>
+        </div>
+    </div>
+</div>
+</body>
+@code {
+    private string UserName { get; set; }
+    private string Password { get; set; }
+    private string Email { get; set; }
+    private int location { get; set; }
+    private int id { get; set; }
+    int n;
+    bool b = false;
+    ApiServices A = new ApiServices();
+    private const string ApiBaseUrl = "http://10.0.0.27:5087";
+    List<Locations> list;
+    ImageModel m =new ImageModel();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+
+            list = list;
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        list = await A.GetAllLocations();
+        b = true;
+    }
+
+    public async Task Reg()
+    {
+        int r = await A.Register(Email, Password, UserName, location, id);
+        await UploadImageToApi(id, m.ImageData);
+    }
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+                m.FileName = e.File.Name;
+                m.ImageData = imageData;
+
+
+
+            }
+        }
+    }
+    private async Task<string> UploadImageToApi(int userId, byte[] imageData)
+    {
+
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            {
+                // Your API endpoint URL
+                string apiUrl = $"{ApiBaseUrl}/api/upload/uploadImage/{userId}";
+
+                // Convert byte array to Base64 string
+                string base64Image = Convert.ToBase64String(imageData);
+
+                // Add the image data as a binary content
+                ByteArrayContent imageContent = new ByteArrayContent(imageData);
+                content.Add(imageContent, "imageData", "image.jpg"); // "imageData" is the parameter name expected by the server
+
+                // Make the POST request
+                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Image uploaded successfully
+                    return ("Image uploaded successfully");
+                }
+                else
+                {
+                    // Handle the error
+                    return ($"Error: {response.StatusCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            return ($"Exception: {ex.Message}");
+        }
+}
+}
+
+
+
+                    

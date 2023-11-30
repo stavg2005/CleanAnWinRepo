@@ -1,0 +1,91 @@
+﻿@page "/uploads"
+@using Microsoft.AspNetCore.Components.Forms;
+@* @using DataLayer; *@
+@using MySql.Data;
+@using MySqlConnector;
+@using Model;
+<h1>@message</h1>
+<p>@error</p>
+<InputFile OnChange="HandleFileChange" />
+
+
+
+
+@code {
+    HttpClient Http = new HttpClient();
+    string message = "InputFile";
+    bool isDisabled = false;
+    string query = "";
+    byte[] buf;
+    string error = "error";
+    private const string ApiBaseUrl = "http://10.0.0.27:5087";
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+                var image = new ImageModel
+                    {
+                        FileName = e.File.Name,
+                        ImageData = imageData
+                    };
+
+                error = await UploadImageToApi(2, image.ImageData);
+                
+            }
+        }
+    }
+
+
+    private async Task<string> UploadImageToApi(int userId, byte[] imageData)
+    {
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                using (MultipartFormDataContent content = new MultipartFormDataContent())
+                {
+                    // Your API endpoint URL
+                    string apiUrl = $"{ApiBaseUrl}/api/upload/uploadImage/{userId}";
+
+                    // Convert byte array to Base64 string
+                    string base64Image = Convert.ToBase64String(imageData);
+
+                    // Add the image data as a binary content
+                    ByteArrayContent imageContent = new ByteArrayContent(imageData);
+                    content.Add(imageContent, "imageData", "image.jpg"); // "imageData" is the parameter name expected by the server
+
+                    // Make the POST request
+                    HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Image uploaded successfully
+                    return ("Image uploaded successfully");
+                }
+                else
+                {
+                    // Handle the error
+                    return ($"Error: {response.StatusCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            return ($"Exception: {ex.Message}");
+        }
+    }
+    
+}
+    
+
+
+

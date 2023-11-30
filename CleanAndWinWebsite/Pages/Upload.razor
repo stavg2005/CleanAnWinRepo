@@ -1,0 +1,53 @@
+﻿@page "/uploads"
+@using Microsoft.AspNetCore.Components.Forms;
+@using DataLayer;
+@using MySql.Data;
+@using MySqlConnector;
+<h1>@message</h1>
+
+<InputFile OnChange="HandleFileChange" />
+
+
+
+
+@code {
+    HttpClient Http = new HttpClient();
+    string message = "InputFile";
+    bool isDisabled = false;
+    string query ="";
+    string error;
+    byte[] buf;
+
+    private const string ApiBaseUrl = "http://10.0.0.27:5087";
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+                var image = new ImageModel
+                    {
+                        FileName = e.File.Name,
+                        ImageData = imageData
+                    };
+                buf = image.ImageData;
+                await ImageService.UploadImage(image, 1 );
+
+            }
+
+           
+        }
+    }
+
+
+
+
+    
+}
+

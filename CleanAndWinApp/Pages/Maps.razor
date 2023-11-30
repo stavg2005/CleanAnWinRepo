@@ -1,0 +1,47 @@
+﻿@page "/maps/{param1}/{param2}"
+
+@inject NavigationManager NavManager;
+@inject IJSRuntime JSRuntime
+
+<h1>Display Google Map</h1>
+<div id="map" style="height:500px;width:100%;">
+</div>
+
+<h3>Page 2</h3>
+
+<p>Parameter 1: @param1</p>
+<p>Parameter 2: @param2</p>
+@code {
+
+    [Parameter]
+    public Tuple<String,string> LatnLng { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initialize", param1,param2);
+        }
+    }
+    [Parameter]
+    public string param1 { get; set; }
+    [Parameter]
+    public string param2 { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavManager.Uri);
+        var queryString = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        if (queryString.AllKeys.Contains("param1"))
+        {
+            param1 = Uri.UnescapeDataString(queryString["param1"]);
+        }
+
+        if (queryString.AllKeys.Contains("param2"))
+        {
+            param2 = Uri.UnescapeDataString(queryString["param2"]);
+        }
+            
+        
+    }
+}

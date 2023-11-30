@@ -1,0 +1,52 @@
+﻿@page "/"
+@using CleanAndWinWebsite;
+@using Microsoft.AspNetCore.Components.Web
+@namespace ProjectYodBetButAPICleanAndWin.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="~/" />
+    <link href="css/site.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script type="text/javascript">
+        window.getDimensions = function () {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        };
+    </script>
+
+    <script async="false" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key="> </script>
+    <script async defer type="text/javascript">
+        function initialize(lat, lng) {
+            var latlng = new google.maps.LatLng(lat, lng);
+            var options = {
+                zoom: 20, center: latlng,
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+            var map = new google.maps.Map(document.getElementById("map"), options);
+        }
+    </script>
+
+</body>
+</html>

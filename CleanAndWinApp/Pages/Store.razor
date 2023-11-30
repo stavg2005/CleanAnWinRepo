@@ -1,0 +1,66 @@
+﻿
+@inject UserService Userservice
+@inject AuthService AuthService
+@page "/store"
+@using Model;
+<link rel="stylesheet" href="css/Store.css">
+<link rel="stylesheet" href="css/Proggress.css">
+<div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
+<div style="position:fixed;top: 3%; left:0%;text-align: center;border-radius:20px;border-color:black;border:5px,solid;">
+    <img src="css/imags/coin.png" style="width:20px;height:20px;position:absolute;right:80%" />
+    <h2 style="margin-left:35px;top:25%"> @Userservice.CurrentUser.coins </h2>
+</div>
+<img style="width:60px;height:60px;" class="profile-pic" src="@(path+Convert.ToBase64String(Userservice.CurrentUser.profile))" />
+<body style="overflow-y:scroll">
+
+    <div class="store-container">
+        @if (b)
+        {
+            foreach (Product i in l)
+            {
+                <div class="product" style="margin-top:200px;position:relative;">
+                    <img src="css/imags/coin.png" style="position:absolute;width:30px;height:30px;margin-left:250px;margin-top:-150px; z-index: 1;" />
+                    <div style="position:absolute;z-index:2"><h2>@i.ProductPrice</h2> </div>
+                <img src = "@(path+Convert.ToBase64String(i.ProductPicture))" style="width:300px;height:200px" alt="Product 1">
+                    <div style="width:300px;height:100px;background-color:#ddebf4;position:absolute;margin-left:240px;margin-top:-1px;z-index:1;" class="product-name"><h2>@i.ProductName <br /><p>@i.ProductPrice</p></h2></div>
+                 </div>
+ 
+
+            }
+            <div class="navbar" style="border-top: 5px solid blue; z-index:3">
+                
+                <img src="css/imags/bin.png" style="width:50px;height:50px" />
+                <img src="css/imags/bag.png" style="width:50px;height:50px" />
+                <img src="css/imags/user.png" style="width:50px;height:50px" />
+
+            </div>
+
+        }
+
+    </div>
+
+</body>
+
+@code {
+    List<Product> l = null;
+    ApiServices es = new ApiServices();
+    bool b = false;
+    string path = "data:image/png;base64,";
+    protected override async Task OnInitializedAsync()
+    {
+
+        await InsertValuesToUserService();
+        await GetC(Userservice.CurrentUser.UserID, true);
+    }
+    private async Task InsertValuesToUserService()
+    {
+        Userservice.CurrentUser = await AuthService.GetUserInfo();
+
+    }
+
+    public async Task GetC(int id, bool isphone)
+    {
+        l = await es.GetALLProducts();
+        b = true;
+    }
+}

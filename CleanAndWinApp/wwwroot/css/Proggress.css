@@ -1,0 +1,134 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    font-family: 'Arial', sans-serif;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100vh;
+}
+
+.centered-div {
+    
+    margin-top:0px;
+    text-align: center;
+    position:relative;
+    font-size:24px;
+    position:relative;
+}
+
+.search {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.profile-pic {
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+    position: fixed;
+    top:0;
+    right:0;
+}
+.progress-container {
+    position: relative;
+}
+
+.progress-circle {
+    transform: rotate(-90deg);
+}
+
+#progress {
+    stroke-dasharray: 942.47; /* Circumference of the circle (2 * π * radius) */
+    stroke-dashoffset: 942.47;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.nav-bar {
+    margin: 0; /* Remove default margin to ensure the div reaches the edges of the viewport */
+    display: flex;
+    position:fixed;
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-end;
+    width: 200px; /* Set the width of the rectangle */
+    height: 50px; /* Set the height of the rectangle */
+    border: 2px solid black; /* Set the border color and thickness */
+    background-color: transparent;
+    margin-top:640px;
+    margin-left:23px;
+}
+.button-9 {
+    appearance: button;
+    backface-visibility: hidden;
+    background-color: #405cf5;
+    border-radius: 6px;
+    border-width: 0;
+    box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    font-family: -apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif;
+    font-size: 100%;
+    height: 44px;
+    line-height: 1.15;
+    margin: 12px 0 0;
+    outline: none;
+    overflow: hidden;
+    padding: 0 25px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    transform: translateZ(0);
+    transition: all .2s,box-shadow .08s ease-in;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: 100%;
+}
+
+    .button-9:disabled {
+        cursor: default;
+    }
+
+    .button-9:focus {
+        box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .2) 0 6px 15px 0, rgba(0, 0, 0, .1) 0 2px 2px 0, rgba(50, 151, 211, .3) 0 0 0 4px;
+    }
+
+.loader-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+}
+
+.loader {
+    border: 8px solid #3498db;
+    border-radius: 50%;
+    border-top: 8px solid #fff;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.content.hidden,
+.loader-wrapper.hidden {
+    display: none;
+}

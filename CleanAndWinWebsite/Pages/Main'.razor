@@ -1,0 +1,19 @@
+﻿@page "/main"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject NavigationManager NavManager;
+<p>BITCH</p>
+@code {
+    private string UserName;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var name = await MySession.GetAsync<string>("name");
+        if (name.Success)
+        {
+            UserName = name.Value;
+            StateHasChanged();
+        }
+        else
+            NavManager.NavigateTo("page1");
+    }
+}
