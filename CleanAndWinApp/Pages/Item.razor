@@ -1,6 +1,8 @@
 ﻿@page "/item/{ItemID}"
 @inject NavigationManager NavManager;
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JSRuntime;
+@inject UserService Userservice;
+@inject AuthService AuthService;
 @using Model;
 <body>
     <p>@ItemID</p>
@@ -15,7 +17,7 @@
             </div>
         </div>
     }
-    <p>test</p>
+    
 
 </body>
 
@@ -48,6 +50,9 @@
             base64 = Convert.ToBase64String(p.ProductPicture);
             StateHasChanged();
         }
+    }
+
+    private async Task AddToCart() { 
     }
 
 }

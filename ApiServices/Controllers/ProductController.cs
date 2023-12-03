@@ -17,6 +17,8 @@ namespace ApiServices.Controllers
             return await (ProductDTO.GetAllProducts());
         }
 
+
+
         [HttpGet("GetProuctFromIndex")]
         public async Task<Product> GetProuctFromIndex(int index)
         {

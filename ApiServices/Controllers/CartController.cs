@@ -12,5 +12,19 @@ namespace ApiServices.Controllers
         {
             return Ok(UsersDTO.GetCart(id));
         }
+
+        [HttpPost("AddProductTocart")]
+        public async Task<IActionResult> AddProductToCart(int userid, int productid)
+        {
+            try
+            {
+                await ProductDTO.AddTocart(userid, productid);
+                return Ok("Cart operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }

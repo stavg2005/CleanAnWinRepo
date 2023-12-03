@@ -82,7 +82,7 @@ namespace DataLayer
 			Users ca = new Users() ;
             if (r.HasRows)
             {
-                r.Read();
+                await r.ReadAsync();
 				int id = r.GetInt32(0);
                 ca = new Users(id, email, password, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id));
                 

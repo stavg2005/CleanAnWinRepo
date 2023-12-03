@@ -65,7 +65,7 @@
     ApiServices api = new ApiServices();
     public int Height { get; set; }
     public int Width { get; set; }
-    
+
     private void GoMain()
     {
         Nav.NavigateTo("/reg");
@@ -73,15 +73,15 @@
     protected override async Task OnInitializedAsync()
     {
 
-      //AuthService.ClearAuthToken();
-         if (AuthService!=null &&AuthService.IsUserAuthenticated )
-          {
+        //AuthService.ClearAuthToken();
+        if (AuthService!=null &&AuthService.IsUserAuthenticated )
+        {
 
-                
-             Nav.NavigateTo("/main");
-            
-            
-         }
+
+            Nav.NavigateTo("/main");
+
+
+        }
 
 
     }
@@ -105,7 +105,7 @@
     {
         // Perform authentication logic (replace this with your actual logic)
         bool isAuthenticated = await PerformLogin(Email, password);
-
+        isAuthenticated = isAuthenticated;
         if (isAuthenticated)
         {
             // Set authentication token

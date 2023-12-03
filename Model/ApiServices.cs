@@ -15,6 +15,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -47,7 +48,7 @@ namespace Model
         public async Task<List<Product>> Getc(int id, bool isphone)
         {
 
-                string s = $"http://10.0.0.27:5087/api/CartControllercs/GetAllProducts?id={id}";
+                string s = $"{Apiurl}/api/CartControllercs/GetAllProducts?id={id}";
                 var value = await _httpClient.GetFromJsonAsync<List<Product>>(s);
                 value = value;
                 return value;
@@ -57,37 +58,37 @@ namespace Model
 
         public async Task<Users> Login(string email, string password)
         {
-            string s = $"http://10.0.0.27:5087/api/Login/Login?email={email}&password={password}";
+            string s = $"{Apiurl}/api/Login/Login?email={email}&password={password}";
             return await _httpClient.GetFromJsonAsync<Users>(s);
         }
 
         public async Task<string> GetProfilePhoto(int id)
         {
-            string s = $"http://10.0.0.27:5087/api/Upload/GetImageUri?id={id}";
+            string s = $"{Apiurl}/api/Upload/GetImageUri?id={id}";
             return await _httpClient.GetFromJsonAsync<string>(s);
         }
         
         public async Task<Tuple<string,string>> GetLatLngFromAPI(int id)
         {
-            string s = "http://10.0.0.27:5087/api/Map/GetLocation?id=1";
+            string s = $"{Apiurl}/api/Map/GetLocation?id={id}";
             return await _httpClient.GetFromJsonAsync<Tuple<string, string>>(s);
         }
 
         public async Task<int> Register(string email, string password,string username,int location,int id)
         {
-            string s = $"http://10.0.0.27:5087/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
+            string s = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
             return await _httpClient.GetFromJsonAsync<int>(s);
         }
 
         public async Task<List<Locations>> GetAllLocations()
         {
-            string s = "http://10.0.0.27:5087/GetAllLocation";
+            string s = $"{Apiurl}/GetAllLocation";
             return await _httpClient.GetFromJsonAsync<List<Locations>>(s);
         }
 
         public async Task<List<Product>> GetALLProducts()
         {
-            string s = "http://10.0.0.27:5087/GetAllProducts";
+            string s = $"{Apiurl}/GetAllProducts";
             return await _httpClient.GetFromJsonAsync<List<Product>>(s);
         }
 
@@ -131,7 +132,7 @@ namespace Model
        {
             try
             {
-                string s = $"http://10.0.0.27:5087/GetProuctFromIndex?index={id}";
+                string s = $"{Apiurl}/GetProuctFromIndex?index={id}";
                 return await (_httpClient.GetFromJsonAsync<Product>(s));
             }
             catch (Exception e)

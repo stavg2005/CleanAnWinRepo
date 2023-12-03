@@ -10,7 +10,7 @@ using Dapper;
 
 namespace DataLayer
 {
-    public class ProductDTO
+    public class ProductDTO:BaseDTO
     {
         public ProductDTO()
         {
@@ -96,6 +96,17 @@ namespace DataLayer
 
                 return  await connection.QueryFirstOrDefaultAsync<byte[]>(query); ;
             }
+        }
+
+        public static async Task AddTocart(int userid,int productid)
+        {
+                  MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog");
+          MySqlCommand cmd = new MySqlCommand();
+            connection.Open();
+            string query = $"INSERT INTO cart (ProductID, UserID, quantity) VALUES ('{productid}', '{userid}','1');";
+            cmd.CommandText = query;
+            cmd.ExecuteNonQuery();
+            connection.Close();
         }
         public int ProductID { get; set; }
         public string ProductName { get; set; }

@@ -31,17 +31,18 @@ namespace Test
 
         static async Task Main(string[] args)
         {
-            Model.ApiServices a = new Model.ApiServices();
-            //Console.WriteLine(await a.ReportClean(1255, 1, 1));
-            //Console.ReadLine();
-            Product p = await a.GetProductFromPK(1);
-            if (p != null)
-            {
-                Console.WriteLine(p.ProductName);
-                Console.ReadLine();
-            }
-            
+            //Model.ApiServices a = new Model.ApiServices();
+            ////Console.WriteLine(await a.ReportClean(1255, 1, 1));
+            ////Console.ReadLine();
+            //Product p = await a.GetProductFromPK(1);
+            //if (p != null)
+            //{
+            //    Console.WriteLine(p.ProductName);
+            //    Console.ReadLine();
+            //}
 
+
+            ProductDTO.AddTocart(1, 1);
 
 
         }
