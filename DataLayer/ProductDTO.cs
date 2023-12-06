@@ -14,7 +14,7 @@ namespace DataLayer
     {
         public ProductDTO()
         {
-			ProductID = -1;
+			ProductID = -113414;
 			ProductName = null;
 			ProductDescription =null;
 			ProductPrice = -1;
