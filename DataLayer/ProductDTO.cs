@@ -102,6 +102,7 @@ namespace DataLayer
         {
                   MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog");
           MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = connection;
             connection.Open();
             string query = $"INSERT INTO cart (ProductID, UserID, quantity) VALUES ('{productid}', '{userid}','1');";
             cmd.CommandText = query;

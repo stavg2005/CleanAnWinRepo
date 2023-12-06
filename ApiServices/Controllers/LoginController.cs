@@ -26,6 +26,20 @@ namespace ApiServices.Controllers
             return Ok(UsersDTO.GetUserByID(id));
         }
 
-        
+        [HttpPost ("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(int id,string password)
+        {
+            try
+            {
+                await (UsersDTO.UpdatePassword(id,password));
+                return Ok("operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

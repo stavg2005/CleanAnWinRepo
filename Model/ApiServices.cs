@@ -140,5 +140,14 @@ namespace Model
                 return new Product(-1,"null","null",-1,null);
             }
         }
+
+        //public async Task UpdatePassword(int id, string password)
+        //{
+        //    try
+        //    {
+        //        string s = $"{Apiurl}/api/Login/UpdatePassword?id={id}&password={password}";
+        //        return await
+        //    }
+        //}
     }
   }
