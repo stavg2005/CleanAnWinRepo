@@ -1,4 +1,5 @@
 ﻿using Model;
+using datalayer;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Sockets;
@@ -76,6 +77,7 @@ namespace Model
 
         public async Task<int> Register(string email, string password,string username,int location,int id)
         {
+            
             string s = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
             return await _httpClient.GetFromJsonAsync<int>(s);
         }

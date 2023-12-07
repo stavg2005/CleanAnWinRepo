@@ -14,7 +14,7 @@ namespace ApiServices.Controllers
             return await (UsersDTO.Login(email, password));
         }
 
-        [HttpGet("Register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(string username,string password,string email,int location,int id)
         {
             return Ok(UsersDTO.Register(username, password, email, location, id));

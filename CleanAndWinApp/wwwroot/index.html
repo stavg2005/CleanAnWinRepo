@@ -101,6 +101,29 @@
             }, 4000);
         });
     </script>
+    <script>
+        function nextStep() {
+            // Add logic to handle the transition to the next step
+            var currentStep = document.querySelector('.form-step.active');
+            var nextStep = currentStep.nextElementSibling;
+
+            if (nextStep) {
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+            }
+        }
+
+        function prevStep() {
+            var currentStep = document.querySelector('.form-step.active');
+            var prevStep = currentStep.previousElementSibling;
+
+            if (prevStep) {
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+            }
+        }
+        // Add similar functions for prevStep() and showStep(stepNumber) if not already defined.
+    </script>
 </body>
 
 </html>
