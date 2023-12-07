@@ -17,6 +17,11 @@ namespace DataLayer
 {
     public class UsersDTO
     {
+       
+        
+           
+        
+        
         public static async Task<List<Product>>GetCart(int id)
         {
 
@@ -182,6 +187,18 @@ namespace DataLayer
             cmd.Connection = c;
             string query = $"UPDATE users SET UserPassword = '{password}' where UserID={id};";
             cmd.CommandText= query ;
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public static async Task UpdateUserName(int id,string UserName)
+        {
+            MySqlConnection c = new MySqlConnection();
+            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            c.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = c;
+            string query = $"UPDATE users SET UserName = '{UserName}' where UserID={id};";
+            cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }
     }

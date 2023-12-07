@@ -141,13 +141,60 @@ namespace Model
             }
         }
 
-        //public async Task UpdatePassword(int id, string password)
-        //{
-        //    try
-        //    {
-        //        string s = $"{Apiurl}/api/Login/UpdatePassword?id={id}&password={password}";
-        //        return await
-        //    }
-        //}
+        public async Task<string> UpdatePassword(int id, string password)
+        {
+            try
+            {
+                
+                string s =
+                    JsonSerializer.Serialize(password);
+                
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                string apiurl = $"{Apiurl}/api/Login/UpdatePassword?id={id}&password={password}";
+                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+
+
+            }
+        }
+        public async Task<string> UpdateUserName(int id, string username)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(username);
+
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                string apiurl = $"{Apiurl}/api/Login/UpdateUserName?id={id}&username={username}";
+
+                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
     }
-  }
+}

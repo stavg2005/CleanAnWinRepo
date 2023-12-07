@@ -9,7 +9,7 @@
 @using Microsoft.JSInterop
 <div class="content hidden" id="content">
     @{
-       
+        
     }
 @if ( AuthService.IsUserAuthenticated)
 {
@@ -101,10 +101,13 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
+        if (AuthService.IsUserAuthenticated)
+        {
+            await InsertValuesToUserService();
+            progressValue = GetLastDigit(Userservice.CurrentUser.xp) * 10;
+            level = Userservice.CurrentUser.xp / 10;
+        }
 
-        await InsertValuesToUserService();
-        progressValue = GetLastDigit(Userservice.CurrentUser.xp) * 10;
-        level = Userservice.CurrentUser.xp / 10;
 
     }
 
@@ -115,12 +118,16 @@ else
             await UpdateProgressBar(progressValue);
         }
 
-        
+
     }
     private async Task InsertValuesToUserService()
     {
-        Userservice.CurrentUser = await AuthService.GetUserInfo();
-        path = path + Convert.ToBase64String(Userservice.CurrentUser.profile);
+        if (AuthService.IsUserAuthenticated)
+        {
+            Userservice.CurrentUser = await AuthService.GetUserInfo();
+            path = path + Convert.ToBase64String(Userservice.CurrentUser.profile);
+        }
+
     }
     private void Logout()
     {

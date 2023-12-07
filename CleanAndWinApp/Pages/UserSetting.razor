@@ -3,13 +3,14 @@
 @inject NavigationManager NavManager;
 @inject UserService Userservice
 @inject AuthService AuthService
-<input /> enter new password
+<p>error!!!: @error</p>
+<input @bind-value="password"/> enter new password <button @onclick="UpdatatePassword">Change Password</button>
 <div>
     change Profile Picture  
     <InputFile OnChange="HandleFileChange" />
 </div>
 
-<input /> enter new UserName
+<input @bind-value="UserName" /> enter new UserName <button @onclick="UpdateUserName"> change UserName</button>
 @code {
     string password { get; set; }
     string UserName { get; set; }
@@ -19,6 +20,7 @@
     string query = "";
     byte[] buf;
     string error = "error";
+    ApiServices a = new ApiServices();
     private const string ApiBaseUrl = "http://192.168.1.64:5087";
 
     private async Task HandleFileChange(InputFileChangeEventArgs e)
@@ -87,11 +89,29 @@
     {
 
         await InsertValuesToUserService();
-        
+
     }
     private async Task InsertValuesToUserService()
     {
         Userservice.CurrentUser = await AuthService.GetUserInfo();
 
+    }
+
+    private async Task UpdatatePassword()
+    {
+        error =await a.UpdatePassword(Userservice.CurrentUser.UserID, password);
+        Logout();
+
+    }
+    private async Task UpdateUserName()
+    {
+        error = await a.UpdateUserName(Userservice.CurrentUser.UserID, UserName);
+        Logout();
+    }
+
+    private void Logout()
+    {
+        AuthService.ClearAuthToken();
+        NavManager.NavigateTo("/");
     }
 }
