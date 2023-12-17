@@ -1,5 +1,4 @@
 ﻿using Model;
-using datalayer;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Sockets;
