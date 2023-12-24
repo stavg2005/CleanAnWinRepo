@@ -15,7 +15,7 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(string username,string password,string email,int location,int id)
+        public async Task<IActionResult> Register(string username, string password, string email, int location, int id)
         {
             return Ok(UsersDTO.Register(username, password, email, location, id));
         }
@@ -26,12 +26,12 @@ namespace ApiServices.Controllers
             return Ok(UsersDTO.GetUserByID(id));
         }
 
-        [HttpPost ("UpdatePassword")]
-        public async Task<IActionResult> UpdatePassword(int id,string password)
+        [HttpPost("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(int id, string password)
         {
             try
             {
-                await (UsersDTO.UpdatePassword(id,password));
+                await (UsersDTO.UpdatePassword(id, password));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)
@@ -41,12 +41,12 @@ namespace ApiServices.Controllers
             }
         }
 
-        [HttpPost ("UpdateUserName")]
-        public async Task<IActionResult> UpdateUserPassword(int id, string username)
+        [HttpPost("UpdateUserName")]
+        public async Task<IActionResult> UpdateUserName(int id, string username)
         {
             try
             {
-                await (UsersDTO.UpdateUserName(id,username));
+                await (UsersDTO.UpdateUserName(id, username));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)
@@ -56,5 +56,20 @@ namespace ApiServices.Controllers
             }
         }
 
+        [HttpPost("UpdateEmail")]
+
+        public async Task<IActionResult> UpdateUserEmail(int id, string username)
+        {
+            try
+            {
+                await (UsersDTO.UpdateUserEmail(id, username));
+                return Ok("operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

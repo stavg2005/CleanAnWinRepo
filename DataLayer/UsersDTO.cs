@@ -201,5 +201,17 @@ namespace DataLayer
             cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public static async Task UpdateUserEmail(int id,string UserEmail)
+        {
+            MySqlConnection c = new MySqlConnection();
+            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            c.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = c;
+            string query = $"UPDATE users SET UserEmail = '{UserEmail}' where UserID={id};";
+            cmd.CommandText = query;
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }

@@ -197,5 +197,31 @@ namespace Model
             }
         }
 
+        public async Task<string> UpdateUserEmail(int id,string useremail)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(useremail);
+
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                string apiurl = $"{Apiurl}/api/Login/UpdateEmail?id={id}&useremail={useremail}";
+
+                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
     }
 }

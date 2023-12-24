@@ -3,31 +3,130 @@
 @inject NavigationManager NavManager;
 @inject UserService Userservice
 @inject AuthService AuthService
-<p>error!!!: @error</p>
-<input @bind-value="password"/> enter new password <button @onclick="UpdatatePassword">Change Password</button>
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@inject NavigationManager Nav;
+ <p>error!!!: @error</p> 
+@* <input @bind-value="password"/> enter new password <button @onclick="UpdatatePassword">Change Password</button>
 <div>
     change Profile Picture  
     <InputFile OnChange="HandleFileChange" />
 </div>
 
-<input @bind-value="UserName" /> enter new UserName <button @onclick="UpdateUserName"> change UserName</button>
+<input @bind-value="UserName" /> enter new UserName <button @onclick="UpdateUserName"> change UserName</button> *@
+<link rel="stylesheet" href="css/settings.css">
+<div class="wrapper bg-white mt-sm-5" style="position:relative;width:(@d.Width+200)px;height:(@d.Height)px">
+    <h4 class="pb-4 border-bottom">Account settings</h4>
+    <div class="d-flex align-items-start py-3 border-bottom">
+        @{
+
+                <img src="@(path)"
+                     class="img" alt="">
+                <div class="pl-sm-4 pl-2" id="img-section">
+                    <b>Profile Photo</b>
+                    <p>Accepted file type .png. Less than 1MB</p>
+                    <InputFile OnChange="HandleFileChange" />Upload
+                </div>
+                
+            }
+        
+        
+    </div>
+    <div class="py-2">
+        <div class="row py-2">
+            <div class="col-md-6">
+                <label for="firstname">User Name</label>
+                <input @bind-value="UserName"  type="text" class="bg-light form-control" placeholder="Steve">
+            </div>
+        </div>
+        <div class="row py-2">
+            <div class="col-md-6">
+                <label for="email">Email Address</label>
+                <input @bind-value="Email" type="text" class="bg-light form-control" placeholder="steve_email.com">
+            </div>
+        </div>
+                <div class="row py-2">
+            <div class="col-md-6">
+                <label for="email">Password</label>
+                <input @bind-value="password" type="text" class="bg-light form-control" placeholder="steve_email.com">
+            </div>
+        </div>
+        <div class="row py-2">
+            <div class="col-md-6">
+                <label for="country">Location</label>
+                <select name="country" id="country" class="bg-light">
+                    <option value="india" selected>India</option>
+                    <option value="usa">USA</option>
+                    <option value="uk">UK</option>
+                    <option value="uae">UAE</option>
+                </select>
+            </div>
+        </div>
+        <div class="py-3 pb-4 border-bottom">
+            <button @onclick="SaveChanges" class="btn btn-primary mr-3">Save Changes</button>
+            <button class="btn border button">Cancel</button>
+        </div>
+    </div>
+</div>
 @code {
-    string password { get; set; }
-    string UserName { get; set; }
+    string password = "";
+    string UserName= "";
+    string Email = "";
+    public int Height { get; set; }
+    public int Width { get; set; }
+    string path = "data:image/png;base64,";
     HttpClient Http = new HttpClient();
     string message = "InputFile";
     bool isDisabled = false;
     string query = "";
     byte[] buf;
     string error = "error";
+    bool Updatedphoto = false;
+
     ApiServices a = new ApiServices();
+    ImageModel image = new ImageModel();
     private const string ApiBaseUrl = "http://192.168.1.64:5087";
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+        }
+
+    }
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+
+    private async Task SaveChanges()
+    {
+        if(Updatedphoto)
+            error = await UploadImageToApi(Userservice.CurrentUser.UserID, image.ImageData);
+        if (UserName != " ")
+        {
+            await a.UpdateUserName(Userservice.CurrentUser.UserID,UserName);
+        }
+        if(Email != "")
+        {
+            await a.UpdateUserEmail(Userservice.CurrentUser.UserID, Email);
+        }
+        if(password != "")
+        {
+            await a.UpdatePassword(Userservice.CurrentUser.UserID, password);
+        }
+
+    }
     private async Task HandleFileChange(InputFileChangeEventArgs e)
     {
         // Ensure the selected file is not null
         if (e.File != null)
         {
+            Updatedphoto = true;
             // Read the file content into a byte array
             using (var memoryStream = new MemoryStream())
             {
@@ -35,14 +134,14 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                var image = new ImageModel
+                var imaget = new ImageModel
                     {
                         FileName = e.File.Name,
                         ImageData = imageData
                     };
+                path = path + Convert.ToBase64String(imageData);
 
-                error = await UploadImageToApi(Userservice.CurrentUser.UserID, image.ImageData);
-
+                image = imaget;
             }
         }
     }
@@ -70,7 +169,9 @@
                 if (response.IsSuccessStatusCode)
                 {
                     // Image uploaded successfully
+                    Nav.NavigateTo("/setting");
                     return ("Image uploaded successfully");
+                  
                 }
                 else
                 {
@@ -94,6 +195,7 @@
     private async Task InsertValuesToUserService()
     {
         Userservice.CurrentUser = await AuthService.GetUserInfo();
+        
 
     }
 
@@ -109,6 +211,10 @@
         Logout();
     }
 
+    private async Task<string> GetUserImage()
+    {
+       return  await a.GetProfilePhoto(Userservice.CurrentUser.UserID);
+    }
     private void Logout()
     {
         AuthService.ClearAuthToken();
