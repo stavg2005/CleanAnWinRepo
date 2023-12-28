@@ -74,11 +74,25 @@ namespace Model
             return await _httpClient.GetFromJsonAsync<Tuple<string, string>>(s);
         }
 
-        public async Task<int> Register(string email, string password,string username,int location,int id)
+        public async Task<string> Register(string email, string password,string username,int location,int id)
         {
-            
-            string s = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
-            return await _httpClient.GetFromJsonAsync<int>(s);
+            Users users = new Users(id,email,username,location);
+            string s =
+            JsonSerializer.Serialize(users);
+            HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+            string apiurl = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
+            HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return ("POST request successful!");
+
+            }
+            else
+            {
+                return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+            }
+
         }
 
         public async Task<List<Locations>> GetAllLocations()
@@ -102,7 +116,7 @@ namespace Model
                     JsonSerializer.Serialize(r);
                 Console.WriteLine(s);
                 HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                string apiurl = $"http://10.0.0.27:5087/ReportClean?userid={userid}&weight={Weight}&trashcanid={trashcanid}";
+                string apiurl = $"http://{Apiurl}:5087/ReportClean?userid={userid}&weight={Weight}&trashcanid={trashcanid}";
 
                 HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
                 
@@ -205,6 +219,74 @@ namespace Model
 
                 HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
                 string apiurl = $"{Apiurl}/api/Login/UpdateEmail?id={id}&useremail={useremail}";
+
+                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> UploadImageToApi(int userId, byte[] imageData)
+        {
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                using (MultipartFormDataContent content = new MultipartFormDataContent())
+                {
+                    // Your API endpoint URL
+                    string apiUrl = $"{Apiurl}/api/upload/uploadImage/{userId}";
+
+                    // Convert byte array to Base64 string
+                    string base64Image = Convert.ToBase64String(imageData);
+
+                    // Add the image data as a binary content
+                    ByteArrayContent imageContent = new ByteArrayContent(imageData);
+                    content.Add(imageContent, "imageData", "image.jpg"); // "imageData" is the parameter name expected by the server
+
+                    // Make the POST request
+                    HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Image uploaded successfully
+                        
+                        return ("Image uploaded successfully");
+
+                    }
+                    else
+                    {
+                        // Handle the error
+                        return ($"Error: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                return ($"Exception: {ex.Message}");
+            }
+        }
+
+        public async Task<string> AddItemToCart(string p, int id)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(p);
+
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                string apiurl = $"{Apiurl}/api/CartControllercs/AddProductTocart?userid={id}&productid={p}";
 
                 HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
 

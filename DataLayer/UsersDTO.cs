@@ -89,7 +89,12 @@ namespace DataLayer
             {
                 await r.ReadAsync();
 				int id = r.GetInt32(0);
-                ca = new Users(id, email, password, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id));
+                bool isadmin = false;
+                if(r.GetInt32(8) == 1)
+                {
+                    isadmin = true;
+                }
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
                 
             }
                 return ca;
@@ -134,7 +139,12 @@ namespace DataLayer
             if (r.HasRows)
             {
                 r.Read();
-                ca = new Users(id, r.GetString(1), r.GetString(2), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id));
+                bool isadmin = false;
+                if (r.GetInt32(8) == 1)
+                {
+                    isadmin = true;
+                }
+                ca = new Users(id, r.GetString(1),r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
 
             }
             return ca;

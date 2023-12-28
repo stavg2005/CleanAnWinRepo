@@ -1,0 +1,110 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000; /* Ensure it's above other elements */
+}
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+.content {
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.box {
+    text-align: center;
+}
+
+.coin {
+    width: 20px;
+    height: 20px;
+}
+
+.coins {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.profile {
+    text-align: center;
+}
+
+.profile-pic {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.store-container {
+    /* Add any common styles for the store-container here */
+}
+
+.product {
+    margin-top: 20px;
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+    .product img.coin {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .product h2 {
+        text-align: center;
+    }
+
+    .product img.product-picture {
+        width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+
+    .product .product-name {
+        background-color: #f9f9f9;
+        padding: 10px;
+        text-align: center;
+    }
+
+.navbar {
+    border-top: 5px solid blue;
+    text-align: center;
+    padding: 10px;
+}
+
+    .navbar img {
+        width: 50px;
+        height: 50px;
+        margin: 0 5px;
+    }
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

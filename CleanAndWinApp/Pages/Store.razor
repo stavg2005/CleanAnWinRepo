@@ -3,10 +3,69 @@
 @inject AuthService AuthService
 @page "/store"
 @using Model;
-<link rel="stylesheet" href="css/Store.css">
-<link rel="stylesheet" href="css/Proggress.css">
-<div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
-<div style="position:fixed;top: 3%; left:0%;text-align: center;border-radius:20px;border-color:black;border:5px,solid;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/shop.css">
+    <title>Your Web Page</title>
+</head>
+<body style="overflow-y:scroll">
+
+    <header class="fixed-header">
+        <h1>You have @Userservice.CurrentUser.coins coins <img src="css/imags/coin.png" class="coin" /> </h1>
+    </header>
+
+    <section class="content">
+        <div class="box">
+            <img src="css/imags/coin.png" class="coin" />
+            <h2 class="coins">@Userservice.CurrentUser.coins</h2>
+        </div>
+
+        <div class="profile">
+            <img src="images/profile-pic.png" class="profile-pic" />
+        </div>
+
+        <div class="store-container">
+            @{
+                if(b)
+                    {
+                    foreach (Product i in l)
+                    {
+                        <div class="product">
+                            
+                            
+                            <img src="@(path+Convert.ToBase64String(i.ProductPicture))" class="product-picture" alt="Product 1">
+                            <div class="product-name" @onclick="() =>GoToProuctPage(i.ProductID)">
+                                <h2>@i.ProductName <br /><p> <img class="coin" src="css/imags/coin.png"   style="top:80%;right:80%"/>@i.ProductPrice</p></h2>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+          <div style="position:relative;height:100px"></div>
+
+            <!-- Add more product entries as needed -->
+
+@*             <div class="navbar">
+                <img src="css/imags/bin.png" />
+                <img src="css/imags/bag.png" />
+                <img src="css/imags/user.png" />
+            </div> *@
+        </div>
+    </section>
+
+    <footer style="background-color:white">
+
+        <div class="navbar">
+            <img src="css/imags/bin.png" />
+            <img src="css/imags/bag.png" />
+            <img src="css/imags/user.png" />
+        </div>
+    </footer>
+
+</body>
+
+@* <div style="position:fixed;top: 3%; left:0%;text-align: center;border-radius:20px;border-color:black;border:5px,solid;">
     <img src="css/imags/coin.png" style="width:20px;height:20px;position:absolute;right:80%" />
     <h2 style="margin-left:35px;top:25%"> @Userservice.CurrentUser.coins </h2>
 </div>
@@ -39,7 +98,7 @@
 
     </div>
 
-</body>
+</body> *@
 
 @code {
     List<Product> l = null;

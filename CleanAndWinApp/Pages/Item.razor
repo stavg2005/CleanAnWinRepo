@@ -4,7 +4,47 @@
 @inject UserService Userservice;
 @inject AuthService AuthService;
 @using Model;
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/ProductP.css">
+    <title></title>
+</head>
 <body>
+
+    <header class="fixed-header" style="position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000; ">
+        <h1>You have @Userservice.CurrentUser.coins coins <img src="images/coin.png" class="coin" /> </h1>
+    </header>
+    @if(p != null)
+    {
+        <section class="product-details">
+            <img src="@(path+base64)" alt="Product Image" class="product-image">
+            <div class="product-info">
+                <h2>@p.ProductName</h2>
+                <p class="price">@p.ProductPrice</p>
+                <p>@p.ProductDescription</p>
+                <button @onclick="() =>AddToCart()">Add to Cart</button>
+            </div>
+        </section>
+    }
+   
+
+    <footer>
+        <p>&copy; 2023 Your Company</p>
+    </footer>
+
+</body>
+@* <body>
     <p>@ItemID</p>
     @if (p!=null)
     {
@@ -19,7 +59,7 @@
     }
     
 
-</body>
+</body> *@
 
 @code {
     [Parameter]
@@ -28,8 +68,12 @@
     string path= "data:image/png;base64,";
     string base64 { get; set; }
     bool b = false;
+    string error = "";
+
+    ApiServices a = new ApiServices();
     protected override async Task OnInitializedAsync()
     {
+        await InsertValuesToUserService();
         Model.ApiServices a = new Model.ApiServices();
         p = await a.GetProductFromPK(int.Parse(ItemID));
 
@@ -42,6 +86,11 @@
 
     }
 
+    private async Task InsertValuesToUserService()
+    {
+        Userservice.CurrentUser = await AuthService.GetUserInfo();
+
+    }
     private async Task UpdateProductData()
     {
         // Your logic to update p and base64
@@ -52,7 +101,9 @@
         }
     }
 
-    private async Task AddToCart() { 
+    private async Task AddToCart()
+    {
+        error = await a.AddItemToCart(ItemID, Userservice.CurrentUser.UserID);
     }
 
 }
