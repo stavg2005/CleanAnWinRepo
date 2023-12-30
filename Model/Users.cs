@@ -21,7 +21,7 @@ namespace Model
 
         public Byte[] profile { get; set; }
 
-        public bool IsAdmin;
+        public bool IsAdmin { get; set; }
 
         public Users(int userID, string UserEmail, int coins, string UserName, int xp, int location,List<Product> l,bool isadmin)
         {

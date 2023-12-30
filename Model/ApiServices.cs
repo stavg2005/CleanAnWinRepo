@@ -15,7 +15,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.27:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -74,7 +74,7 @@ namespace Model
             return await _httpClient.GetFromJsonAsync<Tuple<string, string>>(s);
         }
 
-        public async Task<string> Register(string email, string password,string username,int location,int id)
+        public async Task<string> Register(string email, string password,string username,int location,int id, byte[] imagedata )
         {
             Users users = new Users(id,email,username,location);
             string s =
@@ -82,9 +82,10 @@ namespace Model
             HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
             string apiurl = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
             HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-
-            if (response.IsSuccessStatusCode)
+            string r = await UploadImageToApi(id, imagedata);
+            if (response.IsSuccessStatusCode && r== "Image uploaded successfully")
             {
+                
                 return ("POST request successful!");
 
             }
@@ -195,7 +196,7 @@ namespace Model
                 string apiurl = $"{Apiurl}/api/Login/UpdateUserName?id={id}&username={username}";
 
                 HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-
+               
                 if (response.IsSuccessStatusCode)
                 {
                     return ("POST request successful!");

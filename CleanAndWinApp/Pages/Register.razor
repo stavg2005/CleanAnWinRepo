@@ -179,8 +179,7 @@
 
     public async Task Reg()
     {
-        string r = await A.Register(Email, Password, UserName, location, id);
-        await UploadImageToApi(id, m.ImageData);
+        string r = await A.Register(Email, Password, UserName, location, id, m.ImageData);
     }
     async Task GetDimensions()
     {

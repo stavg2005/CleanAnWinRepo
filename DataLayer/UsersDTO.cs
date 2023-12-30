@@ -90,7 +90,7 @@ namespace DataLayer
                 await r.ReadAsync();
 				int id = r.GetInt32(0);
                 bool isadmin = false;
-                if(r.GetInt32(8) == 1)
+                if(r.GetBoolean(8) == true)
                 {
                     isadmin = true;
                 }
