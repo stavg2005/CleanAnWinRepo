@@ -33,7 +33,7 @@ namespace DataLayer
             using (MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
             {
                 connection.Open();
-                string query = "SELECT LocationID, LocationName FROM location";
+                string query = "SELECT LocationID, LocationName,lat,lng FROM location";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -44,7 +44,9 @@ namespace DataLayer
                             Locations location = new Locations
                             {
                                 ID = Convert.ToInt32(reader["LocationID"]),
-                                Name = Convert.ToString(reader["LocationName"])
+                                Name = Convert.ToString(reader["LocationName"]),
+                                lat = Convert.ToString(reader["lat"]),
+                                lng = Convert.ToString(reader["lng"])
                                 
                             };
 

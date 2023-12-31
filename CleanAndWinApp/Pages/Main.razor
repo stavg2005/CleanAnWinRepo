@@ -53,7 +53,7 @@
 
                 <div class="navbar">
 
-                    <img src="css/imags/bin.png" style="width:50px;height:50px" />
+                    <img @onclick="Gomap"src="css/imags/bin.png" style="width:50px;height:50px" />
                     <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
                     <img @onclick="GoSettings" src="css/imags/user.png" style="width:50px;height:50px" />
 
@@ -108,6 +108,10 @@ else
     private void GoMain()
     {
         nav.NavigateTo("/reg");
+    }
+    private void Gomap(){
+        
+        nav.NavigateTo("maps/32.67010645526227/35.23945354415878");
     }
 
     private void GoSettings()
