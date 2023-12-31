@@ -67,30 +67,28 @@
     </script>-->
 
     <script>
-        function initialize(locations) {
+        function initialize(js) {
             var mapOptions = {
                 zoom: 15,
-                center: new google.maps.LatLng(locations[0].lat, locations[0].lng),
+                center: new google.maps.LatLng(js.lat,js.lng),
                 mapTypeId: google.maps.MapTypeId.SATELLITE
             };
 
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             // Add waypoints
-            locations.forEach(function (location) {
+            js.locations.forEach(function (js) {
                 var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(location.lat, location.lng),
+                    position: new google.maps.LatLng(js.item1, js.item2),
                     map: map,
                     title: 'Waypoint'
                 });
 
-                // You can customize the marker icon, animation, etc. here if needed
+                
             });
         }
 
-        // Serialize C# List to JSON using Razor syntax
 
-        // Call the JavaScript function with the serialized data
     </script>
     <script type="text/javascript">
         window.getDimensions = function () {

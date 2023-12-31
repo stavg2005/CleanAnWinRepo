@@ -8,14 +8,14 @@
 <link rel="stylesheet" href="css/Store.css">
 @using Microsoft.JSInterop
 
-
+    
 
     @{
         
     }
 @if ( AuthService.IsUserAuthenticated)
 {
-     
+    
     if (Userservice.CurrentUser != null)
     {
 
@@ -30,7 +30,8 @@
             }
             else
             {
-            <div class="content hidden" id="content">
+            <p>what the hellllll</p>
+            <div>
                 <div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
 
                 @* <button @onclick="Logout">Log Out</button> *@
@@ -58,9 +59,9 @@
                     <img @onclick="GoSettings" src="css/imags/user.png" style="width:50px;height:50px" />
 
                 </div>
-                <div class="loader-wrapper" id="loader">
+@*                 <div class="loader-wrapper" id="loader">
                     <div class="loader"></div>
-                </div>
+                </div> *@
                 </div>
             }
 
@@ -111,7 +112,7 @@ else
     }
     private void Gomap(){
         
-        nav.NavigateTo("maps/32.67010645526227/35.23945354415878");
+        nav.NavigateTo($"maps/{Userservice.CurrentUser.location.lat}/{Userservice.CurrentUser.location.lng}");
     }
 
     private void GoSettings()

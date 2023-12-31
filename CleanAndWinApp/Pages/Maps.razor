@@ -1,50 +1,80 @@
-﻿@page "/maps/{param1}/{param2}"
+﻿@page "/maps/{lat}/{lng}"
+@using Model;
 
 @inject NavigationManager NavManager;
 @inject IJSRuntime JSRuntime
+@inject UserService Userservice
+@inject AuthService AuthService
+
 
 <div id="map" style="height:800px;width:300px;">
 </div>
-
 
 @code {
 
     [Parameter]
     public Tuple<String,string> LatnLng { get; set; }
-    
-   
+
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-             
-            
+
+
         }
 
     }
     [Parameter]
-    public string param1 { get; set; }
+    public string lat{ get; set; }
     [Parameter]
-    public string param2 { get; set; }
+    public string lng { get; set; }
 
 
+    private async Task InsertValuesToUserService()
+    {
+        Userservice.CurrentUser = await AuthService.GetUserInfo();
+
+    }
     protected override async Task OnInitializedAsync()
     {
+        await InsertValuesToUserService();
         Model.ApiServices a = new Model.ApiServices();
-        List<Model.Locations> locations =locations = await a.GetAllLocations();
-        await JSRuntime.InvokeVoidAsync("initialize", locations);
+
         var uri = new Uri(NavManager.Uri);
         var queryString = System.Web.HttpUtility.ParseQueryString(uri.Query);
         if (queryString.AllKeys.Contains("param1"))
         {
-            param1 = Uri.UnescapeDataString(queryString["param1"]);
+            lat = Uri.UnescapeDataString(queryString["param1"]);
         }
 
         if (queryString.AllKeys.Contains("param2"))
         {
-            param2 = Uri.UnescapeDataString(queryString["param2"]);
+            lng = Uri.UnescapeDataString(queryString["param2"]);
         }
-            
-        
+        List<Tuple<string, string>> locations = await a.GetAllTrashCanLocations();
+        if (locations != null)
+        {
+            Javascriptquery js = new Javascriptquery(locations, lat, lng);
+            await JSRuntime.InvokeVoidAsync("initialize", js);
+        }
+
     }
+
+
+    public class Javascriptquery
+    {
+        public Javascriptquery(List<Tuple<string,string>> locations, string lat, string lng)
+        {
+            this.locations = locations;
+            this.lat = lat;
+            this.lng = lng;
+        }
+
+        public List<Tuple<string,string>> locations {get;set;}
+        public string lat { get; set; }
+        public string lng { get; set; }
+    }
+
 }
+

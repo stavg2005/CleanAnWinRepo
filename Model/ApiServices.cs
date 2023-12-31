@@ -8,6 +8,7 @@ using Google.Protobuf.WellKnownTypes;
 using System.Globalization;
 using static System.Net.WebRequestMethods;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 
 namespace Model
 {
@@ -15,7 +16,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.27:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -73,19 +74,24 @@ namespace Model
             string s = $"{Apiurl}/api/Map/GetLocation?id={id}";
             return await _httpClient.GetFromJsonAsync<Tuple<string, string>>(s);
         }
-
-        public async Task<string> Register(string email, string password,string username,int location,int id, byte[] imagedata )
+        public async Task<Locations> GetLocationFromPK(int id)
         {
-            Users users = new Users(id,email,username,location);
+            string s = $"http://{Apiurl}/GetLocationFromPK?id={id}";
+            return await _httpClient.GetFromJsonAsync<Locations>(s);
+        }
+        public async Task<string> Register(string email, string password, string username, int location, int id, byte[] imagedata)
+        {
+
+            Users users = new Users(id, email, username,await GetLocationFromPK(location));
             string s =
             JsonSerializer.Serialize(users);
             HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
             string apiurl = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
             HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
             string r = await UploadImageToApi(id, imagedata);
-            if (response.IsSuccessStatusCode && r== "Image uploaded successfully")
+            if (response.IsSuccessStatusCode && r == "Image uploaded successfully")
             {
-                
+
                 return ("POST request successful!");
 
             }
@@ -305,6 +311,19 @@ namespace Model
                 return ($"An error occurred: {ex.Message}");
             }
         }
+
+       public async Task<List<Tuple<string,string>>> GetAllTrashCanLocations()
+        {
+
+                string apiurl = $"http://10.0.0.27:5087/GetAllTrashCanLocations";
+
+                List<Tuple<string, string>> l = (await _httpClient.GetFromJsonAsync<List<Tuple<string, string>>>(apiurl));
+                return l;
+                
+            
+        }
+
+        
 
     }
 }

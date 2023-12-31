@@ -16,7 +16,22 @@ namespace ApiServices.Controllers
             try
             {
                 var locations = await LocationsDTO.GetAllLocations();
-                return Json(locations);
+                return Ok(locations);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred in GetAllLocations: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpGet ("GetLocationFromPK")]
+        public async Task<IActionResult> GetLocationFromPK(int id)
+        {
+            try
+            {
+                var locations = await LocationsDTO.GetLocationFromPK(id);
+                return  Ok(locations);
             }
             catch (Exception ex)
             {

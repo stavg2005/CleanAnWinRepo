@@ -41,8 +41,13 @@ namespace Test
             //    Console.ReadLine();
             //}
 
-
-            ProductDTO.AddTocart(1, 1);
+            Model.ApiServices a = new Model.ApiServices();
+            List<Tuple<string,string>> l = await a.GetAllTrashCanLocations();
+            foreach (Tuple<string,string> i in l){
+                Console.WriteLine("lat" + i.Item1);
+                Console.WriteLine("lng" + i.Item2);
+            }
+            Console.ReadLine();
 
 
         }

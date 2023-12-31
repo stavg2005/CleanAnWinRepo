@@ -57,5 +57,38 @@ namespace DataLayer
             }
             return locations;
         }
+
+        public static async Task<Locations> GetLocationFromPK(int id)
+        {
+            Locations locations = new Locations();
+
+            using (MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
+            {
+                connection.Open();
+                string query = $"SELECT LocationID, LocationName,lat,lng FROM location where LocationID = '{id}'";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if(reader.Read())
+                        {
+                            Locations locationtemp = new Locations
+                            {
+                                ID = Convert.ToInt32(reader["LocationID"]),
+                                Name = Convert.ToString(reader["LocationName"]),
+                                lat = Convert.ToString(reader["lat"]),
+                                lng = Convert.ToString(reader["lng"])
+
+                            };
+                            locations = locationtemp;
+                            
+                        }
+                    }
+                }
+            }
+            return locations;
+
+        }
     }
 }

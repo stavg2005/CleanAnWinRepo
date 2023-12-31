@@ -119,5 +119,47 @@ namespace DataLayer
             Tuple<string, string> t = new Tuple<string, string>(Lat, lng);
             return t;
         }
+
+        public static int countRows()
+        {
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            int num = 0;
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT * from trashcan;";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            num = num + 1;
+                           
+                        }
+                    }
+                }
+               
+                return num;
+            }
+        }
+        public static async Task<List<Tuple<string,string>>> GetAlltrashCanLocations()
+        {
+            int i = 1;
+            int max = countRows();
+            List<Tuple<string,string>> l = new List<Tuple<string,string>>(max);
+            while(i <= max)
+            {
+                l.Add(GetLatLngFromPK(i));
+                i++;
+            }
+            return l;
+
+        }
 	}
 }

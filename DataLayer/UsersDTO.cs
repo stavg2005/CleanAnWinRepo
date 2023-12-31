@@ -94,7 +94,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
                 
             }
                 return ca;
@@ -144,7 +144,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, r.GetString(1),r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), r.GetInt32(6), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
+                ca = new Users(id, r.GetString(1),r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
 
             }
             return ca;

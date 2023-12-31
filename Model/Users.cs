@@ -11,7 +11,7 @@ namespace Model
         public int UserID { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public int location { get; set; }
+        public Locations location { get; set; }
 
         public int xp { get; set; }
 
@@ -23,7 +23,7 @@ namespace Model
 
         public bool IsAdmin { get; set; }
 
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, int location,List<Product> l,bool isadmin)
+        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin)
         {
             UserID = userID;
             this.UserName = UserName;
@@ -36,7 +36,7 @@ namespace Model
             IsAdmin = isadmin;
         }
 
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, int location, List<Product> l, byte[] profile, bool isadmin)
+        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin)
         {
             UserID = userID;
             this.UserName = UserName;
@@ -49,7 +49,7 @@ namespace Model
             IsAdmin = isadmin;
         }
 
-        public Users(int id ,string UserEmail,string UserName,int location)
+        public Users(int id ,string UserEmail,string UserName,Locations location)
         {
             UserID = id;
             UserName = UserName;
@@ -66,7 +66,7 @@ namespace Model
 			UserID = -1;
 			UserName = null;
 			Email = null;
-			location = -1;
+			location = new Locations();
 			this.xp = -1;
 			this.coins = -1;
             products = null;
