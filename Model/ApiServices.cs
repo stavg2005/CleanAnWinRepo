@@ -16,7 +16,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.27:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -315,7 +315,7 @@ namespace Model
        public async Task<List<Tuple<string,string>>> GetAllTrashCanLocations()
         {
 
-                string apiurl = $"http://10.0.0.27:5087/GetAllTrashCanLocations";
+                string apiurl = $"{Apiurl}/GetAllTrashCanLocations";
 
                 List<Tuple<string, string>> l = (await _httpClient.GetFromJsonAsync<List<Tuple<string, string>>>(apiurl));
                 return l;
