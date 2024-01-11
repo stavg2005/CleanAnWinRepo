@@ -1,0 +1,116 @@
+﻿ @page "/pcontrol"
+ @inject UserService Userservice
+ @inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+ @using Model;
+ <p>Hello @Userservice.CurrentUser.UserName</p>
+ <button @onclick="showallproduct"> show all Product</button>
+ <div style="width:@(d.Width)px">
+@{
+   
+    if(count%2==0 && count != 0 && allProduct!=null)
+    {
+        <table class="table align-middle mb-0 bg-white">
+            <thead class="bg-light">
+                <tr>
+                    <th>   Name</th>
+                    <th>description</th>
+                    <th>price</th>
+                    <th>      </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(Product P in allProduct)
+                {
+                    string Name = "";
+                        int Price = 0;
+                        string Des = "";
+
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+ 
+                          
+                            
+                            <img src="@(path +Convert.ToBase64String(P.ProductPicture))"
+                                 alt=""
+                                 style="width: 45px; height: 45px"
+                                 class="rounded-circle" />
+                                    <div class="ms-3">
+                                        @if (conditionIsMet)
+                                        {
+                                            <input class="fw-bold mb-1" type="text" @bind="Name" placeholder="@P.ProductName" style="width:150px" />
+                                        }
+                                        else
+                                        {
+                                            <p class="fw-bold mb-1">@P.ProductName</p>
+                                        }
+                                    </div>
+                        </div>
+                    </td>
+                    <td>
+                                @P.ProductDescription
+                    </td>
+                    <td>
+                        @P.ProductPrice
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded" @onclick="() =>ToggleCondition(Name,Price,Des)">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+                }
+                
+                
+            </tbody>
+        </table>  
+    }
+    
+}
+</div>
+@code {
+    List<Product> allProduct { get; set; }
+    ApiServices a = new ApiServices();
+    string path ="data:image/png;base64,";
+    static int count = 0;
+    static int CountEdit = 1;
+    protected override async Task OnInitializedAsync()
+    {
+        allProduct = await a.GetALLProducts();
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+        }
+    }
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+    private void showallproduct()
+    {
+        count++;
+    }
+
+    private bool conditionIsMet = false;
+    private string inputText = "";
+
+    private void ToggleCondition(string Name,int Price,string des)
+    {
+        count++;
+        conditionIsMet = !conditionIsMet;
+        if (count % 2 == 0)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

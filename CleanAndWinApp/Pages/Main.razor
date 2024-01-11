@@ -22,7 +22,7 @@
             if (Userservice.CurrentUser.IsAdmin)
             {
                 <h1 class="centered-div">Admin Control Panel</h1>
-                <button style="height:170px" class="button-19" role="button">User Controls</button>
+            <button style="height:170px" class="button-19" role="button" @onclick="GoProductControl">User Controls</button>
             <button style="left:175px;top:-170px;position:relative;height:170px;" class="button-19" role="button"> Product Control</button>
             <button style="position:relative;top:-165px;height:175px" class="button-19" role="button"> Location Control</button>
             <button style="position:relative;top:-340px;left:175px;height:175px" class="button-19" role="button"> Order Control </button>
@@ -111,13 +111,21 @@ else
         nav.NavigateTo("/reg");
     }
     private void Gomap(){
-        
+
         nav.NavigateTo($"maps/{Userservice.CurrentUser.location.lat}/{Userservice.CurrentUser.location.lng}");
     }
 
     private void GoSettings()
     {
         nav.NavigateTo("/setting");
+    }
+
+    private void GoProductControl()
+    {
+        if (Userservice.CurrentUser.IsAdmin)
+        {
+            nav.NavigateTo("/pcontrol");
+        }
     }
     protected override async Task OnInitializedAsync()
     {
