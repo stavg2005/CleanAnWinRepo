@@ -1,0 +1,125 @@
+﻿@page "/cart"
+@inject UserService Current;
+@using Model
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@inject NavigationManager NavManager;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Responsive Shopping Cart @Response</title>
+    <!-- Add your Bootstrap and other stylesheets and scripts here -->
+</head>
+<body>
+
+    <section class="h-100" style="background-color: #eee;overflow-y:scroll;width:@(d.Width)px;height:@(d.Height)px">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-normal mb-0 text-black">Your Shopping Cart</h3>
+                        <div>
+
+                        </div>
+                    </div>
+                    @{
+                        foreach (Product p in Current.CurrentUser.products)
+                        {
+                            <div class="card rounded-3 mb-4">
+                                <div class="card-body p-4">
+                                    <div class="row d-flex justify-content-between align-items-center">
+                                        <div class="col-md-2 col-lg-2 col-xl-2">
+                                            <img src="@(path + Convert.ToBase64String(p.ProductPicture))"
+                                                 class="img-fluid rounded-3" alt="Cotton T-shirt">
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 col-xl-3">
+                                            <p class="lead fw-normal mb-2"></p>
+                                            <p><span class="text-muted"> </span><span > </span>@p.ProductName</p>
+                                        </div>
+                                        
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                            <h5 class="mb-0">@p.ProductPrice</h5>
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                            <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        }
+                    }
+                    
+                    
+
+                    <!-- Repeat the same structure for other cards... -->
+
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <button @onclick="Pay" type="button" class="btn btn-warning btn-block btn-lg ">Proceed to Pay</button>
+                            <span> &zwnj;&zwnj;&zwnj;   Total: @Getsum()</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add your Bootstrap and other scripts here -->
+
+</body>
+</html>
+
+@code {
+    string path = "data:image/png;base64,";
+    private int Length;
+    string Response;
+    ApiServices a = new ApiServices();
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+    private async Task Pay()
+    {
+        int sum = Getsum();
+        if (Current.CurrentUser.coins > sum)
+        {
+            int pay =  Current.CurrentUser.coins-sum;
+            Response =await a.UpdateUserCoin(Current.CurrentUser.UserID, pay);
+            await a.DeleteUserCart(Current.CurrentUser.UserID);
+            GoMain();
+        }
+    }
+    private int Getsum()
+    {
+        int sum = 0;
+        foreach (Product p in Current.CurrentUser.products)
+        {
+            sum = sum + p.ProductPrice;
+        }
+        return sum;
+    }
+
+    private void GoMain()
+    {
+        NavManager.NavigateTo("/main");
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+        }
+
+    }
+
+}

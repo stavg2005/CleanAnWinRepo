@@ -32,9 +32,9 @@
                     foreach (Product i in l)
                     {
                         <div class="product">
-                            
-                            
-                            <img src="@(path+Convert.ToBase64String(i.ProductPicture))" class="product-picture" alt="Product 1">
+
+
+                            <span @onclick="() =>GoToProuctPage(i.ProductID)"> <img src="@(path+Convert.ToBase64String(i.ProductPicture))" class="product-picture" alt="Product 1 "></span>
                             <div class="product-name" @onclick="() =>GoToProuctPage(i.ProductID)">
                                 <h2>@i.ProductName <br /><p> <img class="coin" src="css/imags/coin.png"   style="top:80%;right:80%"/>@i.ProductPrice</p></h2>
                             </div>
@@ -108,14 +108,10 @@
     protected override async Task OnInitializedAsync()
     {
 
-        await InsertValuesToUserService();
+        
         await GetC(Userservice.CurrentUser.UserID, true);
     }
-    private async Task InsertValuesToUserService()
-    {
-        Userservice.CurrentUser = await AuthService.GetUserInfo();
 
-    }
 
     private void GoToProuctPage(int id)
     {

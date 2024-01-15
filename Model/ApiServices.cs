@@ -9,6 +9,7 @@ using System.Globalization;
 using static System.Net.WebRequestMethods;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace Model
 {
@@ -16,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -323,7 +324,54 @@ namespace Model
             
         }
 
-        
+        public async Task<string> UpdateUserCoin(int id,int coins)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(coins);
 
+                string url = $"{Apiurl}/api/Login/UpdateUserCoin?id={id}&coin={coins}";
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+        
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> DeleteUserCart(int id)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(id);
+                string url = $"{Apiurl}/api/Login/DeleteUserCart?id={id}";
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
     }
+
 }

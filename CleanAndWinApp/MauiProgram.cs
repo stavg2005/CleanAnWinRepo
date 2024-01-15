@@ -1,5 +1,7 @@
 ﻿using CleanAndWinApp.Data;
 using Microsoft.Extensions.Logging;
+using Model;
+using ZstdSharp.Unsafe;
 
 namespace CleanAndWinApp
 {
@@ -27,6 +29,7 @@ namespace CleanAndWinApp
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<Data.BrowserService>();
             builder.Services.AddScoped<Data.BrowserDimension>();
+            builder.Services.AddScoped<List<Product>>();
             
 
             return builder.Build();

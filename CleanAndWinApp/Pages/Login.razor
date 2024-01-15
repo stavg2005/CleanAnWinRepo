@@ -5,6 +5,7 @@
 @inject UserService Userservice
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
+@inject List<Product> Products;
 @using Model;
 
 
@@ -72,7 +73,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
-
+        
         //AuthService.ClearAuthToken();
         if (AuthService!=null &&AuthService.IsUserAuthenticated )
         {

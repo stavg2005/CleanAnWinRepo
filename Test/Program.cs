@@ -41,12 +41,15 @@ namespace Test
             //    Console.ReadLine();
             //}
 
+            //Model.ApiServices a = new Model.ApiServices();
+            //List<Tuple<string,string>> l = await a.GetAllTrashCanLocations();
+            //foreach (Tuple<string,string> i in l){
+            //    Console.WriteLine("lat" + i.Item1);
+            //    Console.WriteLine("lng" + i.Item2);
+            //}
+            //Console.ReadLine();
             Model.ApiServices a = new Model.ApiServices();
-            List<Tuple<string,string>> l = await a.GetAllTrashCanLocations();
-            foreach (Tuple<string,string> i in l){
-                Console.WriteLine("lat" + i.Item1);
-                Console.WriteLine("lng" + i.Item2);
-            }
+            Console.WriteLine(await a.UpdateUserCoin(1, 69));
             Console.ReadLine();
 
 

@@ -30,7 +30,6 @@
             }
             else
             {
-            <p>what the hellllll</p>
             <div>
                 <div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
 
@@ -38,7 +37,7 @@
 
 
                 <img class="profile-pic" src="@path" />
-                <button style="right:0" @onclick="Logout">Logout</button>
+                <img style="left:0;width:50px;height:50px;position:absolute;top:5px" src="css/imags/shopping-cart.png" @onclick="GoCart"/>
                 <div class="progress-container" style="position:fixed;left:-80px;margin-top:20px">
                     <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
                         <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
@@ -127,6 +126,10 @@ else
             nav.NavigateTo("/pcontrol");
         }
     }
+    private void GoCart()
+    {
+        nav.NavigateTo("/cart");
+    }
     protected override async Task OnInitializedAsync()
     {
         if (AuthService.IsUserAuthenticated)
@@ -138,6 +141,7 @@ else
 
 
     }
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

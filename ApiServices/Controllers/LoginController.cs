@@ -71,5 +71,33 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost("UpdateUserCoin")]
+        public async Task<IActionResult> UpdateUserCoin(int id , int coin)
+        {
+            try
+            {
+                await UsersDTO.UpdateUserCoin(id, coin);
+                return Ok("Payment successfull");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500,ex.Message);
+            }
+        }
+
+        [HttpPost("DeleteUserCart")]
+
+        public async Task<IActionResult> DeleteUserCart(int id)
+        {
+            try
+            {
+                await UsersDTO.DeleteCart(id);
+                return Ok("shii got killed");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
