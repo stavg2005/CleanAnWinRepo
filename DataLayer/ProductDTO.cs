@@ -109,6 +109,26 @@ namespace DataLayer
             cmd.ExecuteNonQuery();
             connection.Close();
         }
+
+        public static async Task UpdateProduct(Product P)
+        {
+            try
+            {
+                MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog");
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = connection;
+                connection.Open();
+                string Query = $"UPDATE Product SET ProductName = '{P.ProductName}', ProductDes = '{P.ProductDescription}', ProductPrice = '{P.ProductPrice}', ProductPicture = '{P.ProductPicture}' WHERE ProductID = {P.ProductID}";
+                cmd.CommandText = Query;
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }

@@ -24,5 +24,19 @@ namespace ApiServices.Controllers
         {
             return await ProductDTO.GetProuctFromIndex(index);
         }
+
+        [HttpPost("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct(Product p)
+        {
+            try
+            {
+                await ProductDTO.UpdateProduct(p);
+                return Ok("Update Operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

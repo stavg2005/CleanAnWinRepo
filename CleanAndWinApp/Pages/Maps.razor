@@ -10,11 +10,22 @@
 <div id="map" style="height:800px;width:300px;">
 </div>
 
+<div class="modal" style="display: @modalDisplay">
+    <div class="modal-content">
+        <span class="close" @onclick="CloseModal">&times;</span>
+        <h3>Place new TrashCan</h3>
+                    <p> are you sure you want to place the trash can here?</p>
+            </div>
+
+            <button type="button" class="btn btn-primary" @onclick="CreateTashCan">Create Animal</button>
+    </div>
+
 @code {
 
     [Parameter]
     public Tuple<String,string> LatnLng { get; set; }
-
+    private string modalDisplay = "none";
+    TrashCan newTrash = new TrashCan();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -60,6 +71,52 @@
         }
 
     }
+
+
+
+    public void OpenModal()
+    {
+        modalDisplay = "block";
+        Console.WriteLine("Modal opened");
+    }
+
+
+    private void CloseModal()
+    {
+        modalDisplay = "none";
+    }
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var imageFile = e.File;
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await imageFile.OpenReadStream().CopyToAsync(memoryStream);
+                imageData = Convert.ToBase64String(memoryStream.ToArray());
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error handling file change: {ex.Message}");
+        }
+    }
+    [JSInvokable]
+    public async Task HandleMapClick(string latitude, string longitude)
+    {
+        newTrash.latitude = latitude;
+        newTrash.longitude = longitude;
+        OpenModal();
+        StateHasChanged();
+    }
+
+    private async Task CreateTrashCan()
+    {
+        
+    }
+
+
 
 
     public class Javascriptquery

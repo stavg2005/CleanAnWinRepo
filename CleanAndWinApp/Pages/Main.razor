@@ -21,12 +21,37 @@
 
             if (Userservice.CurrentUser.IsAdmin)
             {
-                <h1 class="centered-div">Admin Control Panel</h1>
-            <button style="height:170px" class="button-19" role="button" @onclick="GoProductControl">User Controls</button>
-            <button style="left:175px;top:-170px;position:relative;height:170px;" class="button-19" role="button"> Product Control</button>
-            <button style="position:relative;top:-165px;height:175px" class="button-19" role="button"> Location Control</button>
-            <button style="position:relative;top:-340px;left:175px;height:175px" class="button-19" role="button"> Order Control </button>
-            <button style="position:relative;top:-335px;left:175px;height:175px" class="button-19" role="button">Trashcan control</button>
+            <div>
+                <div class="centered-div">Hello Admin</div>
+
+                @* <button @onclick="Logout">Log Out</button> *@
+
+
+                <img class="profile-pic" src="@path" />
+                <div class="progress-container" style="position:fixed;left:-80px;margin-top:20px">
+                    <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
+                        <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
+                        <circle id="progress" cx="250" cy="250" r="150" stroke="#6db7c1" stroke-width="10" fill="transparent"></circle>
+                    </svg>
+                </div>
+                <input style="opacity:0" @bind-value="progressValue" />
+                <button style="opacity:0">Update Progress</button>
+                <div class="nav-bar" style="width:300px;height:50px;margin-top:615px;height:80px">
+                </div>
+                <h1 style="margin-top:225px;position:fixed;margin-left:120px"> Level:∞</h1>
+                <button @onclick="Report" class="button-9" style="margin-top:430px;height:100px" role="button">Report Clean</button>
+
+                <div class="navbar">
+
+                    <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
+                    <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
+                    <img @onclick="GoSettings" src="css/imags/user.png" style="width:50px;height:50px" />
+
+                </div>
+                @*                 <div class="loader-wrapper" id="loader">
+    <div class="loader"></div>
+    </div> *@
+            </div>
             }
             else
             {

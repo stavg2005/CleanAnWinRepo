@@ -17,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -47,6 +47,7 @@ namespace Model
 
             return ipv4Address;
         }
+    
         public async Task<List<Product>> Getc(int id, bool isphone)
         {
 
@@ -368,6 +369,29 @@ namespace Model
             }
 
             catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> UpdateProduct(Product P)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(P);
+                string url = $"{Apiurl}/UpdateProduct?ProductID={P.ProductID}&ProductName={P.ProductName}&ProductDescription={P.ProductDescription}&ProductPrice={P.ProductPrice}&ProductPicture={P.ProductPicture}";
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch(Exception ex) 
             {
                 return ($"An error occurred: {ex.Message}");
             }

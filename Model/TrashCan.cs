@@ -12,16 +12,19 @@ namespace Model
         public int Location;
         public int IsFull;
 		public int Weight;
-		public string Coordinates;
+		public string longitude;
+		public string latitude;
 
-		public TrashCan(int iD, int location, int isFull, int weight, string coordinates)
+		public TrashCan(int iD, int location, int isFull, int weight, string longitude,string latitude)
 		{
 			ID = iD;
 			Location = location;
 			IsFull = isFull;
 			Weight = weight;
-			Coordinates = coordinates;
-		}
+			this.latitude = latitude;
+			this.longitude = longitude;
+
+        }
 
 		public TrashCan()
 		{
@@ -29,7 +32,9 @@ namespace Model
 			Location = -1;
 			IsFull = -1;
 			Weight = -1;
-			Coordinates = "";
-		}
+			latitude = "";
+			longitude = "";
+
+        }
 	}
 }
