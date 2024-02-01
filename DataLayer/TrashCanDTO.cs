@@ -161,5 +161,34 @@ namespace DataLayer
             return l;
 
         }
+
+        public static async Task InsertTrashCan(TrashCan trashCan)
+        {
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"; 
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = $"Insert into trashcan VALUES ({trashCan.IsFull}, {trashCan.Weight},{trashCan.latitude},{trashCan.longitude});";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+
+                        cmd.ExecuteNonQuery();
+
+                    }
+                    connection.Close();
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
 	}
 }

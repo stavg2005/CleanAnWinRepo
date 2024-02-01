@@ -28,12 +28,12 @@ namespace Model
 
 		public TrashCan()
 		{
-			ID = -1;
-			Location = -1;
+			ID = 43;
+			Location = 1;
 			IsFull = -1;
 			Weight = -1;
-			latitude = "";
-			longitude = "";
+			latitude = "0";
+			longitude = "0";
 
         }
 	}

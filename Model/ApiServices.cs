@@ -378,10 +378,8 @@ namespace Model
         {
             try
             {
-                string s = JsonSerializer.Serialize(P);
-                string url = $"{Apiurl}/UpdateProduct?ProductID={P.ProductID}&ProductName={P.ProductName}&ProductDescription={P.ProductDescription}&ProductPrice={P.ProductPrice}&ProductPicture={P.ProductPicture}";
-                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                string url = $"{Apiurl}/UpdateProduct";
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync<Product>(url,P);
                 if (response.IsSuccessStatusCode)
                 {
                     return ("POST request successful!");
@@ -396,6 +394,29 @@ namespace Model
                 return ($"An error occurred: {ex.Message}");
             }
         }
+
+        public async Task<string> InsertTrashCan(TrashCan t)
+        {
+            try
+            {
+                string url = $"{Apiurl}/InsertTrashCan";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<TrashCan>(url, t);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+       
     }
+
 
 }

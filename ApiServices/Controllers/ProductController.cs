@@ -25,8 +25,8 @@ namespace ApiServices.Controllers
             return await ProductDTO.GetProuctFromIndex(index);
         }
 
-        [HttpPost("UpdateProduct")]
-        public async Task<IActionResult> UpdateProduct(Product p)
+        [HttpPut("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct([FromBody]Product p)
         {
             try
             {

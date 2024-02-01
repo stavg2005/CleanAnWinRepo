@@ -432,16 +432,21 @@
                 ]
             }
         ]
-        function initialize(js) {
+        function initialize(js, dotnetHelper) {
             var mapOptions = {
                 zoom: 15,
                 center: new google.maps.LatLng(js.lat,js.lng),
                 mapTypeId: google.maps.MapTypeId.SATELLITE,
                 styles: mapStyle
             };
-
+            
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            map.addListener('click', function (event) {
+                var longitude = event.latLng.lng();
+                var latitude = event.latLng.lat();
+                dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
 
+            });
             // Add waypoints
             js.locations.forEach(function (js) {
                 var marker = new google.maps.Marker({

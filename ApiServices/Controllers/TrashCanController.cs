@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using System.Net.Http;
 
 namespace ApiServices.Controllers
@@ -40,6 +41,19 @@ namespace ApiServices.Controllers
                 return Ok(error);
             }
 
+        }
+
+        [HttpPost("InsertTrashCan")]
+        public async Task<IActionResult> InsertTrashCan([FromBody]TrashCan t)
+        {
+            try
+            {
+                await TrashCanDTO.InsertTrashCan(t); return Ok("Post operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500,ex.Message);
+            }
         }
     }
 }

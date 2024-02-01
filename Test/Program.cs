@@ -49,9 +49,14 @@ namespace Test
             //}
             //Console.ReadLine();
             Model.ApiServices a = new Model.ApiServices();
-            Console.WriteLine(await a.UpdateUserCoin(1, 69));
-            Console.ReadLine();
+            //byte[] A = new byte[37357];
+            //Product p = new Product(1,"PST-TEST","FDAFG",39552,A);
+            //Console.WriteLine(await a.UpdateProduct(p));
+            //Console.ReadLine();
 
+            TrashCan t = new TrashCan();
+            Console.WriteLine(await a.InsertTrashCan(t));
+            Console.ReadLine();
 
         }
 
