@@ -77,6 +77,35 @@ namespace ApiServices.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("UploadeProductImage/{ProductID}")]
+        public async Task<IActionResult> UploadProductImage(int ProductId, IFormFile imageData)
+        {
+            try
+            {
+
+
+                // Convert IFormFile to byte array
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    imageData.CopyTo(ms);
+                    byte[] imageBytes = ms.ToArray();
+
+                    ImageModel m = new ImageModel();
+                    m.ImageData = imageBytes;
+                    // Call the ImageService to update the image in the database
+                    await ImageService.UploadProductImage(m, ProductId);
+
+                    return Ok("Image uploaded successfully");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 
 }

@@ -3,6 +3,9 @@
 @inject IJSRuntime JSRuntime;
 @inject UserService Userservice;
 @inject AuthService AuthService;
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@inject NavigationManager Nav;
 @using Model;
 
 
@@ -13,7 +16,56 @@
     <title></title>
 </head>
 <body>
+    @{
+        if (EditMode)
+        {
+            <div style="z-index:1;position:fixed">
+                <link rel="stylesheet" href="css/settings.css">
+                <div class="wrapper bg-white mt-sm-5" style="position:relative;width:(@d.Width+200)px;height:(@d.Height)px">
+                    <h4 class="pb-4 border-bottom">Account settings</h4>
+                    <div class="d-flex align-items-start py-3 border-bottom">
+                        @{
 
+                            <img src="@(path)"
+                                 class="img" alt="">
+                            <div class="pl-sm-4 pl-2" id="img-section">
+                                <b>Profile Photo</b>
+                                <p>Accepted file type .png. Less than 1MB</p>
+                                <InputFile OnChange="HandleFileChange" />Upload
+                            </div>
+
+                        }
+
+
+                    </div>
+                    <div class="py-2">
+                        <div class="row py-2">
+                            <div class="col-md-6">
+                                <label for="firstname">Product Name</label>
+                                <input @bind-value="ProductName" type="text" class="bg-light form-control" placeholder="@p.ProductName">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-md-6">
+                                <label for="email">Product description</label>
+                                <input @bind-value="ProductDescription" type="text" class="bg-light form-control" placeholder="@p.ProductDescription">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-md-6">
+                                <label for="email">Price</label>
+                                <input @bind-value="ProductPrice" type="text" class="bg-light form-control" placeholder="@p.ProductPrice">
+                            </div>
+                        </div>
+                        <div class="py-3 pb-4 border-bottom">
+                            <button @onclick="SaveChanges" class="btn btn-primary mr-3">Save Changes</button>
+                            <button class="btn border button">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
     <header class="fixed-header" style="position: fixed;
     top: 0;
     left: 0;
@@ -34,6 +86,12 @@
                 <p class="price">@p.ProductPrice</p>
                 <p>@p.ProductDescription</p>
                 <button @onclick="() =>AddToCart()">Add to Cart</button>
+                @{
+                    if (Userservice.CurrentUser.IsAdmin)
+                    {
+                        <button  style="margin-left:60px;" @onclick="InitiateEditMode">Edit</button>
+                    }
+                }
             </div>
         </section>
     }
@@ -44,22 +102,7 @@
     </footer>
 
 </body>
-@* <body>
-    <p>@ItemID</p>
-    @if (p!=null)
-    {
-        <div class="item-container">
-            <img src="@(path+base64)" alt="Item Image" class="item-image" style="width:400px;height:300px">
-            <div class="item-details">
-                <h2 class="item-name">@p.ProductName</h2>
-                <p class="item-price">@p.ProductPrice</p>
-                <button class="add-to-cart-btn">Add to Cart</button>
-            </div>
-        </div>
-    }
-    
 
-</body> *@
 
 @code {
     [Parameter]
@@ -68,15 +111,23 @@
     string path= "data:image/png;base64,";
     string base64 { get; set; }
     bool b = false;
+    bool Updatedphoto = false;
     string error = "";
-
+    bool EditMode = false;
+    string ProductName { get; set; }
+    string ProductDescription { get; set; }
+    string ProductPrice { get; set; }
+    byte[] ProductPicture { get; set; }
     ApiServices a = new ApiServices();
     protected override async Task OnInitializedAsync()
     {
         await InsertValuesToUserService();
         Model.ApiServices a = new Model.ApiServices();
         p = await a.GetProductFromPK(int.Parse(ItemID));
-
+        ProductName = p.ProductName;
+        ProductDescription = p.ProductDescription;
+        ProductPrice = p.ProductPrice.ToString();
+        ProductPicture = p.ProductPicture;
         if (p != null)
         {
             base64 = Convert.ToBase64String(p.ProductPicture);
@@ -104,6 +155,45 @@
     private async Task AddToCart()
     {
         error = await a.AddItemToCart(ItemID, Userservice.CurrentUser.UserID);
+    }
+
+    private async Task SaveChanges()
+    {
+        Product newP = new Product(p.ProductID, ProductName, ProductDescription, int.Parse(ProductPrice), ProductPicture);
+        await a.UpdateProduct(newP);
+        await a.UploadProductImage(newP.ProductID,newP.ProductPicture);
+        EditMode = false;
+        StateHasChanged();
+
+    }
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+            Updatedphoto = true;
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+                var imaget = new ImageModel
+                    {
+                        FileName = e.File.Name,
+                        ImageData = imageData
+                    };
+                path = path + Convert.ToBase64String(imageData);
+
+                ProductPicture = imaget.ImageData;
+            }
+        }
+    }
+
+    private void InitiateEditMode()
+    {
+        EditMode = true;
     }
 
 }

@@ -118,10 +118,11 @@ namespace DataLayer
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = connection;
                 connection.Open();
-                string Query = $"UPDATE Product SET ProductName = '{P.ProductName}', ProductDes = '{P.ProductDescription}', ProductPrice = '{P.ProductPrice}', ProductPicture = '{P.ProductPicture}' WHERE ProductID = {P.ProductID}";
+                string Query = $"UPDATE Product SET ProductName = '{P.ProductName}', ProductDes = '{P.ProductDescription}', ProductPrice = '{P.ProductPrice}' WHERE ProductID = {P.ProductID}";
                 cmd.CommandText = Query;
 
                 cmd.ExecuteNonQuery();
+                
             }
             catch (Exception ex)
             {

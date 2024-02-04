@@ -17,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -288,6 +288,46 @@ namespace Model
             }
         }
 
+        public async Task<string> UploadProductImage(int ProductID, byte[] imageData)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                using (MultipartFormDataContent content = new MultipartFormDataContent())
+                {
+                    // Your API endpoint URL
+                    string apiUrl = $"{Apiurl}/api/upload/UploadeProductImage/{ProductID}";
+
+                    // Convert byte array to Base64 string
+                    string base64Image = Convert.ToBase64String(imageData);
+
+                    // Add the image data as a binary content
+                    ByteArrayContent imageContent = new ByteArrayContent(imageData);
+                    content.Add(imageContent, "imageData", "image.jpg"); // "imageData" is the parameter name expected by the server
+
+                    // Make the POST request
+                    HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Image uploaded successfully
+
+                        return ("Image uploaded successfully");
+
+                    }
+                    else
+                    {
+                        // Handle the error
+                        return ($"Error: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                return ($"Exception: {ex.Message}");
+            }
+        }
         public async Task<string> AddItemToCart(string p, int id)
         {
             try
