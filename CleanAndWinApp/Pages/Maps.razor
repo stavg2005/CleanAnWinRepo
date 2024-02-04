@@ -5,7 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject UserService Userservice
 @inject AuthService AuthService
-
+@inject NavigationManager nav;
 
 <div id="map" style="height:800px;width:300px;">
 </div>
@@ -17,7 +17,7 @@
                     <p> are you sure you want to place the trash can here?</p>
             </div>
 
-            <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Create Animal</button>
+            <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add trashCan</button>
     </div>
 
 @code {
@@ -27,15 +27,7 @@
     private string modalDisplay = "none";
     TrashCan newTrash = new TrashCan();
     ApiServices a = new ApiServices();
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
 
-
-        }
-
-    }
     [Parameter]
     public string lat{ get; set; }
     [Parameter]
@@ -89,6 +81,7 @@
     [JSInvokable]
     public async Task HandleMapClick(double latitude, double longitude)
     {
+        
         newTrash.latitude = latitude.ToString();
         newTrash.longitude = longitude.ToString();
         OpenModal();
@@ -97,7 +90,12 @@
 
     private async Task CreateTrashCan()
     {
+        
         await a.InsertTrashCan(newTrash);
+        nav.NavigateTo($"mapredirect");
+        CloseModal();
+        
+        
     }
 
 

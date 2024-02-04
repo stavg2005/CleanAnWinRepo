@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Model;
 using MySqlConnector;
 
@@ -151,13 +152,32 @@ namespace DataLayer
         public static async Task<List<Tuple<string,string>>> GetAlltrashCanLocations()
         {
             int i = 1;
-            int max = countRows();
-            List<Tuple<string,string>> l = new List<Tuple<string,string>>(max);
-            while(i <= max)
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            List<Tuple<string, string>> l = new List<Tuple<string, string>>(countRows());
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                l.Add(GetLatLngFromPK(i));
-                i++;
+                connection.Open();
+
+                string query = $"SELECT * from trashcan;";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32(0);
+                            l.Add(new Tuple<string, string>(GetLatByPK(id), GetLngByPK(id)));
+
+                        }
+                    }
+                }
+
+               
             }
+
             return l;
 
         }
@@ -172,7 +192,7 @@ namespace DataLayer
                 {
                     connection.Open();
 
-                    string query = $"Insert into trashcan VALUES ({trashCan.IsFull}, {trashCan.Weight},{trashCan.latitude},{trashCan.longitude});";
+                    string query = $"Insert into trashcan  (TrashCanIsFull,TrashCanWeight,Lat,Lng) VALUES ('{trashCan.IsFull.ToString()}', '{trashCan.Weight.ToString()}','{trashCan.latitude}','{trashCan.longitude}');";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {

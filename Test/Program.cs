@@ -41,22 +41,23 @@ namespace Test
             //    Console.ReadLine();
             //}
 
-            //Model.ApiServices a = new Model.ApiServices();
-            //List<Tuple<string,string>> l = await a.GetAllTrashCanLocations();
-            //foreach (Tuple<string,string> i in l){
-            //    Console.WriteLine("lat" + i.Item1);
-            //    Console.WriteLine("lng" + i.Item2);
-            //}
-            //Console.ReadLine();
             Model.ApiServices a = new Model.ApiServices();
-            //byte[] A = new byte[37357];
-            //Product p = new Product(1,"PST-TEST","FDAFG",39552,A);
-            //Console.WriteLine(await a.UpdateProduct(p));
-            //Console.ReadLine();
-
-            TrashCan t = new TrashCan();
-            Console.WriteLine(await a.InsertTrashCan(t));
+            List<Tuple<string, string>> l = await a.GetAllTrashCanLocations();
+            foreach (Tuple<string, string> i in l)
+            {
+                Console.Write("lat" + i.Item1);
+                Console.WriteLine("    lng" + i.Item2);
+            }
             Console.ReadLine();
+            //Model.ApiServices a = new Model.ApiServices();
+            ////byte[] A = new byte[37357];
+            ////Product p = new Product(1,"PST-TEST","FDAFG",39552,A);
+            ////Console.WriteLine(await a.UpdateProduct(p));
+            ////Console.ReadLine();
+
+            //TrashCan t = new TrashCan();
+            //Console.WriteLine(await a.GetAllTrashCanLocations());
+            //Console.ReadLine();
 
         }
 

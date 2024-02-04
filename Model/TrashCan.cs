@@ -8,17 +8,15 @@ namespace Model
 {
     public class TrashCan
     {
-        public int ID;
-        public int Location;
-        public int IsFull;
-		public int Weight;
-		public string longitude;
-		public string latitude;
+        public int ID { get; set; }
+        public int IsFull { get; set; }
+        public int Weight { get; set; }
+        public string longitude { get; set; }
+        public string latitude { get; set; }
 
-		public TrashCan(int iD, int location, int isFull, int weight, string longitude,string latitude)
+        public TrashCan(int iD, int isFull, int weight, string longitude,string latitude)
 		{
 			ID = iD;
-			Location = location;
 			IsFull = isFull;
 			Weight = weight;
 			this.latitude = latitude;
@@ -28,8 +26,7 @@ namespace Model
 
 		public TrashCan()
 		{
-			ID = 43;
-			Location = 1;
+			ID = -1;
 			IsFull = -1;
 			Weight = -1;
 			latitude = "0";
