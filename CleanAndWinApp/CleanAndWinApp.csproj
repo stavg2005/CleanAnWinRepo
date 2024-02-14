@@ -62,6 +62,7 @@
     <ItemGroup>
       <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
       <ProjectReference Include="..\Model\Model.csproj" />
+      <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 
 </Project>

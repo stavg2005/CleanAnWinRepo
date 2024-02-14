@@ -5,7 +5,7 @@
 @inject UserService Userservice
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
-@inject List<Product> Products;
+@inject Services.ProductService productservice
 @using Model;
 
 
@@ -63,7 +63,7 @@
     string password;
     string Email;
     string error;
-    ApiServices api = new ApiServices();
+    Model.ApiServices api = new Model.ApiServices();
     public int Height { get; set; }
     public int Width { get; set; }
 
@@ -78,6 +78,8 @@
         if (AuthService!=null &&AuthService.IsUserAuthenticated )
         {
 
+            var products = await api.GetALLProducts();
+            productservice.ProductList = products;
 
             Nav.NavigateTo("/main");
 

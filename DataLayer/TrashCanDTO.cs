@@ -169,10 +169,10 @@ namespace DataLayer
                         while (reader.Read())
                         {
                             int id = reader.GetInt32(0);
-                            int isfull = reader.GetInt32(1);
-                            int weight = reader.GetInt32(2);
-                            string lng = reader.GetString(3);
-                            string lat = reader.GetString(4);
+                            int isfull = int.Parse(reader.GetString(1));
+                            int weight = int.Parse(reader.GetString(2));
+                            string lng = reader.GetString(4);
+                            string lat = reader.GetString(3);
                             l.Add(new TrashCan(id,isfull,weight,lng,lat));
 
                         }
