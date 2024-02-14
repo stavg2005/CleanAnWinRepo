@@ -55,7 +55,7 @@
         {
             lng = Uri.UnescapeDataString(queryString["param2"]);
         }
-        List<Tuple<string, string>> locations = await a.GetAllTrashCanLocations();
+        List<TrashCan> locations = await a.GetAllTrashCanLocations();
         if (locations != null)
         {
             Javascriptquery js = new Javascriptquery(locations, lat, lng);
@@ -103,16 +103,17 @@
 
     public class Javascriptquery
     {
-        public Javascriptquery(List<Tuple<string,string>> locations, string lat, string lng)
+        public Javascriptquery(List<TrashCan> locations, string lat, string lng)
         {
             this.locations = locations;
             this.lat = lat;
             this.lng = lng;
         }
 
-        public List<Tuple<string,string>> locations {get;set;}
+        public List<TrashCan> locations { get; set; }
         public string lat { get; set; }
         public string lng { get; set; }
+        
     }
 
 }

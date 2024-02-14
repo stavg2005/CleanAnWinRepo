@@ -441,6 +441,8 @@
             };
             
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            var infoWindow = new google.maps.InfoWindow();
             map.addListener('click', function (event) {
                 var longitude = event.latLng.lng();
                 var latitude = event.latLng.lat();
@@ -450,11 +452,23 @@
             // Add waypoints
             js.locations.forEach(function (js) {
                 var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(js.item1, js.item2),
+                    position: new google.maps.LatLng(js.latitude, js.longitude),
                     map: map,
                     title: 'Waypoint'
-                });
 
+                });
+                var contentString = `
+                    <div>
+                        <strong>${js.ID}</strong><br>
+                       
+                        Weight: ${js.Weight}<br>
+                        Isfull: ${js.IsFull}<br>
+
+                    </div>`;
+
+                var infoWindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
                 
             });
         }

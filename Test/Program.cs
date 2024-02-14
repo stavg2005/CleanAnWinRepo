@@ -42,11 +42,11 @@ namespace Test
             //}
 
             Model.ApiServices a = new Model.ApiServices();
-            List<Tuple<string, string>> l = await a.GetAllTrashCanLocations();
-            foreach (Tuple<string, string> i in l)
+            List<TrashCan> l = await a.GetAllTrashCanLocations();
+            foreach (TrashCan i in l)
             {
-                Console.Write("lat" + i.Item1);
-                Console.WriteLine("    lng" + i.Item2);
+                Console.Write("lat" + i.latitude);
+                Console.WriteLine("    lng" + i.longitude);
             }
             Console.ReadLine();
             //Model.ApiServices a = new Model.ApiServices();

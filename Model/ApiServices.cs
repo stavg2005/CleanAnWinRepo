@@ -354,12 +354,12 @@ namespace Model
             }
         }
 
-       public async Task<List<Tuple<string,string>>> GetAllTrashCanLocations()
+       public async Task<List<TrashCan>> GetAllTrashCanLocations()
         {
 
                 string apiurl = $"{Apiurl}/GetAllTrashCanLocations";
 
-                List<Tuple<string, string>> l = (await _httpClient.GetFromJsonAsync<List<Tuple<string, string>>>(apiurl));
+                List<TrashCan> l = await _httpClient.GetFromJsonAsync<List<TrashCan>>(apiurl);
                 return l;
                 
             

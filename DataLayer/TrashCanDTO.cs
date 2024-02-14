@@ -149,11 +149,11 @@ namespace DataLayer
                 return num;
             }
         }
-        public static async Task<List<Tuple<string,string>>> GetAlltrashCanLocations()
+        public static async Task<List<TrashCan>> GetAlltrashCanLocations()
         {
             int i = 1;
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            List<Tuple<string, string>> l = new List<Tuple<string, string>>(countRows());
+            List<TrashCan> l = new List<TrashCan>(countRows());
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
@@ -169,7 +169,11 @@ namespace DataLayer
                         while (reader.Read())
                         {
                             int id = reader.GetInt32(0);
-                            l.Add(new Tuple<string, string>(GetLatByPK(id), GetLngByPK(id)));
+                            int isfull = reader.GetInt32(1);
+                            int weight = reader.GetInt32(2);
+                            string lng = reader.GetString(3);
+                            string lat = reader.GetString(4);
+                            l.Add(new TrashCan(id,isfull,weight,lng,lat));
 
                         }
                     }

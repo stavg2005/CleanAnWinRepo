@@ -30,7 +30,7 @@ namespace ApiServices.Controllers
 
             try
             {
-                List<Tuple<string, string>> l = await TrashCanDTO.GetAlltrashCanLocations();
+                List<TrashCan> l = await TrashCanDTO.GetAlltrashCanLocations();
                 l = l;
                 return Ok(l);
             }
