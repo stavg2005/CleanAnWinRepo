@@ -38,5 +38,19 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("InsertNewProduct")]
+        public async Task<IActionResult> InsertNewProduct([FromBody] Product p)
+        {
+            try
+            {
+                await ProductDTO.InsertNewProduct(p);
+                return Ok("Insert Operation completed successfully. ");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

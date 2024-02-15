@@ -28,7 +28,7 @@ namespace CleanAndWinApp
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<Data.BrowserService>();
-            builder.Services.AddScoped<Data.BrowserDimension>();
+            builder.Services.AddSingleton<Data.BrowserDimension>();
             
             builder.Services.AddSingleton<Services.ProductService>();
 

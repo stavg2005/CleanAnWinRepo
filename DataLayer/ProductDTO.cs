@@ -130,6 +130,36 @@ namespace DataLayer
             }
 
         }
+
+        public static async Task InsertNewProduct(Product p)
+        {
+            try
+            {
+                string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = "INSERT INTO product (ProductName, ProductDes, ProductPrice, ProductPicture) VALUES (@ProductName, @ProductDescription, @ProductPrice, @ProductPicture)";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@ProductName", p.ProductName);
+                        cmd.Parameters.AddWithValue("@ProductDescription", p.ProductDescription);
+                        cmd.Parameters.AddWithValue("@ProductPrice", p.ProductPrice);
+                        cmd.Parameters.AddWithValue("@ProductPicture", p.ProductPicture);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
