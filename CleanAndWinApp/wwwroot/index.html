@@ -432,52 +432,52 @@
                 ]
             }
         ]
-        function initialize(js, dotnetHelper) {
-            var mapOptions = {
-                zoom: 15,
-                center: new google.maps.LatLng(js.lat,js.lng),
-                mapTypeId: google.maps.MapTypeId.SATELLITE,
-                styles: mapStyle
-            };
             
-            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            function initialize(js, dotnetHelper) {
+                var mapOptions = {
+                    zoom: 15,
+                    center: new google.maps.LatLng(js.lat, js.lng),
+                    mapTypeId: google.maps.MapTypeId.SATELLITE,
+                    styles: mapStyle
+                };
 
-            var infoWindow = new google.maps.InfoWindow();
-            map.addListener('click', function (event) {
-                var longitude = event.latLng.lng();
-                var latitude = event.latLng.lat();
-                dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
+                var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
+                var infoWindow = new google.maps.InfoWindow();
+                map.addListener('click', function (event) {
+                    var longitude = event.latLng.lng();
+                    var latitude = event.latLng.lat();
+                    dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
+                });
+                console.log("WHYYYYYYY"+js.locations[0])
+                // Add waypoints
+                for (var i = 0; i < js.locations.length; i++) {
+                    CreateMarker(js.locations[i], map);
+                }
+            }
+
+        function CreateMarker(t, map) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(t.latitude, t.longitude),
+                map: map,
+                title: 'Waypoint'
             });
-            // Add waypoints
-            js.locations.forEach(function (js) {
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(js.latitude, js.longitude),
-                    map: map,
-                    title: 'Waypoint'
+           
+            var contentString = `
+                <div>
+                    <strong>${t.ID }</strong><br>
+                    Weight: ${t.latitude }<br>
+                    Isfull: ${t.IsFull }<br>
+                </div>`;
 
-                });
-                var contentString = `
-                    <div>
-                        <strong>${js.ID}</strong><br>
-                       
-                        Weight: ${js.Weight}<br>
-                        Isfull: ${js.IsFull}<br>
+            var infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
 
-                    </div>`;
-
-                var infoWindow = new google.maps.InfoWindow({
-                    content: contentString
-                });
-
-                marker.addListener('click', function () {
-                    infoWindow.open(map, this);
-                });
-                
+            marker.addListener('click', function () {
+                infoWindow.open(map, this);
             });
         }
-
-
     </script>
     <script type="text/javascript">
         window.getDimensions = function () {
