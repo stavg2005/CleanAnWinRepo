@@ -196,7 +196,7 @@ namespace DataLayer
                 {
                     connection.Open();
 
-                    string query = $"Insert into trashcan  (TrashCanIsFull,TrashCanWeight,Lat,Lng) VALUES ('{trashCan.IsFull.ToString()}', '{trashCan.Weight.ToString()}','{trashCan.latitude}','{trashCan.longitude}');";
+                    string query = $"Insert into trashcan  (TrashCanIsFull,TrashCanWeight,Lat,Lng) VALUES ('{trashCan.isfull.ToString()}', '{trashCan.weight.ToString()}','{trashCan.latitude}','{trashCan.longitude}');";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
