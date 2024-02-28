@@ -32,7 +32,7 @@
                                 <div class="card-body p-4">
                                     <div class="row d-flex justify-content-between align-items-center">
                                         <div class="col-md-2 col-lg-2 col-xl-2">
-                                            <img src="@(path + Convert.ToBase64String(p.ProductPicture))"
+                                            <img src="@(path + Convert.ToBase64String(p.ProductPicture))" style="width:100px;weight:100px"
                                                  class="img-fluid rounded-3" alt="Cotton T-shirt">
                                         </div>
                                         <div class="col-md-3 col-lg-3 col-xl-3">
@@ -43,6 +43,13 @@
                                         <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                             <h5 class="mb-0">@p.ProductPrice</h5>
                                         </div>
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                            <button class="btndel btn-delete">
+                                                <span class="mdi mdi-delete mdi-24px"></span>
+                                                <span class="mdi mdi-delete-empty mdi-24px"></span>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
                                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                             <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
                                         </div>
@@ -52,35 +59,103 @@
                             
                         }
                     }
-                    
-                    
-
-                    <!-- Repeat the same structure for other cards... -->
-
 
 
                     <div class="card">
                         <div class="card-body">
-                            <button @onclick="Pay" type="button" class="btn btn-warning btn-block btn-lg ">Proceed to Pay</button>
-                            <span> &zwnj;&zwnj;&zwnj;   Total: @Getsum()</span>
+                            @if (Current.CurrentUser.coins < sum)
+                            {
+                                <button  class="btn btn-warning btn-block btn-lg ">You Dont have enough Coins</button>
+                                <span> &zwnj;&zwnj;&zwnj;   Total: @Getsum()</span>
+                            }
+                            else
+                            {
+                                <button @onclick="Pay" class="btn btn-warning btn-block btn-lg ">Proceed to Pay</button>
+                                <span> &zwnj;&zwnj;&zwnj;   Total: @Getsum()</span>
+                            }
+
+
                         </div>
                     </div>
 
                 </div>
             </div>
         </div>
+
     </section>
 
     <!-- Add your Bootstrap and other scripts here -->
 
 </body>
+   <style>
+    .btndel {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: 1px solid lighten(gray, 24%);
+        height: 48px;
+        padding: 0 24px 0 16px;
+        letter-spacing: .25px;
+        border-radius: 24px;
+        cursor: pointer;
+        &:focus
+
+    {
+        outline: none;
+    }
+
+    .mdi {
+        margin-right: 8px;
+    }
+
+    }
+
+    .btn-delete {
+        font-size: 16px;
+        color: red;
+        >.mdi-delete-empty
+
+    {
+        display: none;
+    }
+
+    &:hover {
+        background-color: lighten(red, 48%);
+        >.mdi-delete-empty
+
+    {
+        display: block;
+    }
+
+    > .mdi-delete {
+        display: none;
+    }
+
+    }
+
+
+
+    &:focus {
+        box-shadow: 0 0 0 4px lighten(red, 40%);
+    }
+
+    }
+   </style>
 </html>
 
 @code {
     string path = "data:image/png;base64,";
     private int Length;
+    private string modalDisplay = "none";
     string Response;
+    int sum { get; set; }
     ApiServices a = new ApiServices();
+
+    protected override async Task OnInitializedAsync()
+    {
+        sum = Getsum();
+    }
+
     async Task GetDimensions()
     {
         var dimension = await Service.GetDimensions();
@@ -97,6 +172,10 @@
             await a.DeleteUserCart(Current.CurrentUser.UserID);
             GoMain();
         }
+        else
+        {
+            modalDisplay = "block";
+        }
     }
     private int Getsum()
     {
@@ -106,6 +185,10 @@
             sum = sum + p.ProductPrice;
         }
         return sum;
+    }
+    private async Task DeleteFromCart()
+    {
+        
     }
 
     private void GoMain()
@@ -117,6 +200,7 @@
         if (firstRender)
         {
             await GetDimensions();
+            
             StateHasChanged();
         }
 

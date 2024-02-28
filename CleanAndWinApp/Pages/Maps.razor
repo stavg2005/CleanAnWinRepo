@@ -33,6 +33,11 @@
     [Parameter]
     public string lng { get; set; }
 
+    [JSInvokableAttribute("GoToMain")]
+    public void GoToMain(string id)
+    {
+        NavManager.NavigateTo("/main");
+    }
 
     private async Task InsertValuesToUserService()
     {
@@ -81,11 +86,14 @@
     [JSInvokable]
     public async Task HandleMapClick(double latitude, double longitude)
     {
-        
-        newTrash.latitude = latitude.ToString();
-        newTrash.longitude = longitude.ToString();
-        OpenModal();
-        StateHasChanged();
+        if (Userservice.CurrentUser.IsAdmin)
+        {
+            newTrash.latitude = latitude.ToString();
+            newTrash.longitude = longitude.ToString();
+            OpenModal();
+            StateHasChanged();
+        }
+
     }
 
     private async Task CreateTrashCan()
