@@ -55,5 +55,18 @@ namespace ApiServices.Controllers
                 return StatusCode(500,ex.Message);
             }
         }
+
+        [HttpPost("DeleteTrashCan")]
+        public async Task<IActionResult> DeleteTrashCan([FromBody] int id)
+        {
+            try
+            {
+                await TrashCanDTO.DeleteTrashCan(id); return Ok("Delete operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

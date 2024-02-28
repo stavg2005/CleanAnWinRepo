@@ -17,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -456,6 +456,26 @@ namespace Model
             }
         }
        
+        public async Task<string> DeleteTrashCan(int id)
+        {
+            try
+            {
+                string url = $"{Apiurl}/DeleteTrashCan";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<int>(url, id);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
         public async Task<string> InsertNewProduct(Product p)
         {
             try

@@ -214,5 +214,33 @@ namespace DataLayer
             }
             
         }
+
+        public static async Task DeleteTrashCan(int id)
+        {
+            String connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = $"Delete from trashcan where TrashCanID ={id};";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+
+                        cmd.ExecuteNonQuery();
+
+                    }
+                    connection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 	}
 }

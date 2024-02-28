@@ -67,6 +67,22 @@
     </script>-->
 
     <script>
+
+         class Helpers {
+            static dotNetHelper;
+
+            static SetDotNetHelper(value) {
+                Helpers.dotNetHelper = value;
+            }
+
+            static async DeleteTrashCan( id) {
+                await Helpers.dotNetHelper.invokeMethodAsync('DeleteTrashCan',id);
+            }
+        }
+
+        window.Helpers = Helpers;
+    </script>
+    <script>
         var mapStyle = [
             {
                 "featureType": "all",
@@ -432,29 +448,29 @@
                 ]
             }
         ]
-            
-            function initialize(js, dotnetHelper) {
-                var mapOptions = {
-                    zoom: 15,
-                    center: new google.maps.LatLng(js.lat, js.lng),
-                    mapTypeId: google.maps.MapTypeId.SATELLITE,
-                    styles: mapStyle
-                };
 
-                var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        function initialize(js, dotnetHelper) {
+            var mapOptions = {
+                zoom: 15,
+                center: new google.maps.LatLng(js.lat, js.lng),
+                mapTypeId: google.maps.MapTypeId.SATELLITE,
+                styles: mapStyle
+            };
 
-                var infoWindow = new google.maps.InfoWindow();
-                map.addListener('click', function (event) {
-                    var longitude = event.latLng.lng();
-                    var latitude = event.latLng.lat();
-                    dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
-                });
-                console.log("WHYYYYYYY"+js.locations[0])
-                // Add waypoints
-                for (var i = 0; i < js.locations.length; i++) {
-                    CreateMarker(js.locations[i], map);
-                }
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            var infoWindow = new google.maps.InfoWindow();
+            map.addListener('click', function (event) {
+                var longitude = event.latLng.lng();
+                var latitude = event.latLng.lat();
+                dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
+            });
+            console.log("WHYYYYYYY" + js.locations[0])
+            // Add waypoints
+            for (var i = 0; i < js.locations.length; i++) {
+                CreateMarker(js.locations[i], map);
             }
+        }
 
         function CreateMarker(t, map) {
             var marker = new google.maps.Marker({
@@ -462,14 +478,14 @@
                 map: map,
                 title: 'Waypoint'
             });
-           
+
             var contentString = `
-                <div>
-                    <strong>${t.id }</strong><br>
-                    Weight: ${t.weight }<br>
-                    Isfull: ${t.isfull }<br>
-                     <button onclick="callBlazorFunction('${t.id}')">Click me</button>
-                </div>`;
+                        <div>
+                            <strong>${t.id}</strong><br>
+                            Weight: ${t.weight}<br>
+                            Isfull: ${t.isfull}<br>
+                             <button onclick="Helpers.DeleteTrashCan(${t.id})">Click me</button>
+                        </div>`;
 
             var infoWindow = new google.maps.InfoWindow({
                 content: contentString
@@ -479,10 +495,15 @@
                 infoWindow.open(map, this);
             });
         }
-        function callBlazorFunction(id) {
-            DotNet.invokeMethodAsync('CleanAndWinApp', 'CleanAndWinApp.Pages.Maps.GoToMain', id);
+
+    </script>
+
+    <script>
+        window.reloadPage = function () {
+            window.location.reload();
         }
     </script>
+
     <script type="text/javascript">
         window.getDimensions = function () {
             return {
