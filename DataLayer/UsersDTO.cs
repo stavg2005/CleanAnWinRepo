@@ -45,15 +45,22 @@ namespace DataLayer
 					using (MySqlCommand cmd = new MySqlCommand(query, connection))
 					{
 						cmd.Parameters.AddWithValue("@UserID", userId);
-
-						using (MySqlDataReader reader = cmd.ExecuteReader())
-						{
-							while (reader.Read())
-							{
-								Product productId = await ProductDTO.GetProuctFromIndex(reader.GetInt32("ProductID"));
-								productIds.Add(productId);
-							}
-						}
+                    try
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Product productId = await ProductDTO.GetProuctFromIndex(reader.GetInt32("ProductID"));
+                                productIds.Add(productId);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+						
 					}
 				}
 
@@ -243,6 +250,19 @@ namespace DataLayer
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = c;
             string query = $"Delete from cart where userID = '{Userid}'";
+            cmd.CommandText = query;
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        
+        public static async Task DeleteProductFromUserCart(int Userid , int productid)
+        {
+            MySqlConnection c = new MySqlConnection();
+            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            c.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = c;
+            string query = $"Delete from cart where userID = '{Userid}' And ProductID = '{productid}' ";
             cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }

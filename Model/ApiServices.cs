@@ -17,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -491,6 +491,31 @@ namespace Model
                     return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
                 }
             }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
+        {
+
+            try
+            {
+                
+
+                string url = $"http://{Apiurl}/api/CartControllercs/DeleteProductFromUserCart";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Tuple<int,int>>(url, userIDproductID);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+
             catch (Exception ex)
             {
                 return ($"An error occurred: {ex.Message}");

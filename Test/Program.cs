@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using MySql.Data.MySqlClient;
 using DataLayer;
+using System.Reflection;
 
 namespace Test
 {
@@ -42,13 +43,13 @@ namespace Test
             //}
 
             Model.ApiServices a = new Model.ApiServices();
-            List<TrashCan> l = await a.GetAllTrashCanLocations();
-            foreach (TrashCan i in l)
-            {
-                Console.Write("lat" + i.latitude);
-                Console.WriteLine("    lng" + i.longitude);
-            }
-            Console.ReadLine();
+            //List<TrashCan> l = await a.GetAllTrashCanLocations();
+            //foreach (TrashCan i in l)
+            //{
+            //    Console.Write("lat" + i.latitude);
+            //    Console.WriteLine("    lng" + i.longitude);
+            //}
+            //Console.ReadLine();
             //Model.ApiServices a = new Model.ApiServices();
             ////byte[] A = new byte[37357];
             ////Product p = new Product(1,"PST-TEST","FDAFG",39552,A);
@@ -59,6 +60,12 @@ namespace Test
             //Console.WriteLine(await a.GetAllTrashCanLocations());
             //Console.ReadLine();
 
+            List<Product> products = new List<Product>();
+            products = await a.Getc(1,false);
+            foreach (Product p in products)
+            {
+                Console.WriteLine(p.ProductName);
+            }
         }
 
         static string GetIPv4Address(string adapterName)
@@ -95,4 +102,5 @@ namespace Test
     }
 
 }
+
 

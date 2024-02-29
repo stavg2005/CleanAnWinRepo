@@ -99,5 +99,18 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("GetUserCart")]
+        public async Task<List<Product>> GetUserCart(int id)
+        {
+            try
+            {
+                return await UsersDTO.GetCart(id);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

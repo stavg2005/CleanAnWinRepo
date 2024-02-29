@@ -49,13 +49,16 @@
     [JSInvokable("DeleteTrashCan")]
     public  async Task DeleteTrashCan(int id)
     {
+        if(Userservice.CurrentUser.IsAdmin)
+        {
+            await a.DeleteTrashCan(id);
 
-        await a.DeleteTrashCan(id);
+            nav.NavigateTo($"mapredirect");
+        }
 
-        nav.NavigateTo($"mapredirect");
 
 
-        
+
     }
 
     private async Task ReloadPage()
@@ -67,7 +70,7 @@
         dotNetHelper?.Dispose();
     }
 
-    
+
 
     private async Task InsertValuesToUserService()
     {
@@ -100,7 +103,7 @@
         List<TrashCan> locations = await a.GetAllTrashCanLocations();
         if (locations != null)
         {
-            Javascriptquery js = new Javascriptquery(locations, lat, lng);
+            Javascriptquery js = new Javascriptquery(locations, lat, lng,Userservice.CurrentUser.IsAdmin);
             await JSRuntime.InvokeVoidAsync("initialize", js,DotNetObjectReference.Create(this));
         }
 
@@ -135,12 +138,12 @@
 
     private async Task CreateTrashCan()
     {
-        
+
         await a.InsertTrashCan(newTrash);
         nav.NavigateTo($"mapredirect");
         CloseModal();
-        
-        
+
+
     }
 
 
@@ -148,16 +151,18 @@
 
     public class Javascriptquery
     {
-        public Javascriptquery(List<TrashCan> locations, string lat, string lng)
+        public Javascriptquery(List<TrashCan> locations, string lat, string lng,bool IsUserAdmin)
         {
             this.locations = locations;
             this.lat = lat;
             this.lng = lng;
+            this.isuseradmin = IsUserAdmin;
         }
 
         public List<TrashCan> locations { get; set; }
         public string lat { get; set; }
         public string lng { get; set; }
+        public bool isuseradmin {get;set;}
         
     }
 

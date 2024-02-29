@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 
 namespace ApiServices.Controllers
 {
@@ -8,9 +9,9 @@ namespace ApiServices.Controllers
     public class CartControllercs : ControllerBase
     {
         [HttpGet($"GetAllProducts")]
-        public IActionResult GetAllProducts(int id)
+        public async Task<List<Product>> GetAllProducts(int id)
         {
-            return Ok(UsersDTO.GetCart(id));
+            return  await UsersDTO.GetCart(id);
         }
 
         [HttpPost("AddProductTocart")]
@@ -19,6 +20,20 @@ namespace ApiServices.Controllers
             try
             {
                 await ProductDTO.AddTocart(userid, productid);
+                return Ok("Cart operation completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpPost("DeleteProductFromUserCart")]
+        public async Task<IActionResult> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
+        {
+            try
+            {
+                await UsersDTO.DeleteProductFromUserCart(userIDproductID.Item1, userIDproductID.Item2);
                 return Ok("Cart operation completed successfully.");
             }
             catch (Exception ex)

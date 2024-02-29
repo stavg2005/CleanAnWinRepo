@@ -1,5 +1,5 @@
 ﻿@page "/cart"
-@inject UserService Current;
+@inject UserService UserService;
 @using Model
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     @{
-                        foreach (Product p in Current.CurrentUser.products)
+                        foreach (Product p in UserService.CurrentUser.products)
                         {
                             <div class="card rounded-3 mb-4">
                                 <div class="card-body p-4">
@@ -43,11 +43,11 @@
                                         <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                             <h5 class="mb-0">@p.ProductPrice</h5>
                                         </div>
-                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1" @onclick="() => DeleteProductFromUserCart(UserService.CurrentUser.UserID,p.ProductID)">
                                             <button class="btndel btn-delete">
                                                 <span class="mdi mdi-delete mdi-24px"></span>
                                                 <span class="mdi mdi-delete-empty mdi-24px"></span>
-                                                <span>Delete</span>
+                                                <span>Delete!!</span>
                                             </button>
                                         </div>
                                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
@@ -63,7 +63,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            @if (Current.CurrentUser.coins < sum)
+                            @if (UserService.CurrentUser.coins < sum)
                             {
                                 <button  class="btn btn-warning btn-block btn-lg ">You Dont have enough Coins</button>
                                 <span> &zwnj;&zwnj;&zwnj;   Total: @Getsum()</span>
@@ -165,11 +165,11 @@
     private async Task Pay()
     {
         int sum = Getsum();
-        if (Current.CurrentUser.coins > sum)
+        if (UserService.CurrentUser.coins > sum)
         {
-            int pay =  Current.CurrentUser.coins-sum;
-            Response =await a.UpdateUserCoin(Current.CurrentUser.UserID, pay);
-            await a.DeleteUserCart(Current.CurrentUser.UserID);
+            int pay = UserService.CurrentUser.coins - sum;
+            Response = await a.UpdateUserCoin(UserService.CurrentUser.UserID, pay);
+            await a.DeleteUserCart(UserService.CurrentUser.UserID);
             GoMain();
         }
         else
@@ -177,19 +177,27 @@
             modalDisplay = "block";
         }
     }
+
+    private async Task DeleteProductFromUserCart(int userID,int productid)
+    {
+        Console.WriteLine(userID);
+        Console.WriteLine(productid);
+        Tuple<int, int> userIDproductID = new Tuple<int, int>(userID, productid);
+        Console.WriteLine(await a.DeleteProductFromUserCart(userIDproductID));
+        UserService.CurrentUser.products = await a.Getc(userID, true);
+        NavManager.NavigateTo("main");
+    }
+
     private int Getsum()
     {
         int sum = 0;
-        foreach (Product p in Current.CurrentUser.products)
+        foreach (Product p in UserService.CurrentUser.products)
         {
             sum = sum + p.ProductPrice;
         }
         return sum;
     }
-    private async Task DeleteFromCart()
-    {
-        
-    }
+
 
     private void GoMain()
     {
