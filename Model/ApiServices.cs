@@ -17,7 +17,7 @@ namespace Model
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -502,9 +502,9 @@ namespace Model
 
             try
             {
-                
 
-                string url = $"http://{Apiurl}/api/CartControllercs/DeleteProductFromUserCart";
+                string Serilize = JsonSerializer.Serialize(userIDproductID);
+                string url = $"{Apiurl}/api/CartControllercs/DeleteProductFromUserCart";
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Tuple<int,int>>(url, userIDproductID);
                 if (response.IsSuccessStatusCode)
                 {

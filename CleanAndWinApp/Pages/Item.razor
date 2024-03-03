@@ -16,90 +16,38 @@
     <title></title>
 </head>
 <body>
-    @{
-        if (EditMode)
-        {
-            <div style="z-index:1;position:fixed">
-                <link rel="stylesheet" href="css/settings.css">
-                <div class="wrapper bg-white mt-sm-5" style="position:relative;width:(@d.Width+200)px;height:(@d.Height)px">
-                    <h4 class="pb-4 border-bottom">Account settings</h4>
-                    <div class="d-flex align-items-start py-3 border-bottom">
-                        @{
+    @if (p != null)
+    {
+        <main>
 
-                            <img src="@(path)"
-                                 class="img" alt="">
-                            <div class="pl-sm-4 pl-2" id="img-section">
-                                <b>Profile Photo</b>
-                                <p>Accepted file type .png. Less than 1MB</p>
-                                <InputFile OnChange="HandleFileChange" />Upload
-                            </div>
+            <!-- Left Column / Headphones Image -->
 
-                        }
+            <div >
+                <img src="@(path+Convert.ToBase64String(p.ProductPicture))" style="margin-top:-200px;position:relative;width:380px;height:400px">
+            </div>
 
+            <!-- Right Column -->
+            <div>
 
-                    </div>
-                    <div class="py-2">
-                        <div class="row py-2">
-                            <div class="col-md-6">
-                                <label for="firstname">Product Name</label>
-                                <input @bind-value="ProductName" type="text" class="bg-light form-control" placeholder="@p.ProductName">
-                            </div>
-                        </div>
-                        <div class="row py-2">
-                            <div class="col-md-6">
-                                <label for="email">Product description</label>
-                                <input @bind-value="ProductDescription" type="text" class="bg-light form-control" placeholder="@p.ProductDescription">
-                            </div>
-                        </div>
-                        <div class="row py-2">
-                            <div class="col-md-6">
-                                <label for="email">Price</label>
-                                <input @bind-value="ProductPrice" type="text" class="bg-light form-control" placeholder="@p.ProductPrice">
-                            </div>
-                        </div>
-                        <div class="py-3 pb-4 border-bottom">
-                            <button @onclick="SaveChanges" class="btn btn-primary mr-3">Save Changes</button>
-                            <button class="btn border button">Cancel</button>
-                        </div>
-                    </div>
+                <!-- Product Description -->
+                <div class="product-description">
+                    <span></span>
+                    <h1>@p.ProductName</h1>
+                    <p>@p.ProductDescription</p>
+                </div>
+
+                <!-- Product Configuration -->
+                <!-- Product Pricing -->
+                <div class="product-price" >
+                    <span>@p.ProductPrice</span>
+                    <a href="#" class="cart-btn" @onclick="AddToCart" >Add to cart</a>
                 </div>
             </div>
-        }
+        </main>
     }
-    <header class="fixed-header" style="position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    z-index: 1000; ">
-        <h1>You have @Userservice.CurrentUser.coins coins <img src="images/coin.png" class="coin" /> </h1>
-    </header>
-    @if(p != null)
-    {
-        <section class="product-details">
-            <img src="@(path+base64)" alt="Product Image" class="product-image">
-            <div class="product-info">
-                <h2>@p.ProductName</h2>
-                <p class="price">@p.ProductPrice</p>
-                <p>@p.ProductDescription</p>
-                <button @onclick="() =>AddToCart()">Add to Cart</button>
-                @{
-                    if (Userservice.CurrentUser.IsAdmin)
-                    {
-                        <button  style="margin-left:60px;" @onclick="InitiateEditMode">Edit</button>
-                    }
-                }
-            </div>
-        </section>
-    }
+    
    
 
-    <footer>
-        <p>&copy; 2023 Your Company</p>
-    </footer>
 
 </body>
 
@@ -155,6 +103,7 @@
     private async Task AddToCart()
     {
         error = await a.AddItemToCart(ItemID, Userservice.CurrentUser.UserID);
+        Nav.NavigateTo("store");
     }
 
     private async Task SaveChanges()

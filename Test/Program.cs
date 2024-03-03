@@ -60,12 +60,15 @@ namespace Test
             //Console.WriteLine(await a.GetAllTrashCanLocations());
             //Console.ReadLine();
 
-            List<Product> products = new List<Product>();
-            products = await a.Getc(1,false);
-            foreach (Product p in products)
-            {
-                Console.WriteLine(p.ProductName);
-            }
+            //List<Product> products = new List<Product>();
+            //products = await a.Getc(1,false);
+            //foreach (Product p in products)
+            //{
+            //    Console.WriteLine(p.ProductName);
+            //}
+            Tuple<int, int> uIDpID = new Tuple<int, int>(1, 13);
+            Console.WriteLine(await a.DeleteProductFromUserCart(uIDpID));
+            Console.ReadLine();
         }
 
         static string GetIPv4Address(string adapterName)

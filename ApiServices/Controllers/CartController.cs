@@ -29,7 +29,7 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost("DeleteProductFromUserCart")]
-        public async Task<IActionResult> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
+        public async Task<IActionResult> DeleteProductFromUserCart([FromBody] Tuple<int,int> userIDproductID)
         {
             try
             {

@@ -1,9 +1,11 @@
 ﻿@page "/cart"
 @inject UserService UserService;
 @using Model
+@using Services
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
 @inject NavigationManager NavManager;
+@inject IJSRuntime JSRuntime;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,7 +172,13 @@
             int pay = UserService.CurrentUser.coins - sum;
             Response = await a.UpdateUserCoin(UserService.CurrentUser.UserID, pay);
             await a.DeleteUserCart(UserService.CurrentUser.UserID);
-            GoMain();
+            string product = "";
+            foreach (Product p in UserService.CurrentUser.products)
+            {
+                 product = product + "," + p.ProductName;
+            }
+            await EmailService.SendEmailAsync("stav200new@gmail.com", "order confermation", "thank you for purchasing" + product +"For "+sum+"coins");
+            NavManager.NavigateTo("afterpurchase");
         }
         else
         {
@@ -180,10 +188,11 @@
 
     private async Task DeleteProductFromUserCart(int userID,int productid)
     {
-        Console.WriteLine(userID);
-        Console.WriteLine(productid);
         Tuple<int, int> userIDproductID = new Tuple<int, int>(userID, productid);
-        Console.WriteLine(await a.DeleteProductFromUserCart(userIDproductID));
+        
+
+        
+        Console.WriteLine();
         UserService.CurrentUser.products = await a.Getc(userID, true);
         NavManager.NavigateTo("main");
     }

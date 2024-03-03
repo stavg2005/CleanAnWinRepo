@@ -20,69 +20,63 @@
     </header>
 
     <section class="content">
-        <div class="box">
-            <img src="css/imags/coin.png" class="coin" />
-            <h2 class="coins">@Userservice.CurrentUser.coins</h2>
-        </div>
 
-        <div class="profile">
-            <img src="images/profile-pic.png" class="profile-pic" />
-        </div>
 
         <div class="store-container">
             @{
-                if(b)
-                    {
-                    if (InsertProduct)
-                    {
-                        <div style="z-index:1;position:fixed">
-                            <link rel="stylesheet" href="css/settings.css">
-                            <div class="wrapper bg-white mt-sm-5" style="position:fixed;width:(@d.Width+200)px;height:(@d.Height)px">
-                                <h4 class="pb-4 border-bottom">Account settings</h4>
-                                <div class="d-flex align-items-start py-3 border-bottom">
-                                    @{
+                // if(b)
+                //     {
+                //     if (InsertProduct)
+                //     {
+                //         <div style="z-index:1;position:fixed">
+                //             <link rel="stylesheet" href="css/settings.css">
+                //             <div class="wrapper bg-white mt-sm-5" style="position:fixed;width:(@d.Width+200)px;height:(@d.Height)px">
+                //                 <h4 class="pb-4 border-bottom">Account settings</h4>
+                //                 <div class="d-flex align-items-start py-3 border-bottom">
+                //                     @{
 
-                                        <img src="@(Productpath)"
-                                             class="img" alt="">
-                                        <div class="pl-sm-4 pl-2" id="img-section">
-                                            <b>Profile Photo</b>
-                                            <b>error: @error</b>
-                                            <p>Accepted file type .png. Less than 1MB</p>
-                                            <InputFile OnChange="HandleFileChange" />Upload
-                                        </div>
+                //                         <img src="@(Productpath)"
+                //                              class="img" alt="">
+                //                         <div class="pl-sm-4 pl-2" id="img-section">
+                //                             <b>Profile Photo</b>
+                //                             <b>error: @error</b>
+                //                             <p>Accepted file type .png. Less than 1MB</p>
+                //                             <InputFile OnChange="HandleFileChange" />Upload
+                //                         </div>
 
-                                    }
+                //                     }
 
 
-                                </div>
-                                <div class="py-2">
-                                    <div class="row py-2">
-                                        <div class="col-md-6">
-                                            <label for="firstname">Product Name</label>
-                                            <input @bind-value="ProductName" type="text" class="bg-light form-control" placeholder="ProductName">
-                                        </div>
-                                    </div>
-                                    <div class="row py-2">
-                                        <div class="col-md-6">
-                                            <label for="email">Product description</label>
-                                            <input @bind-value="ProductDescription" type="text" class="bg-light form-control" placeholder="ProductDescription">
-                                        </div>
-                                    </div>
-                                    <div class="row py-2">
-                                        <div class="col-md-6">
-                                            <label for="email">Price</label>
-                                            <input @bind-value="ProductPrice" type="text" class="bg-light form-control" placeholder="ProductPrice">
-                                        </div>
-                                    </div>
-                                    <div class="py-3 pb-4 border-bottom">
-                                        <button @onclick="AddProduct" class="btn btn-primary mr-3">add new product</button>
-                                        <button class="btn border button">Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                //                 </div>
+                //                 <div class="py-2">
+                //                     <div class="row py-2">
+                //                         <div class="col-md-6">
+                //                             <label for="firstname">Product Name</label>
+                //                             <input @bind-value="ProductName" type="text" class="bg-light form-control" placeholder="ProductName">
+                //                         </div>
+                //                     </div>
+                //                     <div class="row py-2">
+                //                         <div class="col-md-6">
+                //                             <label for="email">Product description</label>
+                //                             <input @bind-value="ProductDescription" type="text" class="bg-light form-control" placeholder="ProductDescription">
+                //                         </div>
+                //                     </div>
+                //                     <div class="row py-2">
+                //                         <div class="col-md-6">
+                //                             <label for="email">Price</label>
+                //                             <input @bind-value="ProductPrice" type="text" class="bg-light form-control" placeholder="ProductPrice">
+                //                         </div>
+                //                     </div>
+                //                     <div class="py-3 pb-4 border-bottom">
+                //                         <button @onclick="AddProduct" class="btn btn-primary mr-3">add new product</button>
+                //                         <button class="btn border button">Cancel</button>
+                //                     </div>
+                //                 </div>
+                //             </div>
+                //         </div>
 
-                    }
+                //     }
+                    
                     foreach (Product i in Products.ProductList)
                     {
                         <div class="product">
@@ -102,9 +96,8 @@
                     
                 }
             }
-            
-          <div style="position:relative;height:100px"></div>
 
+            <div style="position:relative;height:100px"></div>
             <!-- Add more product entries as needed -->
 
 @*             <div class="navbar">
@@ -195,9 +188,8 @@
     byte[] ProductPicture { get; set; }
     protected override async Task OnInitializedAsync()
     {
-
+         
         await GetDimensions();
-        await GetC(Userservice.CurrentUser.UserID, true);
         InsertProduct = false;
     }
 
