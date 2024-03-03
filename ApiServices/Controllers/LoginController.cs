@@ -17,7 +17,15 @@ namespace ApiServices.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(string username, string password, string email, int location, int id)
         {
-            return Ok(UsersDTO.Register(username, password, email, location, id));
+            try
+            {
+                return Ok(UsersDTO.Register(username, password, email, location, id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpGet("GetUser")]

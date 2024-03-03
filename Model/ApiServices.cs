@@ -78,7 +78,7 @@ namespace Model
         }
         public async Task<Locations> GetLocationFromPK(int id)
         {
-            string s = $"http://{Apiurl}/GetLocationFromPK?id={id}";
+            string s = $"{Apiurl}/GetLocationFromPK?id={id}";
             return await _httpClient.GetFromJsonAsync<Locations>(s);
         }
         public async Task<string> Register(string email, string password, string username, int location, int id, byte[] imagedata)
@@ -88,19 +88,28 @@ namespace Model
             string s =
             JsonSerializer.Serialize(users);
             HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+            
             string apiurl = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
-            HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-            string r = await UploadImageToApi(id, imagedata);
-            if (response.IsSuccessStatusCode && r == "Image uploaded successfully")
-            {
+            try {
+                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+                string r = await UploadImageToApi(id, imagedata);
+                if (response.IsSuccessStatusCode && r == "Image uploaded successfully")
+                {
 
-                return ("POST request successful!");
+                    return ("POST request successful!");
 
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+                }
             }
-            else
-            {
-                return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+            catch(Exception e) { 
+                string b = e.Message;
+                return b;
             }
+            
+
 
         }
 

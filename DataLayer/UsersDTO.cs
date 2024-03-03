@@ -67,7 +67,7 @@ namespace DataLayer
 				return productIds;
 			}
 
-		public static async Task Register(string Username,string password,string email,int location,int Id)
+		public static async Task<string> Register(string Username,string password,string email,int location,int Id)
 		{
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -75,7 +75,16 @@ namespace DataLayer
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = c;
 			cmd.CommandText = $"INSERT INTO users (UserID,UserEmail,userPassword,usercoin,UserName,Userxp,UserLocation) VALUES ('{Id}','{email}','{password}','0','{Username}','0','{location}');";
-             await  cmd.ExecuteNonQueryAsync();
+            try
+            {
+                return (await cmd.ExecuteNonQueryAsync()).ToString();
+                
+            }
+            catch(Exception ex)
+            {
+                string b = ex.Message;
+                return b;
+            }
 			
         }
 

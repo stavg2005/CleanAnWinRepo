@@ -180,7 +180,9 @@
 
     public async Task Reg()
     {
+        string g = "hi";
         string r = await A.Register(Email, Password, UserName, location, id, m.ImageData);
+        r = r;
         nav.NavigateTo("/");
     }
     async Task GetDimensions()
