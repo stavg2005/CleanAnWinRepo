@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataLayer;
+using Services;
 namespace CleanAndWinApp
 {
     public class AuthService

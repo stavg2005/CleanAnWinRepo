@@ -12,12 +12,54 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Drawing.Imaging;
 using Dapper;
 using MySqlConnector;
+using Org.BouncyCastle.X509;
+using System.Diagnostics;
 
 namespace DataLayer
 {
     public class UsersDTO
     {
-       
+        public UsersDTO(int userID, string email, string password, int coin, string username, int userxp, int userLocation, byte[] profilePicture, bool isAdmin)
+        {
+            UserID = userID;
+            Email = email;
+            Password = password;
+            Coin = coin;
+            Username = username;
+            Userxp = userxp;
+            UserLocation = userLocation;
+            ProfilePicture = profilePicture;
+            IsAdmin = isAdmin;
+        }
+
+        public UsersDTO(string email, string password,  string username,int userLocation, byte[] profilePicture)
+        {
+            UserID = -1;
+            Email = email;
+            Password = password;
+            Coin = 0;
+            Username = username;
+            Userxp = 0;
+            UserLocation = userLocation;
+            ProfilePicture = profilePicture;
+            IsAdmin = false;
+        }
+
+        public UsersDTO()
+        {
+
+        }
+
+        public int UserID { get;set; }
+       public string Email {  get;set; }
+        public string Password { get;set; }
+        public int Coin { get;set; }
+        public string Username { get;set; }
+        public int Userxp { get;set; }
+        public int UserLocation { get; set; }
+        public byte[] ProfilePicture { get; set; }
+
+        public bool IsAdmin { get; set; }
         
            
         
@@ -67,28 +109,44 @@ namespace DataLayer
 				return productIds;
 			}
 
-		public static async Task<string> Register(string Username,string password,string email,int location,int Id)
-		{
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-			cmd.CommandText = $"INSERT INTO users (UserID,UserEmail,userPassword,usercoin,UserName,Userxp,UserLocation) VALUES ('{Id}','{email}','{password}','0','{Username}','0','{location}');";
+        public static async Task<string> Register(UsersDTO user)
+        {
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+
             try
             {
-                return (await cmd.ExecuteNonQueryAsync()).ToString();
-                
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = @"INSERT INTO users (UserEmail, userPassword, usercoin, UserName, Userxp, UserLocation, ProfilePicture, IsAdmin) 
+                             VALUES (@UserEmail, @userPassword, @usercoin, @UserName, @Userxp, @UserLocation, @ProfilePicture, @IsAdmin)";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@UserEmail", user.Email);
+                        cmd.Parameters.AddWithValue("@userPassword", user.Password);
+                        cmd.Parameters.AddWithValue("@usercoin", 0); // Assuming usercoin should be defaulted to 0
+                        cmd.Parameters.AddWithValue("@UserName", user.Username);
+                        cmd.Parameters.AddWithValue("@Userxp", 0); // Assuming Userxp should be defaulted to 0
+                        cmd.Parameters.AddWithValue("@UserLocation", user.UserLocation);
+                        cmd.Parameters.AddWithValue("@ProfilePicture", user.ProfilePicture);
+                        cmd.Parameters.AddWithValue("@IsAdmin", 0); // Assuming IsAdmin should be defaulted to 0
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        Debug.WriteLine($"{rowsAffected} row(s) affected.");
+                        return $"{rowsAffected} row(s) affected.";
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                string b = ex.Message;
-                return b;
+                Debug.WriteLine($"An error occurred: {ex.Message}");
+                return $"An error occurred: {ex.Message}";
             }
-			
         }
 
-		public static async Task<Users> Login(string email,string password)
+        public static async Task<Users> Login(string email,string password)
 		{
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";

@@ -6,6 +6,7 @@
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
 @inject NavigationManager Nav;
+@using Services
 @using Model;
 
 
@@ -70,7 +71,7 @@
     protected override async Task OnInitializedAsync()
     {
         await InsertValuesToUserService();
-        Model.ApiServices a = new Model.ApiServices();
+        ApiServices a = new ApiServices();
         p = await a.GetProductFromPK(int.Parse(ItemID));
         ProductName = p.ProductName;
         ProductDescription = p.ProductDescription;

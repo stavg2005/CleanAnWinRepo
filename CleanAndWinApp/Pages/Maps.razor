@@ -8,6 +8,7 @@
 @implements IDisposable
 @inject IJSRuntime JS
 @using System
+@using Services
 <div id="map" style="height:800px;width:300px;">
 </div>
 
@@ -82,7 +83,7 @@
     protected override async Task OnInitializedAsync()
     {
         await InsertValuesToUserService();
-        Model.ApiServices a = new Model.ApiServices();
+        ApiServices a = new ApiServices();
 
 
 

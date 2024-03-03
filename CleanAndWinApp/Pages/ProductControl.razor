@@ -3,6 +3,7 @@
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
 @using Model;
+@using Services
 <EditForm Model="@productModel" OnValidSubmit="@UpdateProduct">
     <DataAnnotationsValidator />
     <p>Hello @Userservice.CurrentUser.UserName</p>

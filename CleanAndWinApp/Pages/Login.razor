@@ -7,7 +7,11 @@
 @inject Data.BrowserDimension d;
 @inject Services.ProductService productservice
 @using Model;
+@using Services
 
+@{
+    
+}
 
 <head>
   <meta charset="UTF-8">
@@ -49,13 +53,7 @@
 
 
 
-@* <div class="page-container" style="width:@(d.Width)px;height:@(d.Height)px;position:absolute;margin-left:-23px;margin-top:-18px">
-    <h3>Login</h3>
-    <img src="css/imags/logo.jpeg" style="width:70%;height:50%;position:relative" />
-    <button @onclick="LoginBitch">Log In</button>
-    <input @bind-value="Email" />Email
-    <input @bind-value="password" />Password
-</div> *@
+
 
 
 <style>
@@ -69,7 +67,7 @@
     string password;
     string Email;
     string error;
-    Model.ApiServices api = new Model.ApiServices();
+    ApiServices api = new ApiServices();
     public int Height { get; set; }
     public int Width { get; set; }
 
@@ -128,6 +126,15 @@
             // Handle failed login
         }
     }
+
+    private void Logout()
+    {
+        // Perform logout logic
+        // Clear authentication token
+        AuthService.ClearAuthToken();
+    }
+
+
 
     private async Task<bool> PerformLogin(string username, string password)
     {

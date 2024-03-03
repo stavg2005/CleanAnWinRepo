@@ -3,6 +3,7 @@
 @inject Data.BrowserDimension d;
 @inject NavigationManager nav;
 @using Model;
+@using Services
  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,10 +95,6 @@
     <div id="formSteps" >
         <div class="form-step active">
             <h2>Please Enter Your ID and UserName</h2>
-                <div class="form-group">
-                    <label for="id">id:</label>
-                    <input @bind-value="id" type="text" id="id">
-                </div>
             <div class="form-group">
                 <label for="firstName">UserName:</label>
                 <input @bind-value="UserName" type="text" id="firstName">
@@ -181,7 +178,7 @@
     public async Task Reg()
     {
         string g = "hi";
-        string r = await A.Register(Email, Password, UserName, location, id, m.ImageData);
+        string r = await A.Register(Email, Password, UserName, location, m.ImageData);
         r = r;
         nav.NavigateTo("/");
     }

@@ -23,9 +23,8 @@ namespace Model
 
         public bool IsAdmin { get; set; }
 
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin)
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin)
         {
-            UserID = userID;
             this.UserName = UserName;
             Email = UserEmail;
             this.location = location;
@@ -45,6 +44,18 @@ namespace Model
             this.xp = xp;
             this.coins = coins;
             products = l;
+            this.profile = profile;
+            IsAdmin = isadmin;
+        }
+
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location, byte[] profile, bool isadmin)
+        {
+            this.UserName = UserName;
+            Email = UserEmail;
+            this.location = location;
+            this.xp = xp;
+            this.coins = coins;
+            products = new List<Product>(); ;
             this.profile = profile;
             IsAdmin = isadmin;
         }

@@ -10,14 +10,15 @@ using static System.Net.WebRequestMethods;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using DataLayer;
 
-namespace Model
+namespace Services
 {
     public class ApiServices 
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -81,36 +82,48 @@ namespace Model
             string s = $"{Apiurl}/GetLocationFromPK?id={id}";
             return await _httpClient.GetFromJsonAsync<Locations>(s);
         }
-        public async Task<string> Register(string email, string password, string username, int location, int id, byte[] imagedata)
+        public async Task<string> Register(string email, string password, string username, int location, byte[] imagedata)
         {
+            // Create a new UsersDTO object
+            UsersDTO user = new UsersDTO();
 
-            Users users = new Users(id, email, username,await GetLocationFromPK(location));
-            string s =
-            JsonSerializer.Serialize(users);
-            HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-            
-            string apiurl = $"{Apiurl}/api/Login/Register?username={username}&password={password}&email={email}&location={location}&id={id}";
-            try {
+            // Set properties of the user object
+            user.Email = email;
+            user.Password = password;
+            user.Username = username;
+            user.UserLocation = location;
+            user.ProfilePicture = imagedata;
+
+            // Serialize the user object to JSON
+            string serializedUser = JsonSerializer.Serialize(user);
+
+            // Create HTTP content with the serialized user object
+            HttpContent content = new StringContent(serializedUser, Encoding.UTF8, "application/json");
+
+            // Prepare the API URL
+            string apiurl = $"{Apiurl}/api/Login/Register";
+
+            try
+            {
+                // Send the HTTP POST request to the API
                 HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-                string r = await UploadImageToApi(id, imagedata);
-                if (response.IsSuccessStatusCode && r == "Image uploaded successfully")
+
+                // Check if the request was successful
+                if (response.IsSuccessStatusCode)
                 {
-
-                    return ("POST request successful!");
-
+                    return "POST request successful!";
                 }
                 else
                 {
-                    return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+                    // If the request failed, return the error message
+                    return $"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}";
                 }
             }
-            catch(Exception e) { 
-                string b = e.Message;
-                return b;
+            catch (Exception e)
+            {
+                // If an exception occurs, return the error message
+                return e.Message;
             }
-            
-
-
         }
 
         public async Task<List<Locations>> GetAllLocations()

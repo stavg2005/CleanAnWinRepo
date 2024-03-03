@@ -6,6 +6,7 @@
 @inject Data.BrowserDimension d;
 @page "/store"
 @using Model;
+@using Services
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,93 +19,40 @@
     <header class="fixed-header">
         <h1>You have @Userservice.CurrentUser.coins coins <img src="css/imags/coin.png" class="coin" /> </h1>
     </header>
-
+    <div  style="height:200px;position:absolute"></div>
     <section class="content">
 
 
         <div class="store-container">
             @{
-                // if(b)
-                //     {
-                //     if (InsertProduct)
-                //     {
-                //         <div style="z-index:1;position:fixed">
-                //             <link rel="stylesheet" href="css/settings.css">
-                //             <div class="wrapper bg-white mt-sm-5" style="position:fixed;width:(@d.Width+200)px;height:(@d.Height)px">
-                //                 <h4 class="pb-4 border-bottom">Account settings</h4>
-                //                 <div class="d-flex align-items-start py-3 border-bottom">
-                //                     @{
-
-                //                         <img src="@(Productpath)"
-                //                              class="img" alt="">
-                //                         <div class="pl-sm-4 pl-2" id="img-section">
-                //                             <b>Profile Photo</b>
-                //                             <b>error: @error</b>
-                //                             <p>Accepted file type .png. Less than 1MB</p>
-                //                             <InputFile OnChange="HandleFileChange" />Upload
-                //                         </div>
-
-                //                     }
-
-
-                //                 </div>
-                //                 <div class="py-2">
-                //                     <div class="row py-2">
-                //                         <div class="col-md-6">
-                //                             <label for="firstname">Product Name</label>
-                //                             <input @bind-value="ProductName" type="text" class="bg-light form-control" placeholder="ProductName">
-                //                         </div>
-                //                     </div>
-                //                     <div class="row py-2">
-                //                         <div class="col-md-6">
-                //                             <label for="email">Product description</label>
-                //                             <input @bind-value="ProductDescription" type="text" class="bg-light form-control" placeholder="ProductDescription">
-                //                         </div>
-                //                     </div>
-                //                     <div class="row py-2">
-                //                         <div class="col-md-6">
-                //                             <label for="email">Price</label>
-                //                             <input @bind-value="ProductPrice" type="text" class="bg-light form-control" placeholder="ProductPrice">
-                //                         </div>
-                //                     </div>
-                //                     <div class="py-3 pb-4 border-bottom">
-                //                         <button @onclick="AddProduct" class="btn btn-primary mr-3">add new product</button>
-                //                         <button class="btn border button">Cancel</button>
-                //                     </div>
-                //                 </div>
-                //             </div>
-                //         </div>
-
-                //     }
-                    
+                @if (Products.ProductList != null)
+                {
                     foreach (Product i in Products.ProductList)
                     {
-                        <div class="product">
+                        
+                            <div class="product">
 
 
-                            <span @onclick="() =>GoToProuctPage(i.ProductID)"> <img src="@(path+Convert.ToBase64String(i.ProductPicture))" class="product-picture" alt="Product 1 "></span>
-                            <div class="product-name" @onclick="() =>GoToProuctPage(i.ProductID)">
-                                <h2>@i.ProductName <br /><p> <img class="coin" src="css/imags/coin.png"   style="top:80%;right:80%"/>@i.ProductPrice</p></h2>
+                                <span @onclick="() =>GoToProuctPage(i.ProductID)"> <img src="@(path+Convert.ToBase64String(i.ProductPicture))" class="product-picture" alt="Product 1 "></span>
+                                <div class="product-name" @onclick="() =>GoToProuctPage(i.ProductID)">
+                                    <h2>@i.ProductName <br /><p> <img class="coin" src="css/imags/coin.png" style="top:80%;right:80%" />@i.ProductPrice</p></h2>
+                                </div>
                             </div>
-                        </div>
+                        
+                        
                     }
                     if (Userservice.CurrentUser.IsAdmin)
                     {
                         <button class="button-3" role="button" @onclick="AddP" style="width"> add new product</button>
                     }
+                }
+                    
+                    
                     
                     
                 }
-            }
+            
 
-            <div style="position:relative;height:100px"></div>
-            <!-- Add more product entries as needed -->
-
-@*             <div class="navbar">
-                <img src="css/imags/bin.png" />
-                <img src="css/imags/bag.png" />
-                <img src="css/imags/user.png" />
-            </div> *@
         </div>
     </section>
 
@@ -171,6 +119,33 @@
     .button-3:active {
         background-color: #298e46;
         box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+    }
+
+    body {
+        margin: 0;
+        padding-top: 50px; /* Adjust this value to match the height of your header */
+        overflow-y: scroll;
+    }
+
+    .fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: black;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+    }
+
+    .content {
+        padding-top: 110px; /* Adjust this value to create space between header and content */
+    }
+
+    .product {
+        padding-top: 20px; /* Adjust this value as needed */
+        margin-bottom: 20px; /* Adjust this value as needed */
+        /* Add any additional styling for the product item */
     }
 </style>
 @code {

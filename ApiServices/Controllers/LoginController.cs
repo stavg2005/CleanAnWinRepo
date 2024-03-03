@@ -1,6 +1,8 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Model;
+using System.Diagnostics;
 
 namespace ApiServices.Controllers
 {
@@ -15,17 +17,18 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(string username, string password, string email, int location, int id)
+        public async Task<IActionResult> Register([FromBody] UsersDTO user)
         {
             try
             {
-                return Ok(UsersDTO.Register(username, password, email, location, id));
+                return Ok(await UsersDTO.Register(user));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Log the exception
+                Debug.WriteLine($"An error occurred: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the request.");
             }
-            
         }
 
         [HttpGet("GetUser")]
