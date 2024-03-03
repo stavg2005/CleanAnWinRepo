@@ -9,8 +9,8 @@ namespace Services
 {
     public static  class EmailService
     {
-        const string secretKey = "fe01bb0a4740800efe5c8a2222d1ab73";
-        const string APIKey = "b456ff97343d26ed7f83ca6d17b57ac4";
+        const string secretKey = "d9193d0bb43c542d132d6ad0bfd9321e";
+        const string APIKey = "330c93f7f9e505b53a33e40b184301a4";
         const string apiUrl = "https://api.mailjet.com/v3.1/send";
         
         public static async Task<bool> SendEmailAsync(string recipientEmail, string subject, string body)
@@ -30,7 +30,7 @@ namespace Services
                 {
                     From = new
                     {
-                        Email = "joshseventeen1771@gmail.com",
+                        Email = "cleanandwin05@gmail.com",
                         Name = "CleanAndWin"
                     },
                     To = new[]

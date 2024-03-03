@@ -177,7 +177,8 @@
             {
                  product = product + "," + p.ProductName;
             }
-            await EmailService.SendEmailAsync("stav200new@gmail.com", "order confermation", "thank you for purchasing" + product +"For "+sum+"coins");
+            await EmailService.SendEmailAsync(UserService.CurrentUser.Email
+                , "order confermation", "thank you for purchasing" + product + "For " + sum + "coins");
             NavManager.NavigateTo("afterpurchase");
         }
         else

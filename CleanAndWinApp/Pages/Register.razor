@@ -1,6 +1,7 @@
 ﻿ @page "/reg"
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
+@inject NavigationManager nav;
 @using Model;
  <head>
     <meta charset="UTF-8">
@@ -180,6 +181,7 @@
     public async Task Reg()
     {
         string r = await A.Register(Email, Password, UserName, location, id, m.ImageData);
+        nav.NavigateTo("/");
     }
     async Task GetDimensions()
     {
