@@ -3,16 +3,18 @@
 @inject AuthService AuthService
 @inject NavigationManager nav;
 @inject IJSRuntime JSRuntime
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
 @* <p>@AuthService.GetAuthToken()</p> *@
 <link rel="stylesheet" href="css/Proggress.css">
 <link rel="stylesheet" href="css/Store.css">
 @using Microsoft.JSInterop
 
-    
+ <div  style="filter: blur(@(blur)px);height:@(d.Height)px">
 
 @if(AuthService.IsUserAuthenticated)
 {
-    
+   
     if (Userservice.CurrentUser != null)
     {
 
@@ -38,13 +40,6 @@
                 <h1 style="margin-top:225px;position:fixed;margin-left:120px"> Level:∞</h1>
                 <button @onclick="Report" class="button-9" style="margin-top:430px;height:100px" role="button">Report Clean</button>
 
-
-
-
-
-                @*                 <div class="loader-wrapper" id="loader">
-    <div class="loader"></div>
-    </div> *@
             </div>
             }
             else
@@ -70,19 +65,22 @@
                 <h1 style="margin-top:175px;position:fixed;margin-left:120px"> Level:@level</h1>
                 <button @onclick="Report" class="button-9" style="margin-top:430px;height:100px" role="button">Report Clean</button>
 
-@*                 <div class="loader-wrapper" id="loader">
-                    <div class="loader"></div>
-                </div> *@
                 </div>
+
+
             }
 
-        <div class="navbar">
 
-            <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
-            <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
-            <img @onclick="GoSettings" src="css/imags/user.png" style="width:50px;height:50px" />
 
-        </div>
+           <div class="navbar">
+
+                <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
+                <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
+                <img @onclick ="ToggleSidebar" src="css/imags/user.png" style="width:50px;height:50px" />
+
+            </div> 
+
+
     }
    
 }
@@ -94,8 +92,19 @@ else
     nav.NavigateTo("/");
 }
 
+</div>
 
 
+@if (_sidebarVisible)
+{
+    <div class="sidebar " style="top:0px;position:fixed;right:-20px;height:@(d.Height)px">
+        <ul>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+}
 
 
 <!-- HTML !-->
@@ -110,6 +119,8 @@ else
 
     private int progressValue  { get; set; }
     int level { get; set; }
+
+    private int blur = 0;
     // JavaScript Interop to call the JavaScript function
     private async Task UpdateProgressBar(int value)
     {
@@ -156,11 +167,12 @@ else
             await InsertValuesToUserService();
             progressValue = GetLastDigit(Userservice.CurrentUser.xp) * 10;
             level = Userservice.CurrentUser.xp / 10;
+            await GetDimensions();
         }
 
 
     }
-    
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -201,6 +213,22 @@ else
         int lastDigit = number % 10;
 
         return lastDigit;
+    }
+
+
+    private bool _sidebarVisible = false;
+
+    private void ToggleSidebar()
+    {
+        _sidebarVisible = !_sidebarVisible;
+        blur = 5;
+    }
+
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
     }
 
 }

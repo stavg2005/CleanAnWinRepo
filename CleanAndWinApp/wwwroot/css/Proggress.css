@@ -47,17 +47,16 @@
 }
 
 .nav-bar {
-    margin: 0; /* Remove default margin to ensure the div reaches the edges of the viewport */
-    display: flex;
-    position:fixed;
-    justify-content: center; /* Center content horizontally */
-    align-items: flex-end;
-    width: 200px; /* Set the width of the rectangle */
-    height: 50px; /* Set the height of the rectangle */
-    border: 2px solid black; /* Set the border color and thickness */
-    background-color: transparent;
-    margin-top:640px;
-    margin-left:23px;
+    position: fixed;
+    bottom: 0;
+    left: 0; /* or adjust it as per your design */
+    width: 100%; /* make it full width */
+    height: 50px; /* Set the height of the navigation bar */
+    background-color: #333; /* Set the background color */
+    color: white; /* Set the text color */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
 }
 .button-9 {
     appearance: button;
@@ -131,4 +130,20 @@
 .content.hidden,
 .loader-wrapper.hidden {
     display: none;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+    .sidebar.hide {
+        transform: translateX(-200px);
+    }
+
+.content {
+    padding: 20px;
 }

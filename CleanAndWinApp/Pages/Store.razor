@@ -23,7 +23,7 @@
     <section class="content">
 
 
-        <div class="store-container">
+        <div class="store-container" style="z-index:11">
             @{
                 @if (Products.ProductList != null)
                 {
@@ -163,7 +163,7 @@
     byte[] ProductPicture { get; set; }
     protected override async Task OnInitializedAsync()
     {
-         
+        Products = Products;
         await GetDimensions();
         InsertProduct = false;
     }
