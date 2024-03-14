@@ -8,6 +8,9 @@
 @* <p>@AuthService.GetAuthToken()</p> *@
 <link rel="stylesheet" href="css/Proggress.css">
 <link rel="stylesheet" href="css/Store.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons CSS (if you're using Bootstrap Icons) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 @using Microsoft.JSInterop
 
  <div  style="filter: blur(@(blur)px);height:@(d.Height)px">
@@ -52,7 +55,7 @@
 
                 <img class="profile-pic" src="@path" />
                 <img style="left:0;width:50px;height:50px;position:absolute;top:5px" src="css/imags/shopping-cart.png" @onclick="GoCart"/>
-                <div class="progress-container" style="position:fixed;left:-80px;margin-top:20px">
+                <div class="progress-container" style="position:fixed;left:-100px;margin-top:20px">
                     <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
                         <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
                         <circle id="progress" cx="250" cy="250" r="150" stroke="#6db7c1" stroke-width="10" fill="transparent"></circle>
@@ -72,7 +75,7 @@
 
 
 
-           <div class="navbar">
+           <div class="navbar" style="margin-top:100px">
 
                 <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
                 <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
@@ -99,9 +102,32 @@ else
 {
     <div class="sidebar " style="top:0px;position:fixed;right:-20px;height:@(d.Height)px">
         <ul>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+
+
+            <li class="nav-item" style="font-size:50px;list-style-type:none"  @onclick="ToggleSidebar">
+          <a class="nav-link">
+           <i class="bi bi-justify" > </i>
+             </a>
+             </li>
+
+
+         <li class="nav-item" style="font-size:20px"  @onclick="GoSettings">
+          <a class="nav-link">
+           <i class="bi bi-person-circle" ></i> User Settings
+             </a>
+             </li>
+             <li class="nav-item" style="font-size:20px">
+               <a class="nav-link" href="#">
+                <i class="bi bi-cart"></i> Orders
+            </a>
+        </li>
+
+
+               <li class="nav-item" style="font-size:20px;">
+               <a class="nav-link" style="margin-top:600px;" href="#">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </li>
         </ul>
     </div>
 }
@@ -119,6 +145,8 @@ else
 
     private int progressValue  { get; set; }
     int level { get; set; }
+
+    static int count =0;
 
     private int blur = 0;
     // JavaScript Interop to call the JavaScript function
@@ -220,8 +248,15 @@ else
 
     private void ToggleSidebar()
     {
+         count++;
         _sidebarVisible = !_sidebarVisible;
-        blur = 5;
+        if(count %2==0 || count ==0){
+            blur =-1;
+        }
+        else{
+            blur = 5;
+        }
+       
     }
 
     async Task GetDimensions()

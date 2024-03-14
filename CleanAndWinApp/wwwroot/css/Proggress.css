@@ -52,7 +52,7 @@
     left: 0; /* or adjust it as per your design */
     width: 100%; /* make it full width */
     height: 50px; /* Set the height of the navigation bar */
-    background-color: #333; /* Set the background color */
+    background-color: white; /* Set the background color */
     color: white; /* Set the text color */
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center the content horizontally */
