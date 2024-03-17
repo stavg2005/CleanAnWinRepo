@@ -19,11 +19,14 @@ namespace Model
 
         public List<Product> products { get; set; }
 
+        public List<Order> orders { get; set; }
+
         public Byte[] profile { get; set; }
 
         public bool IsAdmin { get; set; }
 
-        public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin)
+        // constructor withouth  profile picture
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin, List<Order> orders)
         {
             this.UserName = UserName;
             Email = UserEmail;
@@ -33,9 +36,11 @@ namespace Model
             products = l;
             profile = null;
             IsAdmin = isadmin;
+            this.orders = orders;
         }
 
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin)
+        // constructor with everything
+        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin, List<Order> orders)
         {
             UserID = userID;
             this.UserName = UserName;
@@ -46,9 +51,12 @@ namespace Model
             products = l;
             this.profile = profile;
             IsAdmin = isadmin;
+            this.orders = orders;
         }
 
-        public Users(string UserEmail, int coins, string UserName, int xp, Locations location, byte[] profile, bool isadmin)
+
+        //constructor without UserID
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location, byte[] profile, bool isadmin, List<Order> orders)
         {
             this.UserName = UserName;
             Email = UserEmail;
@@ -58,9 +66,11 @@ namespace Model
             products = new List<Product>(); ;
             this.profile = profile;
             IsAdmin = isadmin;
+            this.orders = orders;
         }
 
-        public Users(int id ,string UserEmail,string UserName,Locations location)
+        //constructor for new user 
+        public Users(int id, string UserEmail, string UserName, Locations location)
         {
             UserID = id;
             UserName = UserName;
@@ -70,8 +80,10 @@ namespace Model
             this.coins = 0;
             products = new List<Product>();
             IsAdmin = false;
+            this.orders = new List<Order>(0);
         }
 
+       // constructor for temp user 
         public Users()
         {
 			UserID = -1;

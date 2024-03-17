@@ -77,14 +77,20 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        
+
         //AuthService.ClearAuthToken();
-        if (AuthService!=null &&AuthService.IsUserAuthenticated )
+        if (AuthService!=null &&AuthService.IsUserAuthenticated&& Userservice.CurrentUser!=null)
         {
 
             var products = await api.GetALLProducts();
             productservice.ProductList = products;
 
+
+            var Orders = await api.GetAllOrders(Userservice.CurrentUser.UserID);
+            if(Orders.Count != 0)
+            {
+                Userservice.CurrentUser.orders = Orders;
+            }
             Nav.NavigateTo("/main");
 
 

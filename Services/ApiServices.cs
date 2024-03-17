@@ -11,6 +11,8 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using DataLayer;
+using System.Drawing.Printing;
+using Services;
 
 namespace Services
 {
@@ -542,6 +544,36 @@ namespace Services
             {
                 return ($"An error occurred: {ex.Message}");
             }
+        }
+
+
+        public async Task<string> AddNewOrder(int UserID,int orderid , List<Product> P)
+        {
+            OrderRequestModel request = new OrderRequestModel(UserID, orderid, P);
+            try
+            {
+                string url = $"{Apiurl}/api/OrderControllercs/AddOrderToUse";
+                string Serilize = JsonSerializer.Serialize(request);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<OrderRequestModel>(url, request);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+
+        public async Task<List<Order>>GetAllOrders(int userid)
+        {
+
         }
     }
 

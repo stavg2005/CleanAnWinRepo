@@ -32,7 +32,7 @@ namespace DataLayer
             IsAdmin = isAdmin;
         }
 
-        public UsersDTO(string email, string password,  string username,int userLocation, byte[] profilePicture)
+        public UsersDTO(string email, string password, string username, int userLocation, byte[] profilePicture)
         {
             UserID = -1;
             Email = email;
@@ -50,43 +50,43 @@ namespace DataLayer
 
         }
 
-        public int UserID { get;set; }
-       public string Email {  get;set; }
-        public string Password { get;set; }
-        public int Coin { get;set; }
-        public string Username { get;set; }
-        public int Userxp { get;set; }
+        public int UserID { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public int Coin { get; set; }
+        public string Username { get; set; }
+        public int Userxp { get; set; }
         public int UserLocation { get; set; }
         public byte[] ProfilePicture { get; set; }
 
         public bool IsAdmin { get; set; }
-        
-           
-        
-        
-        public static async Task<List<Product>>GetCart(int id)
+
+
+
+
+        public static async Task<List<Product>> GetCart(int id)
         {
 
 
 
 
-				string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-				int userId = id; // Replace with the UserID you want to use.
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            int userId = id; // Replace with the UserID you want to use.
 
-				List<Product> productIds = new List<Product>();
+            List<Product> productIds = new List<Product>();
 
-				using (MySqlConnection connection = new MySqlConnection(connectionString))
-				{
-					connection.Open();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
 
-					string query = "SELECT P.ProductID " +
-								   "FROM Product P " +
-								   "JOIN Cart C ON P.ProductID = C.ProductID " +
-								   "WHERE C.UserID = @UserID";
+                string query = "SELECT P.ProductID " +
+                               "FROM Product P " +
+                               "JOIN Cart C ON P.ProductID = C.ProductID " +
+                               "WHERE C.UserID = @UserID";
 
-					using (MySqlCommand cmd = new MySqlCommand(query, connection))
-					{
-						cmd.Parameters.AddWithValue("@UserID", userId);
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
                     try
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
@@ -102,12 +102,12 @@ namespace DataLayer
                     {
                         Console.WriteLine(ex.Message);
                     }
-						
-					}
-				}
 
-				return productIds;
-			}
+                }
+            }
+
+            return productIds;
+        }
 
         public static async Task<string> Register(UsersDTO user)
         {
@@ -146,8 +146,8 @@ namespace DataLayer
             }
         }
 
-        public static async Task<Users> Login(string email,string password)
-		{
+        public static async Task<Users> Login(string email, string password)
+        {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             c.Open();
@@ -158,34 +158,34 @@ namespace DataLayer
                                 WHERE  (UserPassword = '{password}') AND
  				 (UserEmail = '{email}')";
             MySqlDataReader r = cmd.ExecuteReader();
-			Users ca = new Users() ;
+            Users ca = new Users();
             if (r.HasRows)
             {
                 await r.ReadAsync();
-				int id = r.GetInt32(0);
+                int id = r.GetInt32(0);
                 bool isadmin = false;
-                if(r.GetBoolean(8) == true)
+                if (r.GetBoolean(8) == true)
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))),await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
-                
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin,await OrderDTO.GetOrdersByUserId(id));
+
             }
-                return ca;
-            
+            return ca;
+
         }
 
-		public static async Task<string> GetProfilePhoto(int id)
-		{
-			string query = $"Select ProfilePicture From users Where UserID ={id}";
+        public static async Task<string> GetProfilePhoto(int id)
+        {
+            string query = $"Select ProfilePicture From users Where UserID ={id}";
 
-			using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
-			{
-				connection.Open();
-				var result = connection.QueryFirstOrDefault<byte[]>(query);
-				return $"\"{Convert.ToBase64String(result)}\"";
-			}
-		}
+            using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
+            {
+                connection.Open();
+                var result = connection.QueryFirstOrDefault<byte[]>(query);
+                return $"\"{Convert.ToBase64String(result)}\"";
+            }
+        }
         public static async Task<byte[]> GetProfilePhotoInByte(int id)
         {
             string query = $"Select ProfilePicture From users Where UserID ={id}";
@@ -199,7 +199,7 @@ namespace DataLayer
         }
 
         public static async Task<Users> GetUserByID(int id)
-		{
+        {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             c.Open();
@@ -218,13 +218,13 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, r.GetString(1),r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id),isadmin);
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id));
 
             }
             return ca;
         }
 
-        public static async Task<Tuple<int,int>>GetLevelAndPrecentage(int id)
+        public static async Task<Tuple<int, int>> GetLevelAndPrecentage(int id)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -232,28 +232,28 @@ namespace DataLayer
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = c;
             string query = $"Select UserXp From users WHERE UserID={id}";
-            cmd.CommandText = query ;
+            cmd.CommandText = query;
             int xp = 0;
             MySqlDataReader r = cmd.ExecuteReader();
             if (r.HasRows)
             {
                 r.Read();
                 xp = r.GetInt32(0);
-                
+
 
             }
             int level = xp / 10;
 
-            int precentage =await  GetLastDigit(level)*10;
-            return new Tuple<int,int>(level,precentage);
+            int precentage = await GetLastDigit(level) * 10;
+            return new Tuple<int, int>(level, precentage);
         }
 
-        private  static async Task<int> GetLastDigit(int number)
+        private static async Task<int> GetLastDigit(int number)
         {
             // Ensure the input is a non-negative integer
             if (number < 0)
             {
-                throw new   ArgumentException("Input must be a non-negative integer", nameof(number));
+                throw new ArgumentException("Input must be a non-negative integer", nameof(number));
             }
 
             // Extract the last digit
@@ -262,7 +262,7 @@ namespace DataLayer
             return lastDigit;
         }
 
-        public static async Task UpdatePassword(int id,string password)
+        public static async Task UpdatePassword(int id, string password)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -270,11 +270,11 @@ namespace DataLayer
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = c;
             string query = $"UPDATE users SET UserPassword = '{password}' where UserID={id};";
-            cmd.CommandText= query ;
+            cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task UpdateUserName(int id,string UserName)
+        public static async Task UpdateUserName(int id, string UserName)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -286,7 +286,7 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task UpdateUserEmail(int id,string UserEmail)
+        public static async Task UpdateUserEmail(int id, string UserEmail)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -297,7 +297,7 @@ namespace DataLayer
             cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }
-        public static async Task UpdateUserCoin(int id,int Coin)
+        public static async Task UpdateUserCoin(int id, int Coin)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -321,8 +321,8 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        
-        public static async Task DeleteProductFromUserCart(int Userid , int productid)
+
+        public static async Task DeleteProductFromUserCart(int Userid, int productid)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -333,5 +333,67 @@ namespace DataLayer
             cmd.CommandText = query;
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public static async Task AddNewOrder(int OrderID,int Userid, List<Product> products, DateTime Date)
+        {
+
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                string sqlQuery = $"Insert Into order (OrderDate,UserID) Values ({Date},{Userid});";
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                    {
+
+                        connection.Open();
+                        command.CommandText = sqlQuery;
+                        int i =command.ExecuteNonQuery();
+                        if(i > 0)
+                        {
+                            await AddProductsToOrder(OrderID,products,Userid);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+            }
+        }
+
+
+        private static async Task AddProductsToOrder(int OrderID, List<Product> products, int UserID)
+        {
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                foreach (Product p in products)
+                {
+                    string sqlQuery = $"Insert Into order_Products (OrderDate,ProductID,UserID) Values ({OrderID},{p.ProductID},{UserID});";
+
+                    try
+                    {
+                        using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                        {
+
+                            connection.Open();
+                            command.CommandText = sqlQuery;
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+
+
+            }
+        }
     }
 }
+
+
