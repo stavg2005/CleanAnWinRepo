@@ -5,14 +5,16 @@ using System.Net.Http;
 
 namespace ApiServices.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class TrashCanController : ControllerBase
     {
         [HttpPost ("ReportClean")]
-        public async Task<IActionResult> ReportClean(int userid, int weight, int trashcanid)
+        public async Task<IActionResult> ReportClean([FromBody] ReportClean r)
         {
             try
             {
-                await (TrashCanDTO.ReportClean(userid, weight, trashcanid));
+                await (TrashCanDTO.ReportClean(r.Userid, r.weight, r.TrashCanId));
                 return Ok("ReportClean operation completed successfully.");
             }
             catch (Exception ex)

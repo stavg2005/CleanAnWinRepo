@@ -41,7 +41,7 @@
                 <!-- Product Pricing -->
                 <div class="product-price" >
                     <span>@p.ProductPrice</span>
-                    <a href="#" class="cart-btn" @onclick="AddToCart" >Add to cart</a>
+                    <a  class="cart-btn" @onclick="AddToCart" >Add to cart</a>
                 </div>
             </div>
         </main>
@@ -129,14 +129,10 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                var imaget = new ImageModel
-                    {
-                        FileName = e.File.Name,
-                        ImageData = imageData
-                    };
+ 
                 path = path + Convert.ToBase64String(imageData);
 
-                ProductPicture = imaget.ImageData;
+                ProductPicture = imageData;
             }
         }
     }

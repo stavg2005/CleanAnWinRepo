@@ -1,0 +1,42 @@
+﻿
+@inject NavigationManager NavManager;
+@inject UserService Userservice
+@using Model;
+@page "/afterclean/{weight}"
+<link rel="stylesheet" href="css/AfterClean.css">
+<body>
+    <div class="container">
+        <h1>Thank You for Cleaning the Environment!</h1>
+        <p>You have been awarded <strong>@coins coins</strong> for cleaning <strong>@Weight kg</strong> of trash</p>
+        <div style="text-align: center;">
+            <a href="#" class="btn">Go Back</a>
+        </div>
+    </div>
+</body>
+@code {
+
+    [Parameter]
+    public string Weight { get; set; }
+
+    int coins { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavManager.Uri);
+        var queryString = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        if (queryString.AllKeys.Contains("weight"))
+        {
+            Weight = (queryString["weight"]);
+        }
+
+        int IntWeight = int.Parse(Weight);
+        Users copy = new Users(Userservice.CurrentUser);
+        copy.coins = Userservice.CurrentUser.coins + IntWeight * 100;
+        coins = IntWeight * 100;
+        copy.xp = Userservice.CurrentUser.xp + IntWeight * 15;
+        ApiServices a = new ApiServices();
+        await a.UpdateUser(copy);
+
+
+    }
+
+}

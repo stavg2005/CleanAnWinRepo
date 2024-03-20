@@ -167,18 +167,21 @@
     private async Task Pay()
     {
         int sum = Getsum();
+
         if (UserService.CurrentUser.coins > sum)
         {
             int pay = UserService.CurrentUser.coins - sum;
             Response = await a.UpdateUserCoin(UserService.CurrentUser.UserID, pay);
+            await a.AddNewOrder(UserService.CurrentUser.UserID, UserService.CurrentUser.products);
             await a.DeleteUserCart(UserService.CurrentUser.UserID);
             string product = "";
             foreach (Product p in UserService.CurrentUser.products)
             {
                  product = product + "," + p.ProductName;
             }
-            await EmailService.SendEmailAsync(UserService.CurrentUser.Email
-                , "order confermation", "thank you for purchasing" + product + "For " + sum + "coins");
+            // await EmailService.SendEmailAsync(UserService.CurrentUser.Email
+            //     , "order confermation", "thank you for purchasing" + product + "For " + sum + "coins");
+           
             NavManager.NavigateTo("afterpurchase");
         }
         else

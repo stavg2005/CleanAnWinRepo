@@ -14,7 +14,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await UsersDTO.AddNewOrder(orderRequest.OrderID, orderRequest.UserID, orderRequest.Products, DateTime.Now);
+                await UsersDTO.AddNewOrder(orderRequest.UserID, orderRequest.Products, DateTime.Now);
                 return Ok("Added Order Successfully");
             }
             catch (Exception ex)

@@ -14,6 +14,7 @@ namespace Model
 			ProductName = null;
 			ProductDescription =null;
 			ProductPrice = -1;
+            LevelReq = 0;
 		}
 
         public Product(int productID, string productName, string productDescription, int productPrice, byte[] productPicture)
@@ -23,6 +24,16 @@ namespace Model
             ProductDescription = productDescription;
             ProductPrice = productPrice;
             ProductPicture = productPicture;
+            LevelReq = 0;
+        }
+        public Product(int productID, string productName, string productDescription, int productPrice, byte[] productPicture,int LevelReq)
+        {
+            ProductID = productID;
+            ProductName = productName;
+            ProductDescription = productDescription;
+            ProductPrice = productPrice;
+            ProductPicture = productPicture;
+            this.LevelReq = LevelReq;
         }
 
         public int GetPrice()
@@ -35,6 +46,7 @@ namespace Model
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
         public int ProductPrice { get; set; }
+        public int LevelReq { get; set; }
         public byte[] ProductPicture {  get; set; }
 
     }

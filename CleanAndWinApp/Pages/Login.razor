@@ -82,8 +82,8 @@
         if (AuthService!=null &&AuthService.IsUserAuthenticated)
         {
 
-            // var products = await api.GetALLProducts();
-            productservice.ProductList = new List<Product>(0);
+            var products = await api.GetALLProducts();
+            productservice.ProductList = products;
 
 
             

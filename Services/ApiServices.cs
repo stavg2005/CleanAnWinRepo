@@ -13,6 +13,7 @@ using System.Drawing;
 using DataLayer;
 using System.Drawing.Printing;
 using Services;
+using Org.BouncyCastle.Asn1.Crmf;
 
 namespace Services
 {
@@ -20,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -149,9 +150,9 @@ namespace Services
                     JsonSerializer.Serialize(r);
                 Console.WriteLine(s);
                 HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                string apiurl = $"http://{Apiurl}:5087/ReportClean?userid={userid}&weight={Weight}&trashcanid={trashcanid}";
+                string apiurl = $"{Apiurl}/api/TrashCan/ReportClean";
 
-                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<ReportClean>(apiurl, r);
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -189,6 +190,31 @@ namespace Services
             }
         }
 
+        public async Task<string> UpdateUser(Users u)
+        {
+            try
+            {
+                string api = $"{Apiurl}/api/Login/UpdateUser";
+                UsersDTO U = new UsersDTO(u);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<UsersDTO>(api, U);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("PUT request successful!");
+
+                }
+                else
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    return ($"PUT request failed with status code: {response.StatusCode} and contect {content}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+
+
+            }
+        }
         public async Task<string> UpdatePassword(int id, string password)
         {
             try
@@ -218,57 +244,8 @@ namespace Services
 
             }
         }
-        public async Task<string> UpdateUserName(int id, string username)
-        {
-            try
-            {
-                string s = JsonSerializer.Serialize(username);
-
-                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                string apiurl = $"{Apiurl}/api/Login/UpdateUserName?id={id}&username={username}";
-
-                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-               
-                if (response.IsSuccessStatusCode)
-                {
-                    return ("POST request successful!");
-                }
-                else
-                {
-                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"An error occurred: {ex.Message}");
-            }
-        }
-
-        public async Task<string> UpdateUserEmail(int id,string useremail)
-        {
-            try
-            {
-                string s = JsonSerializer.Serialize(useremail);
-
-                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                string apiurl = $"{Apiurl}/api/Login/UpdateEmail?id={id}&useremail={useremail}";
-
-                HttpResponseMessage response = await _httpClient.PostAsync(apiurl, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return ("POST request successful!");
-                }
-                else
-                {
-                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"An error occurred: {ex.Message}");
-            }
-        }
+        
+        
 
         public async Task<string> UploadImageToApi(int userId, byte[] imageData)
         {
@@ -547,12 +524,12 @@ namespace Services
         }
 
 
-        public async Task<string> AddNewOrder(int UserID,int orderid , List<Product> P)
+        public async Task<string> AddNewOrder(int UserID , List<Product> P)
         {
-            OrderRequestModel request = new OrderRequestModel(UserID, orderid, P);
+            OrderRequestModel request = new OrderRequestModel(UserID, P);
             try
             {
-                string url = $"{Apiurl}/api/OrderControllercs/AddOrderToUse";
+                string url = $"{Apiurl}/api/Order/AddOrderToUser";
                 string Serilize = JsonSerializer.Serialize(request);
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<OrderRequestModel>(url, request);
                 if (response.IsSuccessStatusCode)

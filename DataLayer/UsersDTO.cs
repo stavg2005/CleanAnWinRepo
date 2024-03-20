@@ -45,11 +45,23 @@ namespace DataLayer
             IsAdmin = false;
         }
 
+        public UsersDTO(Users U)
+        {
+            UserID = U.UserID;
+            Email = U.Email;
+            Coin = U.coins;
+            Username = U.UserName;
+            Password = "";
+            Userxp = U.xp;
+            UserLocation = U.location.ID;
+            ProfilePicture = U.profile;
+            IsAdmin = U.IsAdmin;
+        }
+
         public UsersDTO()
         {
 
         }
-
         public int UserID { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
@@ -168,7 +180,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin,await OrderDTO.GetOrdersByUserId(id));
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin,await OrderDTO.GetOrdersByUserId(id),await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -218,7 +230,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id));
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id),await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -262,6 +274,38 @@ namespace DataLayer
             return lastDigit;
         }
 
+        public static async Task UpdateUser(UsersDTO u)
+        {
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+                
+                string update  = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture, IsAdmin = @IsAdmin WHERE UserID = { u.UserID }; ";
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                    {
+                        UpdateUserCommand.Parameters.AddWithValue("@UserEmail",u.Email);
+                        UpdateUserCommand.Parameters.AddWithValue("@Usercoin", u.Coin);
+                        UpdateUserCommand.Parameters.AddWithValue("@UserName", u.Username);
+                        UpdateUserCommand.Parameters.AddWithValue("@Userxp", u.Userxp);
+                        UpdateUserCommand.Parameters.AddWithValue("@UserLocation", u.UserLocation);
+                        UpdateUserCommand.Parameters.AddWithValue("@ProfilePicture", u.ProfilePicture);
+                        UpdateUserCommand.Parameters.AddWithValue("@IsAdmin", u.IsAdmin);
+
+                        await UpdateUserCommand.ExecuteNonQueryAsync();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
         public static async Task UpdatePassword(int id, string password)
         {
             MySqlConnection c = new MySqlConnection();
@@ -274,40 +318,7 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task UpdateUserName(int id, string UserName)
-        {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"UPDATE users SET UserName = '{UserName}' where UserID={id};";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-        public static async Task UpdateUserEmail(int id, string UserEmail)
-        {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"UPDATE users SET UserEmail = '{UserEmail}' where UserID={id};";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
-        public static async Task UpdateUserCoin(int id, int Coin)
-        {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"UPDATE users SET UserCoin = '{Coin}' where UserID={id};";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
+        
 
         public static async Task DeleteCart(int Userid)
         {
@@ -334,64 +345,78 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task AddNewOrder(int OrderID,int Userid, List<Product> products, DateTime Date)
+        public static async Task AddNewOrder(int UserID, List<Product> products, DateTime Date)
         {
 
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
-                string sqlQuery = $"Insert Into order (OrderDate,UserID) Values ({Date},{Userid});";
+                // Step 1: Insert a new order into the "order" table
+                string insertOrderQuery = $"INSERT INTO `order` (OrderDate, UserID) VALUES (@Date, @UserID);";
 
                 try
                 {
-                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
-                    {
+                    await connection.OpenAsync();
 
-                        connection.Open();
-                        command.CommandText = sqlQuery;
-                        int i =command.ExecuteNonQuery();
-                        if(i > 0)
-                        {
-                            await AddProductsToOrder(OrderID,products,Userid);
-                        }
+                    using (MySqlCommand insertOrderCommand = new MySqlCommand(insertOrderQuery, connection))
+                    {
+                        insertOrderCommand.Parameters.AddWithValue("@Date", Date);
+                        insertOrderCommand.Parameters.AddWithValue("@UserID", UserID);
+
+                        await insertOrderCommand.ExecuteNonQueryAsync();
                     }
+
+                    // Step 2: Retrieve the auto-generated OrderID after insertion
+                    string getLastInsertedIdQuery = "SELECT LAST_INSERT_ID();";
+                    ulong lastInsertedOrderId;
+
+                    using (MySqlCommand getLastInsertedIdCommand = new MySqlCommand(getLastInsertedIdQuery, connection))
+                    {
+                        lastInsertedOrderId = (ulong)await getLastInsertedIdCommand.ExecuteScalarAsync();
+                    }
+
+                    // Step 3: Use the retrieved OrderID to insert records into the "order_product" table
+                    await AddProductsToOrder((int)lastInsertedOrderId, products,UserID);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
                 }
-
             }
         }
 
 
         private static async Task AddProductsToOrder(int OrderID, List<Product> products, int UserID)
         {
+
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            int q = 1;
+            try
             {
-                foreach (Product p in products)
+                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
                 {
-                    string sqlQuery = $"Insert Into order_Products (OrderDate,ProductID,UserID) Values ({OrderID},{p.ProductID},{UserID});";
+                    await connection.OpenAsync();
 
-                    try
+                    foreach (Product product in products)
                     {
-                        using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
-                        {
+                        string insertProductQuery = $"INSERT INTO order_product (Order_ID, ProductID,quantity) VALUES (@OrderID, @ProductID,@q);";
 
-                            connection.Open();
-                            command.CommandText = sqlQuery;
-                            command.ExecuteNonQuery();
+                        using (MySqlCommand insertProductCommand = new MySqlCommand(insertProductQuery, connection))
+                        {
+                            insertProductCommand.Parameters.AddWithValue("@OrderID", OrderID);
+                            insertProductCommand.Parameters.AddWithValue("@ProductID", product.ProductID);
+                            insertProductCommand.Parameters.AddWithValue("@q", q);
+
+                            await insertProductCommand.ExecuteNonQueryAsync();
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
                 }
-
-
             }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+           
         }
     }
 }

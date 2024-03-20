@@ -3,6 +3,7 @@
 @inject Data.BrowserDimension d;
 @inject NavigationManager nav;
 @using Model;
+@using DataLayer;
 @using Services
  <head>
     <meta charset="UTF-8">
@@ -151,12 +152,12 @@
     private string Email { get; set; }
     private int location { get; set; }
     private int id { get; set; }
+    byte[] profilepic { get; set; }
     int n;
     bool b = false;
     ApiServices A = new ApiServices();
     private const string ApiBaseUrl = "http://10.0.0.27:5087";
     List<Locations> list;
-    ImageModel m =new ImageModel();
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -178,8 +179,7 @@
     public async Task Reg()
     {
         string g = "hi";
-        string r = await A.Register(Email, Password, UserName, location, m.ImageData);
-        r = r;
+        string r = await A.Register(Email, Password, UserName, location, profilepic);
         nav.NavigateTo("/");
     }
     async Task GetDimensions()
@@ -200,8 +200,8 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                m.FileName = e.File.Name;
-                m.ImageData = imageData;
+                ;
+                profilepic = imageData;
 
 
 

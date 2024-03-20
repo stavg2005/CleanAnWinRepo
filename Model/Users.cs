@@ -25,6 +25,8 @@ namespace Model
 
         public bool IsAdmin { get; set; }
 
+        public List<ReportClean> reportCleans { get; set; }  
+
         // constructor withouth  profile picture
         public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin, List<Order> orders)
         {
@@ -40,7 +42,7 @@ namespace Model
         }
 
         // constructor with everything
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin, List<Order> orders)
+        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin, List<Order> orders, List<ReportClean> reportClean)
         {
             UserID = userID;
             this.UserName = UserName;
@@ -52,6 +54,7 @@ namespace Model
             this.profile = profile;
             IsAdmin = isadmin;
             this.orders = orders;
+            this.reportCleans = reportClean;
         }
 
 
@@ -69,18 +72,21 @@ namespace Model
             this.orders = orders;
         }
 
+        
+
         //constructor for new user 
         public Users(int id, string UserEmail, string UserName, Locations location)
         {
             UserID = id;
-            UserName = UserName;
+            this.UserName = UserName;
             Email = UserEmail;
-            location = location;
+            this.location = location;
             this.xp = 0;
             this.coins = 0;
             products = new List<Product>();
             IsAdmin = false;
             this.orders = new List<Order>(0);
+            reportCleans = new List<ReportClean>();
         }
 
        // constructor for temp user 
@@ -95,6 +101,22 @@ namespace Model
             products = null;
             IsAdmin = false;
 		}
+
+        //constructor for copying exsisting user
+        public Users(Users u)
+        {
+            UserID = u.UserID;
+            UserName = u.UserName;
+            Email = u.Email;
+            location = u.location;
+            this.xp = u.xp;
+            this.coins = u.coins;
+            this.products = u.products;
+            this.profile = u.profile;
+            this.orders = u.orders;
+            this.IsAdmin = u.IsAdmin;
+
+        }
 
         public void Dispose()
         {

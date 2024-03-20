@@ -1,10 +1,25 @@
 ﻿@page "/report"
 @using Model;
 @using Services
-<input @bind-value="weight" /> weight
-<input  @bind-value="userid"/>user
-<input @bind-value="trashcanid" />trash
-<button @onclick="Click "></button>
+@inject UserService Userservice
+@inject NavigationManager NavManager;
+<link rel="stylesheet" href="css/report.css">
+<body>
+
+    <div class="container">
+        <h1>Dev Testing, Pre Electronics</h1>
+        <div class="input-field">
+            <label for="weight">Weight:</label>
+            <input @bind-value="weight" type="text" id="weight" name="weight" placeholder="Enter weight...">
+        </div>
+        <div class="input-field">
+            <label for="trashcan-id">Trash Can ID:</label>
+            <input @bind-value="trashcanid" type="text" id="trashcan-id" name="trashcan-id" placeholder="Enter trash can ID...">
+        </div>
+        <button @onclick="Click" class="btn">Submit</button>
+    </div>
+
+</body>
 <p  style="font-size:12px;margin-top:50px;">@error</p>
 
 @code {
@@ -15,7 +30,8 @@
     ApiServices a = new ApiServices();
     public async Task Click()
     {
-        error= await a.ReportClean(weight, userid, trashcanid);
+        error= await a.ReportClean(weight, Userservice.CurrentUser.UserID, trashcanid);
+        NavManager.NavigateTo($"afterclean/{weight.ToString()}");
     }
 
 }

@@ -1,0 +1,32 @@
+﻿
+@page "/reports"
+
+@inject UserService Userservice
+@inject AuthService AuthService
+@inject NavigationManager nav;
+<link rel="stylesheet" href="css/orders.css">
+
+<body style="overflow-y:scroll">
+    <div class="container">
+        <h1>Orders Information</h1>
+        <ul class="orders-list">
+            @{
+                foreach (ReportClean c in Userservice.CurrentUser.reportCleans)
+                {
+                    <li class="order">
+                        <div class="order-info">
+                            <span class="order-id">@c.ReportID</span>
+                            <span class="order-date">Date: @c.date.ToString();</span>
+                        </div>
+                        <span class="order-amount"></span>
+                        
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</body>
+
+@code {
+
+}

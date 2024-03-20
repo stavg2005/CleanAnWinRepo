@@ -38,17 +38,24 @@ namespace DataLayer
 
         public static async Task ReportClean(int userid,int weight,int trashcanID)
         {
+            try
+            {
+                DateTime now = DateTime.Now;
+                string formattedDate = now.ToString("yyyy-MM-dd HH:mm:ss"); ;
+                string q = $"Insert into clean_report (UserID,TrashCanID,Weight,Date) values ('{userid}','{trashcanID}','{weight}','{formattedDate}')";
+                MySqlConnection c = new MySqlConnection();
+                c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                c.Open();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = c;
+                cmd.CommandText = q;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
-            DateTime now = DateTime.Now;
-             string formattedDate = now.ToString("yyyy-MM-dd HH:mm:ss"); ;
-            string q= $"Insert into clean_report (UserID,TrashCanID,Weight,Date) values ('{userid}','{trashcanID}','{weight}','{formattedDate}')";
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            cmd.CommandText = q;
-            await cmd.ExecuteNonQueryAsync();
         }
 
 		private static string GetLatByPK(int id)

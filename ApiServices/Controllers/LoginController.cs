@@ -52,12 +52,12 @@ namespace ApiServices.Controllers
             }
         }
 
-        [HttpPost("UpdateUserName")]
-        public async Task<IActionResult> UpdateUserName(int id, string username)
+        [HttpPost("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UsersDTO u)
         {
             try
             {
-                await (UsersDTO.UpdateUserName(id, username));
+                await (UsersDTO.UpdateUser(u));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)
@@ -66,35 +66,49 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        //[HttpPost("UpdateUserName")]
+        //public async Task<IActionResult> UpdateUserName(int id, string username)
+        //{
+        //    try
+        //    {
+        //        await (UsersDTO.UpdateUserName(id, username));
+        //        return Ok("operation completed successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception or handle it as needed
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
-        [HttpPost("UpdateEmail")]
+        //[HttpPost("UpdateEmail")]
 
-        public async Task<IActionResult> UpdateUserEmail(int id, string username)
-        {
-            try
-            {
-                await (UsersDTO.UpdateUserEmail(id, username));
-                return Ok("operation completed successfully.");
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it as needed
-                return StatusCode(500, ex.Message);
-            }
-        }
-        [HttpPost("UpdateUserCoin")]
-        public async Task<IActionResult> UpdateUserCoin(int id , int coin)
-        {
-            try
-            {
-                await UsersDTO.UpdateUserCoin(id, coin);
-                return Ok("Payment successfull");
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500,ex.Message);
-            }
-        }
+        //public async Task<IActionResult> UpdateUserEmail(int id, string username)
+        //{
+        //    try
+        //    {
+        //        await (UsersDTO.UpdateUserEmail(id, username));
+        //        return Ok("operation completed successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception or handle it as needed
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+        //[HttpPost("UpdateUserCoin")]
+        //public async Task<IActionResult> UpdateUserCoin(int id , int coin)
+        //{
+        //    try
+        //    {
+        //        await UsersDTO.UpdateUserCoin(id, coin);
+        //        return Ok("Payment successfull");
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return StatusCode(500,ex.Message);
+        //    }
+        //}
 
         [HttpPost("DeleteUserCart")]
 

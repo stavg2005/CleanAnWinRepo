@@ -1,5 +1,6 @@
 ﻿@page "/setting"
 @using Model;
+@using DataLayer;
 @inject NavigationManager NavManager;
 @inject UserService Userservice
 @inject AuthService AuthService
@@ -73,6 +74,7 @@
     string password = "";
     string UserName= "";
     string Email = "";
+    byte[] profilepic { get; set; }
     public int Height { get; set; }
     public int Width { get; set; }
     string path = "data:image/png;base64,";
@@ -85,7 +87,6 @@
     bool Updatedphoto = false;
 
     ApiServices a = new ApiServices();
-    ImageModel image = new ImageModel();
     private const string ApiBaseUrl = "http://192.168.1.64:5087";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -106,20 +107,25 @@
 
     private async Task SaveChanges()
     {
+        Users copy = new Users(Userservice.CurrentUser);
         if (Updatedphoto)
-            error = await a.UploadImageToApi(Userservice.CurrentUser.UserID, image.ImageData);
-        if (UserName != " ")
         {
-            await a.UpdateUserName(Userservice.CurrentUser.UserID,UserName);
+            copy.profile= profilepic;
+        }
+        if (UserName != "")
+        {
+            copy.UserName = UserName;
         }
         if(Email != "")
         {
-            await a.UpdateUserEmail(Userservice.CurrentUser.UserID, Email);
+            copy.Email = Email;
         }
         if(password != "")
         {
             await a.UpdatePassword(Userservice.CurrentUser.UserID, password);
         }
+        await a.UpdateUser(copy);
+
         Logout();
 
 
@@ -137,14 +143,11 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                var imaget = new ImageModel
-                    {
-                        FileName = e.File.Name,
-                        ImageData = imageData
-                    };
+                
                 path = path + Convert.ToBase64String(imageData);
 
-                image = imaget;
+               
+                profilepic = imageData;
             }
         }
     }
@@ -162,17 +165,7 @@
 
     }
 
-    private async Task UpdatatePassword()
-    {
-        error =await a.UpdatePassword(Userservice.CurrentUser.UserID, password);
-        Logout();
 
-    }
-    private async Task UpdateUserName()
-    {
-        error = await a.UpdateUserName(Userservice.CurrentUser.UserID, UserName);
-        Logout();
-    }
 
     private async Task<string> GetUserImage()
     {

@@ -26,7 +26,7 @@
             <div>
                 <div class="centered-div">Hello Admin</div>
 
-                 <button @onclick="Logout">Log Out</button> 
+                 
 
 
                 <img class="profile-pic" src="@path" />
@@ -50,7 +50,7 @@
             <div>
                 <div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
 
-                 <button @onclick="Logout">Log Out</button> 
+                 
 
 
                 <img class="profile-pic" src="@path" />
@@ -121,6 +121,11 @@ else
                     <i class="bi bi-cart"></i> orders
                 </a>
             </li>
+            <li class="nav-item" style="font-size:20px" @onclick="GoReports">
+                <a class="nav-link">
+                    <i class="bi bi-pass"></i> Reports
+                </a>
+            </li>
 
 
 
@@ -181,6 +186,10 @@ else
     private void GoOrders()
     {
         nav.NavigateTo("/testing");
+    }
+    private void GoReports()
+    {
+        nav.NavigateTo("reports");
     }
 
     private void GoProductControl()

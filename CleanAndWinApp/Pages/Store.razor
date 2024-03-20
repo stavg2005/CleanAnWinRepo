@@ -60,7 +60,7 @@
 
         <div class="navbar">
             <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
-            <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
+            <img @onclick="GoMain" src="css/imags/home.png" style="width:50px;height:50px" />
             <img @onclick="GoSettings" src="css/imags/user.png" style="width:50px;height:50px" />
         </div>
     </footer>
@@ -174,7 +174,7 @@
     }
     private void GoMain()
     {
-        nav.NavigateTo("/reg");
+        nav.NavigateTo("/main");
     }
     private void Gomap()
     {
@@ -237,14 +237,10 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                var imaget = new ImageModel
-                    {
-                        FileName = e.File.Name,
-                        ImageData = imageData
-                    };
+
                 Productpath = Productpath + Convert.ToBase64String(imageData);
 
-                ProductPicture = imaget.ImageData;
+                ProductPicture = imageData;
             }
         }
     }

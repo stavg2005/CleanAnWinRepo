@@ -31,13 +31,9 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                var image = new ImageModel
-                    {
-                        FileName = e.File.Name,
-                        ImageData = imageData
-                    };
 
-                error = await UploadImageToApi(2, image.ImageData);
+
+                error = await UploadImageToApi(2, imageData);
                 
             }
         }
