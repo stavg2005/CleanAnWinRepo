@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Model;
 using MySqlConnector;
 using Dapper;
+using System.Linq.Expressions;
 
 namespace DataLayer
 {
@@ -32,36 +33,45 @@ namespace DataLayer
         private static async Task<List<Product>> GetAllPorudctFromOrder(int orderID)
         {
             List<Product> productList = new List<Product>();
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                string sqlQuery = "SELECT p.ProductID, p.ProductName, p.ProductDesc, p.ProductPrice " +
-                                  "FROM Products p " +
-                                  "INNER JOIN Order_product o ON p.ProductID = o.ProductID " +
-                                  "WHERE o.Order_ID = @OrderId";
+                
+                string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
 
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    command.Parameters.AddWithValue("@OrderId", orderID);
-                    connection.Open();
-                    MySqlDataReader reader = command.ExecuteReader();
+                    string sqlQuery = "SELECT p.ProductID, p.ProductName, p.ProductDes, p.ProductPrice " +
+                                      "FROM Product p " +
+                                      "INNER JOIN Order_product o ON p.ProductID = o.ProductID " +
+                                      "WHERE o.Order_ID = @OrderId";
 
-                    while (reader.Read())
+                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
                     {
-                        Product product = new Product
+                        command.Parameters.AddWithValue("@OrderId", orderID);
+                        connection.Open();
+                        MySqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
                         {
-                            ProductID = Convert.ToInt32(reader["ProductID"]),
-                            ProductName = Convert.ToString(reader["ProductName"]),
-                            ProductDescription = Convert.ToString(reader["ProductDesc"]),
-                            ProductPrice = Convert.ToInt32(reader["ProductPrice"])
-                        };
+                            Product product = new Product
+                            {
+                                ProductID = Convert.ToInt32(reader["ProductID"]),
+                                ProductName = Convert.ToString(reader["ProductName"]),
+                                ProductDescription = Convert.ToString(reader["ProductDes"]),
+                                ProductPrice = Convert.ToInt32(reader["ProductPrice"])
+                            };
 
-                        productList.Add(product);
+                            productList.Add(product);
+                        }
+
+                        reader.Close();
                     }
-
-                    reader.Close();
                 }
+               
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             return productList;
@@ -72,34 +82,43 @@ namespace DataLayer
         {
             List<Order> orderList = new List<Order>();
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                string sqlQuery = "SELECT OrderID, UserID, OrderDate FROM Orders WHERE UserID = @UserId";
-
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    command.Parameters.AddWithValue("@UserId", userId);
-                    connection.Open();
-                    MySqlDataReader reader = command.ExecuteReader();
+                    string sqlQuery = "SELECT OrderID, UserID, OrderDate FROM `Order` WHERE UserID = @UserId";
 
-                    while (reader.Read())
+                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
                     {
-                        Order order = new Order
+                        command.Parameters.AddWithValue("@UserId", userId);
+                        connection.Open();
+                        MySqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
                         {
-                            OrderID = Convert.ToInt32(reader["OrderID"]),
-                            UserID = Convert.ToInt32(reader["UserID"]),
-                            Date = (Convert.ToDateTime(reader["OrderDate"])).ToString(),
-                            Products = await GetAllPorudctFromOrder(Convert.ToInt32(reader["OrderID"]))
-                        };
+                            Order order = new Order
+                            {
+                                OrderID = Convert.ToInt32(reader["OrderID"]),
+                                UserID = Convert.ToInt32(reader["UserID"]),
+                                Date = (Convert.ToDateTime(reader["OrderDate"])).ToString(),
+                                Products = await GetAllPorudctFromOrder(Convert.ToInt32(reader["OrderID"]))
+                            };
 
-                        orderList.Add(order);
+                            orderList.Add(order);
+                        }
+
+                        reader.Close();
                     }
-
-                    reader.Close();
                 }
-            }
 
-            return orderList;
+                return orderList;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Order>();
+            }
+           
         }
 
     }

@@ -1,6 +1,21 @@
-﻿@page "/orders"
+﻿<h3>Orders</h3>
+@inject UserService Userservice
+@inject AuthService AuthService
+@inject NavigationManager nav;
+@using Model;
 
-
+@{
+    foreach(Order o in Userservice.CurrentUser.orders)
+    {
+        <p>@o.OrderID</p>
+        <p>@o.Date.ToString()</p>
+        foreach (Product p in o.Products)
+        {
+            <p>@p.ProductName</p>
+        }
+    }
+}
+@page "/testing"
 @code {
 
 }

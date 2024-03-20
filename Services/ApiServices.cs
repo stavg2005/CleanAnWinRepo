@@ -571,9 +571,18 @@ namespace Services
         }
 
 
-        public async Task<List<Order>>GetAllOrders(int userid)
+        public async Task<List<Order>> GetAllOrders(int userid)
         {
-
+            try
+            {
+                string url = $"{Apiurl}/api/Order/GetAllOrders?userid={userid}";
+                List<Order> l = await _httpClient.GetFromJsonAsync<List<Order>>(url);
+                return l;
+            }
+            catch (Exception ex)
+            {
+                return (new List<Order>(0));
+            }
         }
     }
 

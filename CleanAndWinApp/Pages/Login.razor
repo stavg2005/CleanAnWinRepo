@@ -79,18 +79,14 @@
     {
 
         //AuthService.ClearAuthToken();
-        if (AuthService!=null &&AuthService.IsUserAuthenticated&& Userservice.CurrentUser!=null)
+        if (AuthService!=null &&AuthService.IsUserAuthenticated)
         {
 
-            var products = await api.GetALLProducts();
-            productservice.ProductList = products;
+            // var products = await api.GetALLProducts();
+            productservice.ProductList = new List<Product>(0);
 
 
-            var Orders = await api.GetAllOrders(Userservice.CurrentUser.UserID);
-            if(Orders.Count != 0)
-            {
-                Userservice.CurrentUser.orders = Orders;
-            }
+            
             Nav.NavigateTo("/main");
 
 

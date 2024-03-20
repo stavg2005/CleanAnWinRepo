@@ -116,11 +116,12 @@ else
            <i class="bi bi-person-circle" ></i> User Settings
              </a>
              </li>
-             <li class="nav-item" style="font-size:20px">
-               <a class="nav-link" href="#">
-                <i class="bi bi-cart"></i> Orders
-            </a>
-        </li>
+            <li class="nav-item" style="font-size:20px" @onclick="GoOrders">
+                <a class="nav-link">
+                    <i class="bi bi-cart"></i> orders
+                </a>
+            </li>
+
 
 
                <li class="nav-item" style="font-size:20px;">
@@ -145,7 +146,7 @@ else
 
     private int progressValue  { get; set; }
     int level { get; set; }
-
+    Services.ApiServices a = new Services.ApiServices();
     static int count =0;
 
     private int blur = 0;
@@ -177,6 +178,11 @@ else
         nav.NavigateTo("/setting");
     }
 
+    private void GoOrders()
+    {
+        nav.NavigateTo("/testing");
+    }
+
     private void GoProductControl()
     {
         if (Userservice.CurrentUser.IsAdmin)
@@ -196,6 +202,11 @@ else
             progressValue = GetLastDigit(Userservice.CurrentUser.xp) * 10;
             level = Userservice.CurrentUser.xp / 10;
             await GetDimensions();
+            // var Orders = await a.GetAllOrders(Userservice.CurrentUser.UserID);
+            // if (Orders.Count != 0)
+            // {
+            //     Userservice.CurrentUser.orders = Orders;
+            // }
         }
 
 
