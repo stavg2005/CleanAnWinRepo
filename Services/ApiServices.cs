@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -357,11 +357,19 @@ namespace Services
 
        public async Task<List<TrashCan>> GetAllTrashCanLocations()
         {
-
-                string apiurl = $"{Apiurl}/GetAllTrashCanLocations";
-
-                List<TrashCan> l = await _httpClient.GetFromJsonAsync<List<TrashCan>>(apiurl);
+            List<TrashCan> l = new List<TrashCan>();
+            try
+            {
+                string apiurl = $"{Apiurl}/api/TrashCan/GetAllTrashCanLocations";
+                l = await _httpClient.GetFromJsonAsync<List<TrashCan>>(apiurl);
                 return l;
+            }
+            catch(Exception ex)
+            {
+                Console.Write(ex.ToString());
+                return l;
+            }
+
                 
             
         }
@@ -440,7 +448,7 @@ namespace Services
         {
             try
             {
-                string url = $"{Apiurl}/InsertTrashCan";
+                string url = $"{Apiurl}/api/TrashCan/InsertTrashCan";
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<TrashCan>(url, t);
                 if (response.IsSuccessStatusCode)
                 {
@@ -461,7 +469,7 @@ namespace Services
         {
             try
             {
-                string url = $"{Apiurl}/DeleteTrashCan";
+                string url = $"{Apiurl}/api/TrashCan/DeleteTrashCan";
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<int>(url, id);
                 if (response.IsSuccessStatusCode)
                 {

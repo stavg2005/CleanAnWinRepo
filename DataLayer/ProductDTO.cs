@@ -55,7 +55,7 @@ namespace DataLayer
                     {
                         while (reader.Read())
                         {
-                            p = new Product(id, reader.GetString(1), reader.GetString(2), int.Parse(reader.GetString(3)),await GetProductPictureInBytes(id));
+                            p = new Product(id, reader.GetString(1), reader.GetString(2), int.Parse(reader.GetString(3)),await GetProductPictureInBytes(id),reader.GetInt32(5));
                         }
                     }
                 }
@@ -79,7 +79,7 @@ namespace DataLayer
             while (r.Read())
             {
                 int id = r.GetInt32(0);
-                Product p = new Product(id,r.GetString(1),r.GetString(2),r.GetInt32(3), await ProductDTO.GetProductPictureInBytes(id));
+                Product p = new Product(id,r.GetString(1),r.GetString(2),r.GetInt32(3), await ProductDTO.GetProductPictureInBytes(id),r.GetInt32(5));
                 products.Add(p);
             }
             return products;

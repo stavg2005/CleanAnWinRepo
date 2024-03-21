@@ -41,7 +41,20 @@
                 <!-- Product Pricing -->
                 <div class="product-price" >
                     <span>@p.ProductPrice</span>
-                    <a  class="cart-btn" @onclick="AddToCart" >Add to cart</a>
+                    @{
+                        int xp = Userservice.CurrentUser.xp;
+                        int level = xp / 10;
+                        if (level >= p.LevelReq)
+                        {
+                            int l = 1;
+                            <a class="cart-btn" @onclick="AddToCart">Add to cart</a>
+                        }
+                        else
+                        {
+                            <a class="cart-btn" style="background-color:red">Your level is too low</a>
+                        }
+                    }
+                    
                 </div>
             </div>
         </main>

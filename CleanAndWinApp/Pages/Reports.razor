@@ -7,16 +7,16 @@
 <link rel="stylesheet" href="css/orders.css">
 
 <body style="overflow-y:scroll">
-    <div class="container">
-        <h1>Orders Information</h1>
+    <div class="container" style="margin-top:150px">
+        <h1 style="position:fixed;margin-top:100px">All of your orders</h1>
         <ul class="orders-list">
             @{
                 foreach (ReportClean c in Userservice.CurrentUser.reportCleans)
                 {
                     <li class="order">
                         <div class="order-info">
-                            <span class="order-id">@c.ReportID</span>
-                            <span class="order-date">Date: @c.date.ToString();</span>
+                            <span class="order-id">Date: @c.date.ToString()</span>
+                            <span class="order-date">Weight : @c.weight kg</span>
                         </div>
                         <span class="order-amount"></span>
                         

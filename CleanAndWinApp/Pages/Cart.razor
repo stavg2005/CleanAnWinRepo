@@ -49,7 +49,7 @@
                                             <button class="btndel btn-delete">
                                                 <span class="mdi mdi-delete mdi-24px"></span>
                                                 <span class="mdi mdi-delete-empty mdi-24px"></span>
-                                                <span>Delete!!</span>
+                                                <span @onclick="() =>DeleteProductFromUserCart(UserService.CurrentUser.UserID,p.ProductID)">Delete!!</span>
                                             </button>
                                         </div>
                                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
@@ -155,33 +155,37 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // gets the total of all the products prices
         sum = Getsum();
     }
 
     async Task GetDimensions()
     {
+        // for css getting the  width and height of the screen
         var dimension = await Service.GetDimensions();
         d.Height = dimension.Height;
         d.Width = dimension.Width;
     }
     private async Task Pay()
     {
+        // i do this again for sum reason
         int sum = Getsum();
 
         if (UserService.CurrentUser.coins > sum)
         {
             int pay = UserService.CurrentUser.coins - sum;
+            
             Response = await a.UpdateUserCoin(UserService.CurrentUser.UserID, pay);
             await a.AddNewOrder(UserService.CurrentUser.UserID, UserService.CurrentUser.products);
             await a.DeleteUserCart(UserService.CurrentUser.UserID);
             string product = "";
             foreach (Product p in UserService.CurrentUser.products)
             {
-                 product = product + "," + p.ProductName;
+                product = product + "," + p.ProductName;
             }
-            // await EmailService.SendEmailAsync(UserService.CurrentUser.Email
-            //     , "order confermation", "thank you for purchasing" + product + "For " + sum + "coins");
-           
+            await EmailService.SendEmailAsync(UserService.CurrentUser.Email
+                , "order confermation", "thank you for purchasing" + product + "For " + sum + "coins");
+
             NavManager.NavigateTo("afterpurchase");
         }
         else
@@ -193,7 +197,7 @@
     private async Task DeleteProductFromUserCart(int userID,int productid)
     {
         Tuple<int, int> userIDproductID = new Tuple<int, int>(userID, productid);
-        
+        await a.DeleteProductFromUserCart(userIDproductID);
 
         
         Console.WriteLine();

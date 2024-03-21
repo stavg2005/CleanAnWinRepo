@@ -115,7 +115,11 @@
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(t.latitude, t.longitude),
                 map: map,
-                title: 'Waypoint'
+                title: 'Waypoint',
+                icon: {
+                    url: "https://cdn-icons-png.flaticon.com/256/7911/7911205.png",
+                    scaledSize: new google.maps.Size(32, 32)
+                }
             });
             console.log( "why are you not admin " +isadmin);
             var contentString = ``;
