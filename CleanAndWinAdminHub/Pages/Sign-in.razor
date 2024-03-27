@@ -1,7 +1,10 @@
-﻿@page "/sign-in"
+﻿@page "/"
 
 @inject ProtectedSessionStorage MySession
 @inject NavigationManager NavManager;
+@inject Admin_Service Current;
+@inject Task_Service AdminTasks;
+@using DataLayer
 
 <!--
 =========================================================
@@ -164,9 +167,7 @@
                     <div class="row align-items-center justify-content-lg-between">
                         <div class="col-12 col-md-6 my-auto">
                             <div class="copyright text-center text-sm text-white text-lg-start">
-                                © <script>
-                                      document.write(new Date().getFullYear())
-                                </script>,
+
                                 made with <i class="fa fa-heart" aria-hidden="true"></i> by
                                 <a href="https://www.creative-tim.com" class="font-weight-bold text-white" target="_blank">Creative Tim</a>
                                 for a better web.
@@ -200,12 +201,14 @@
 @code {
     public string email = "";
     public string password = "";
-    public AdminServices a = new AdminServices();
+    public ApiServices a = new ApiServices();
     private async Task LoginAPI()
     {
-        Admin c = await a.Login(email, password);
+        Admin c = await a.Login_Admin(email, password);
         if (c != null)
         {
+            Current.admin = c;
+            AdminTasks.Tasks = await Project_TaskDTO.GetAllCurrentTasks();
             await MySession.SetAsync("name", email);
             NavManager.NavigateTo("/dashboard");
         }

@@ -51,7 +51,20 @@ namespace Services
 
             return ipv4Address;
         }
-    
+
+        public async Task<Admin> Login_Admin(string email, string password)
+        {
+            string s = $"{Apiurl}/api/AdminAPI/Login?Email={email}&Password={password}";
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<Admin>(s);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
         public async Task<List<Product>> Getc(int id, bool isphone)
         {
 

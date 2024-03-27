@@ -16,13 +16,21 @@ namespace Model
             Budget = budget;
         }
 
-        int ID { get; set; }
-        string Name { get; set; }
+        public Project_Task()
+        {
+            ID = 0;
+            Name = "TEMP";
+            Completion = 0;
+            Budget = 0;
+        }
 
-        List<Admin> Admins { get; set; }
-        int Completion {  get; set; }
+        public int ID { get; set; }
+        public string Name { get; set; }
 
-        int Budget {  get; set; }
+        public List<Admin> Admins { get; set; }
+        public int Completion {  get; set; }
+
+        public int Budget {  get; set; }
 
 
         
