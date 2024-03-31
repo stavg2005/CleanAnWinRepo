@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -54,7 +54,7 @@ namespace Services
 
         public async Task<Admin> Login_Admin(string email, string password)
         {
-            string s = $"{Apiurl}/api/AdminAPI/Login?Email={email}&Password={password}";
+            string s = $"{Apiurl}/api/Admin/Login?Email={email}&Password={password}";
             try
             {
                 return await _httpClient.GetFromJsonAsync<Admin>(s);
@@ -580,6 +580,21 @@ namespace Services
             catch (Exception ex)
             {
                 return (new List<Order>(0));
+            }
+        }
+
+        public async Task<List<Project_Task>> GetAllcurrentTasks()
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Admin/GetAllCurrentTasks";
+                List<Project_Task> p = await _httpClient.GetFromJsonAsync<List<Project_Task>>(url);
+                return p;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return (new List<Project_Task>(0));
             }
         }
     }

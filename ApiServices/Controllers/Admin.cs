@@ -22,5 +22,20 @@ namespace ApiServices.Controllers
                 return null;
             }
         }
+
+
+        [HttpGet("GetAllCurrentTasks")]
+        public async Task<List<Project_Task>> GetAllCurrentTasks()
+        {
+            try
+            {
+                return await Project_TaskDTO.GetAllCurrentTasks();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<Project_Task>();
+            }
+        }
     }
 }

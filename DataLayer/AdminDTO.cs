@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySqlConnector;
+using Dapper;
 
 namespace DataLayer
 {
@@ -65,7 +66,7 @@ namespace DataLayer
                         if (r.HasRows)
                         {
                             await r.ReadAsync();
-                            ca = new Admin(id, r.GetString(1), r.GetString(7), r.GetString(4), new byte[0], r.GetString(6), r.GetString(2), new List<Project_Task>());
+                            ca = new Admin(id, r.GetString(1), r.GetString(7), r.GetString(4), await AdminDTO.GetProfilePhotoInByte(id), r.GetString(6), r.GetString(2), new List<Project_Task>());
 
                         }
                         return ca;
@@ -77,6 +78,18 @@ namespace DataLayer
                     Console.WriteLine(ex.ToString());
                     return ca;
                 }
+            }
+        }
+
+        public static async Task<byte[]> GetProfilePhotoInByte(int id)
+        {
+            string query = $"Select ProfilePhoto From admin Where AdminID ={id}";
+
+            using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
+            {
+                connection.Open();
+                var result = connection.QueryFirstOrDefault<byte[]>(query);
+                return result;
             }
         }
     }

@@ -42,7 +42,7 @@ namespace Test
             //    Console.ReadLine();
             //}
 
-            Model.ApiServices a = new Model.ApiServices();
+            Services.ApiServices a = new Services.ApiServices();
             //List<TrashCan> l = await a.GetAllTrashCanLocations();
             //foreach (TrashCan i in l)
             //{
@@ -66,9 +66,14 @@ namespace Test
             //{
             //    Console.WriteLine(p.ProductName);
             //}
-            Tuple<int, int> uIDpID = new Tuple<int, int>(1, 13);
-            Console.WriteLine(await a.DeleteProductFromUserCart(uIDpID));
-            Console.ReadLine();
+            //Tuple<int, int> uIDpID = new Tuple<int, int>(1, 13);
+            //Console.WriteLine(await a.DeleteProductFromUserCart(uIDpID));
+            //Console.ReadLine();
+            List<Admin> l = new List<Admin>();
+            l.Add(await AdminDTO.GetAdminById(1));
+            l.Add(await AdminDTO.GetAdminById(2));
+            Project_Task p = new Project_Task("Ability to add Tasks",10,500,l);
+            await Project_TaskDTO.AddNewTask(p);
         }
 
         static string GetIPv4Address(string adapterName)

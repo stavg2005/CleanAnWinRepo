@@ -208,7 +208,7 @@
         if (c != null)
         {
             Current.admin = c;
-            AdminTasks.Tasks = await Project_TaskDTO.GetAllCurrentTasks();
+            AdminTasks.Tasks = await a.GetAllcurrentTasks();
             await MySession.SetAsync("name", email);
             NavManager.NavigateTo("/dashboard");
         }
