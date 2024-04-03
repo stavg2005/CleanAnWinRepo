@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Model;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ApiServices.Controllers
 {
@@ -14,6 +15,20 @@ namespace ApiServices.Controllers
         public async Task<Users> GetAllProducts(string email, string password)
         {
             return await (UsersDTO.Login(email, password));
+        }
+
+        [HttpGet("GetAllUsers")]
+        public async Task<List<Users>> GetAllUsers()
+        {
+            try
+            {
+                return await UsersDTO.GetAllUsers();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<Users>();
+            }
         }
 
         [HttpPost("Register")]

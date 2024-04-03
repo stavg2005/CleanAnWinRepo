@@ -4,6 +4,7 @@
 @inject NavigationManager NavManager;
 @inject Admin_Service Current;
 @inject Task_Service AdminTasks;
+@inject TablesService Tables;
 @using DataLayer
 
 <!--
@@ -209,6 +210,11 @@
         {
             Current.admin = c;
             AdminTasks.Tasks = await a.GetAllcurrentTasks();
+            Tables.Users = await a.GetAllUsers();
+            Tables.Products = await a.GetALLProducts();
+            Tables.Orders = await a.GetAllOrders();
+            Tables.Locations = await a.GetAllLocations();
+            Tables.Trashs = await a.GetAllTrashCanLocations();
             await MySession.SetAsync("name", email);
             NavManager.NavigateTo("/dashboard");
         }

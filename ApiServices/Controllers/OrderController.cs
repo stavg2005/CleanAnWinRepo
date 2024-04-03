@@ -24,14 +24,29 @@ namespace ApiServices.Controllers
         }
 
 
-        [HttpGet("GetAllOrders")]
-        public async Task<List<Order>> GetAllOrders(int userid)
+        [HttpGet("GetAllOrdersForUser")]
+        public async Task<List<Order>> GetAllOrdersForUser(int userid)
         {
             try
             {
                 return (await OrderDTO.GetOrdersByUserId(userid));
             }
             catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return new List<Order>(0);
+            }
+        }
+
+        [HttpGet("GetAllOrders")]
+
+        public async Task<List<Order>> GetAllOrders()
+        {
+            try
+            {
+                return await OrderDTO.GetAllOrders();
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
                 return new List<Order>(0);

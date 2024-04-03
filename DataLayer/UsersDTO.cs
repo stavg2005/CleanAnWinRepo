@@ -74,7 +74,59 @@ namespace DataLayer
         public bool IsAdmin { get; set; }
 
 
+        public static async Task<List<Users>> GetAllUsers()
+        {
+            List<Users> usersList = new List<Users>();
 
+            // Use a using statement to ensure proper disposal of resources
+            using (MySqlConnection c = new MySqlConnection())
+            {
+                try
+                {
+                    c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                    await c.OpenAsync(); // Open the connection asynchronously
+
+                    string query = @"SELECT * FROM users";
+                    using (MySqlCommand cmd = new MySqlCommand(query, c))
+                    {
+                        // Execute the query asynchronously
+                        using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await r.ReadAsync())
+                            {
+                                int id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
+
+                                bool isAdmin = r.GetInt32(8) == 1;
+
+                                // Fetch related data asynchronously using separate methods
+                                Users user = new Users(
+                                    id,
+                                    r.GetString(1),
+                                    r.GetInt32(3),
+                                    r.GetString(4),
+                                    r.GetInt32(5),
+                                    await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
+                                    await UsersDTO.GetCart(id),
+                                    await UsersDTO.GetProfilePhotoInByte(id),
+                                    isAdmin,
+                                    await OrderDTO.GetOrdersByUserId(id),
+                                    await ReportCleanDTO.GellAllReports(id)
+                                );
+
+                                usersList.Add(user);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions appropriately (e.g., log, rethrow, etc.)
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+            }
+
+            return usersList;
+        }
 
         public static async Task<List<Product>> GetCart(int id)
         {

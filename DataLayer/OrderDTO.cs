@@ -113,16 +113,61 @@ namespace DataLayer
 
                 return orderList;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return new List<Order>();
             }
-           
+
         }
 
-       
+        public static async Task<List<Order>> GetAllOrders()
+        {
+            List<Order> orderList = new List<Order>();
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    string sqlQuery = "SELECT * FROM `Order`";
 
+                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                    {
+                        connection.Open();
+                        MySqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            Order order = new Order
+                            {
+                                OrderID = Convert.ToInt32(reader["OrderID"]),
+                                UserID = Convert.ToInt32(reader["UserID"]),
+                                Date = (Convert.ToDateTime(reader["OrderDate"])).ToString(),
+                                Products = await GetAllPorudctFromOrder(Convert.ToInt32(reader["OrderID"]))
+                            };
+
+                            orderList.Add(order);
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                return orderList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Order>();
+            }
+
+        }
     }
 
+        
 }
+
+       
+  
+
+

@@ -83,43 +83,43 @@ namespace DataLayer
             return projectTasks;
         }
         
-        public static async Task AddNewTask(Project_Task task)
-        {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            try
-            {
-                using (var connection = new MySqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string insertProjectTaskQuery = "INSERT INTO Project_Task (Name, Completion, Budget) VALUES ( @Name, @Completion, @Budget)";
-                    using (var cmd = new MySqlCommand(insertProjectTaskQuery, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@Name", task.Name);
-                        cmd.Parameters.AddWithValue("@Completion", task.Completion);
-                        cmd.Parameters.AddWithValue("@Budget", task.Budget);
-                        cmd.ExecuteNonQuery();
-                    }
-                    string getLastInsertIdQuery = "SELECT LAST_INSERT_ID()";
-                    MySqlCommand getLastInsertIdCommand = new MySqlCommand(getLastInsertIdQuery, connection);
-                    int taskid = int.Parse(getLastInsertIdCommand.ExecuteScalar());
+        //public static async Task AddNewTask(Project_Task task)
+        //{
+        //    string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+        //    try
+        //    {
+        //        using (var connection = new MySqlConnection(connectionString))
+        //        {
+        //            connection.Open();
+        //            string insertProjectTaskQuery = "INSERT INTO Project_Task (Name, Completion, Budget) VALUES ( @Name, @Completion, @Budget)";
+        //            using (var cmd = new MySqlCommand(insertProjectTaskQuery, connection))
+        //            {
+        //                cmd.Parameters.AddWithValue("@Name", task.Name);
+        //                cmd.Parameters.AddWithValue("@Completion", task.Completion);
+        //                cmd.Parameters.AddWithValue("@Budget", task.Budget);
+        //                cmd.ExecuteNonQuery();
+        //            }
+        //            string getLastInsertIdQuery = "SELECT LAST_INSERT_ID()";
+        //            MySqlCommand getLastInsertIdCommand = new MySqlCommand(getLastInsertIdQuery, connection);
+        //            int taskid = int.Parse(getLastInsertIdCommand.ExecuteScalar());
                     
-                    foreach (Admin adminId in task.Admins)
-                    {
-                        string insertAdminProjectQuery = "INSERT INTO Admin_Projects (AdminID, Project_TaskID) VALUES (@AdminID, @Project_TaskID)";
-                        using (var cmd = new MySqlCommand(insertAdminProjectQuery, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@AdminID", adminId.Id);
-                            cmd.Parameters.AddWithValue("@Project_TaskID", task.ID);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
-            }
-            catch(Exception ex){
-                Console.WriteLine(ex.Message);
-            }
+        //            foreach (Admin adminId in task.Admins)
+        //            {
+        //                string insertAdminProjectQuery = "INSERT INTO Admin_Projects (AdminID, Project_TaskID) VALUES (@AdminID, @Project_TaskID)";
+        //                using (var cmd = new MySqlCommand(insertAdminProjectQuery, connection))
+        //                {
+        //                    cmd.Parameters.AddWithValue("@AdminID", adminId.Id);
+        //                    cmd.Parameters.AddWithValue("@Project_TaskID", task.ID);
+        //                    cmd.ExecuteNonQuery();
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch(Exception ex){
+        //        Console.WriteLine(ex.Message);
+        //    }
             
-        }
+        //}
 
         
 

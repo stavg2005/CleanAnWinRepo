@@ -76,6 +76,35 @@ namespace Services
 
         }
 
+        public async Task<List<Order>> GetAllOrders()
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Order/GetAllOrders";
+                List<Order> l = await _httpClient.GetFromJsonAsync<List<Order>>(url);
+                return l;
+            }
+            catch (Exception ex)
+            {
+                return (new List<Order>(0));
+            }
+        }
+
+        public async Task<List<Users>> GetAllUsers()
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Login/GetAllUsers";
+                List<Users> u = await _httpClient.GetFromJsonAsync<List<Users>>(url);
+                return u;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return (new List<Users>(0));
+            }
+        }
+
         public async Task<Users> Login(string email, string password)
         {
             string s = $"{Apiurl}/api/Login/Login?email={email}&password={password}";
@@ -569,11 +598,11 @@ namespace Services
         }
 
 
-        public async Task<List<Order>> GetAllOrders(int userid)
+        public async Task<List<Order>> GetAllOrdersForUser(int userid)
         {
             try
             {
-                string url = $"{Apiurl}/api/Order/GetAllOrders?userid={userid}";
+                string url = $"{Apiurl}/api/Order/GetAllOrdersForUser?userid={userid}";
                 List<Order> l = await _httpClient.GetFromJsonAsync<List<Order>>(url);
                 return l;
             }
