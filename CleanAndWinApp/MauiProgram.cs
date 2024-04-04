@@ -31,6 +31,7 @@ namespace CleanAndWinApp
             builder.Services.AddSingleton<Data.BrowserDimension>();
             
             builder.Services.AddSingleton<Services.ProductService>();
+            builder.Services.AddSingleton<LocationService>();
 
 
             return builder.Build();

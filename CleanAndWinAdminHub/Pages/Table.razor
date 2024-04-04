@@ -1,5 +1,6 @@
 ﻿@page "/tables"
 @inject TablesService Tables;
+@inject NavigationManager nav;
 @using Microsoft.AspNetCore.Components.Forms
 <!--
 =========================================================
@@ -54,7 +55,7 @@
         <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/dashboard.html">
+                    <a class="nav-link text-white active bg-gradient-primary" @onclick="GoDashBoard">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">dashboard</i>
                         </div>
@@ -62,70 +63,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white active bg-gradient-primary" href="../pages/tables.html">
+                    <a class="nav-link text-white " @onclick="GoTables">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">table_view</i>
                         </div>
                         <span class="nav-link-text ms-1">Tables</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/billing.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">receipt_long</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Billing</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/virtual-reality.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">view_in_ar</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Virtual Reality</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/rtl.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
-                        </div>
-                        <span class="nav-link-text ms-1">RTL</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/notifications.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">notifications</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Notifications</span>
-                    </a>
-                </li>
+
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/profile.html">
+                    <a class="nav-link text-white " @onclick="GoProfile">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">person</i>
                         </div>
                         <span class="nav-link-text ms-1">Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/sign-in.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">login</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Sign In</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="../pages/sign-up.html">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">assignment</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Sign Up</span>
                     </a>
                 </li>
             </ul>
@@ -144,9 +98,9 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tables</li>
+                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                     </ol>
-                    <h6 class="font-weight-bolder mb-0">Tables</h6>
+                    <h6 class="font-weight-bolder mb-0">Dashboard</h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -283,6 +237,8 @@
                                     </thead>
                                     <tbody>
                                         @{
+                                            if(Tables.Users !=null)
+                                            {
                                             foreach(Users u in Tables.Users)
                                             {
                                                 <tr>
@@ -308,14 +264,14 @@
                                                         <span class="text-secondary text-xs font-weight-bold">@u.UserID</span>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" @onclick="() =>EditUser(u)">
                                                             Edit
                                                         </a>
                                                     </td>
                                                 </tr>
                                             }
                                         }
-                                        
+                                        }
 
                                        
                                     </tbody>
@@ -325,6 +281,72 @@
                     </div>
                 </div>
             </div>
+            </div>
+            <div class="container-fluid py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card my-4">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                                    <h6 class="text-white text-capitalize ps-3">Locations table</h6>
+                                </div>
+                            </div>
+                            <div class="card-body px-0 pb-2">
+                                <div class="table-responsive p-0">
+                                    <table class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">lat</th>
+                                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">lng</th>
+                                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                                                <th class="text-secondary opacity-7"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                            if (Tables.Locations !=null)
+                                            {
+                                                foreach (Locations l in Tables.Locations)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <h6 class="mb-0 text-sm">@l.Name</h6>
+                                                                    
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <p class="text-xs font-weight-bold mb-0">@l.lat</p>
+
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                        <p class="text-xs font-weight-bold mb-0">@l.lng</p>
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            <span class="text-secondary text-xs font-weight-bold">@l.ID</span>
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit Location" @onclick="() =>EditLocation(l)">
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            }
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             <div class="row">
                 <div class="col-12">
@@ -347,6 +369,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @if (Tables.Products != null)
+                                        {
+                                            
+                                        
                                         @foreach (Product p in Tables.Products)
                                         {
                                             <tr>
@@ -377,6 +403,7 @@
                                                 </td>
                                             </tr>
                                         }
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -385,10 +412,89 @@
                 </div>
             </div>
 
+            <div class="container-fluid py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card my-4">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                                    <h6 class="text-white text-capitalize ps-3">TrashCan table</h6>
+                                </div>
+                            </div>
+                            <div class="card-body px-0 pb-2">
+                                <div class="table-responsive p-0">
+                                    <table class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> ID</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Weight</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">isfull</th>
+                                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Lat</th>
+                                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Lng</th>
+                                                <th class="text-secondary opacity-7"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                if (Tables.Trashs != null)
+                                                {
+                                                    
+                                                
+                                                foreach (TrashCan t in Tables.Trashs)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <h6 class="mb-0 text-sm">@t.id</h6>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <p class="text-xs font-weight-bold mb-0">@t.weight</p>
+
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            @if (t.isfull == -1)
+                                                            {
+                                                                <span class="badge badge-sm bg-danger">false</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-success">true</span>
+                                                            }
+                                                            
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            <span class="text-secondary text-xs font-weight-bold">@t.latitude</span>
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            <span class="text-secondary text-xs font-weight-bold">@t.longitude</span>
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" @onclick="() => EditTrashCan(t)">
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            }
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Modal for editing product -->
-            @if (productToEdit != null)
+            @if (LocationToEdit != null)
             {
-                <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);" @onclick="CancelEdit">
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -399,22 +505,119 @@
                             </div>
                             <div class="modal-body">
                                 <!-- Form for editing product details -->
-                                <EditForm Model="@productToEdit">
-                                    <InputText @bind-Value="@productToEdit.ProductName" />
-                                    <InputText @bind-Value="@productToEdit.ProductDescription" />
-                                    <InputNumber @bind-Value="@productToEdit.ProductPrice" />
-                                    <InputNumber @bind-Value="@productToEdit.LevelReq" />
+                                <EditForm Model="@LocationToEdit">
+                                    <InputText @bind-Value="@LocationToEdit.Name" />
+                                    <InputText @bind-Value="@LocationToEdit.lat" />
+                                    <InputText @bind-Value="@LocationToEdit.lng" />
                                 </EditForm>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
-                                <button type="button" class="btn btn-primary" @onclick="SaveEdit">Save changes</button>
+                                <button type="button" class="btn btn-primary" @onclick="SaveLocationEdit">Save changes</button>
                             </div>
                         </div>
                     </div>
                 </div>
             }
 
+            @if (TrashCanToEdit != null)
+            {
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Product</h5>
+                                <button type="button" class="close" aria-label="Close" @onclick="CancelEdit">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Form for editing product details -->
+                                <EditForm Model="@TrashCanToEdit">
+                                    <InputNumber @bind-Value="@TrashCanToEdit.weight" />
+                                    <InputNumber @bind-Value="@TrashCanToEdit.isfull" />
+                                    <InputText @bind-Value="@TrashCanToEdit.latitude" />
+                                    <InputText @bind-Value="@TrashCanToEdit.longitude" />
+                                </EditForm>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                                <button type="button" class="btn btn-primary" @onclick="SaveTrashCanEdit">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+                @if (productToEdit != null)
+                {
+                    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Product</h5>
+                                    <button type="button" class="close" aria-label="Close" @onclick="CancelEdit">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Form for editing product details -->
+                                    <EditForm Model="@productToEdit">
+                                        <InputText @bind-Value="@productToEdit.ProductName" />
+                                        <InputText @bind-Value="@productToEdit.ProductDescription" />
+                                        <InputNumber @bind-Value="@productToEdit.ProductPrice" />
+                                        <InputNumber @bind-Value="@productToEdit.LevelReq" />
+                                    </EditForm>
+                                </div>
+                            <div class="pl-sm-4 pl-2" id="img-section">
+                                <b>Profile Photo</b>
+                                <p>Accepted file type .png. Less than 1MB</p>
+                                <InputFile OnChange="HandleFileChangeForProduct" />Upload
+                            </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                                    <button type="button" class="btn btn-primary" @onclick="SaveProductEdit">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            @if (UserToEdit != null)
+            {
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Product</h5>
+                                <button type="button" class="close" aria-label="Close" @onclick="CancelEdit">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Form for editing product details -->
+                                <EditForm Model="@UserToEdit">
+                                    <InputText @bind-Value="@UserToEdit.UserName" />
+                                    <InputText @bind-Value="@UserToEdit.Email" />
+                                    <InputNumber @bind-Value="@UserToEdit.xp" />
+                                    <InputNumber @bind-Value="@UserToEdit.coins" />
+                                </EditForm>
+                            </div>
+                            <img src="@(path)"
+                                 class="img" alt="">
+                            <div class="pl-sm-4 pl-2" id="img-section">
+                                <b>Profile Photo</b>
+                                <p>Accepted file type .png. Less than 1MB</p>
+                                <InputFile OnChange="HandleFileChange" />Upload
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                                <button type="button" class="btn btn-primary" @onclick="SaveUserEdit">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
 
             <footer class="footer py-4  ">
                 <div class="container-fluid">
@@ -528,10 +731,13 @@
 
 @code {
     string path = "data:image/png;base64,";
-
+    ApiServices a = new ApiServices();
 
 
     private Product productToEdit;
+    private Users UserToEdit;
+    private Locations LocationToEdit;
+    private TrashCan TrashCanToEdit;
 
     // Method to handle edit button click
     private void EditProduct(Product product)
@@ -539,16 +745,57 @@
         // Set the product to edit
         productToEdit = product;
     }
+    private void EditUser(Users u)
+    {
+        UserToEdit = u;
+    }
+    private void EditLocation(Locations l)
+    {
+        LocationToEdit = l;
+    }
+
+    private void EditTrashCan(TrashCan t)
+    {
+        TrashCanToEdit = t;
+    }
 
     // Method to save changes
-    private void SaveEdit()
+    private async Task SaveProductEdit()
     {
-        // Save the changes made to the product
-        // You can implement your logic to save changes here
-        // For simplicity, let's just print the product details for now
-        Console.WriteLine($"Saving changes for {productToEdit.ProductName}");
-        // Clear the productToEdit after saving changes
-        productToEdit = null;
+        await a.UpdateProduct(productToEdit);
+        CancelEdit();
+    }
+
+    private async Task SaveUserEdit()
+    {
+        await a.UpdateUser(UserToEdit);
+        CancelEdit();
+    }
+
+    private async Task SaveLocationEdit()
+    {
+        await a.UpdateLocation(LocationToEdit);
+        CancelEdit();
+    }
+
+    private async Task SaveTrashCanEdit()
+    {
+        await a.UpdateTrashCan(TrashCanToEdit);
+        CancelEdit();
+    }
+
+    private void GoTables()
+    {
+        nav.NavigateTo("/tables");
+    }
+    private void GoProfile()
+    {
+        nav.NavigateTo("/profile");
+    }
+
+    private void GoDashBoard()
+    {
+        nav.NavigateTo("/dashboard");
     }
 
     // Method to cancel edit
@@ -556,5 +803,48 @@
     {
         // Clear the productToEdit without saving changes
         productToEdit = null;
+        UserToEdit = null;
+        LocationToEdit = null;
+        TrashCanToEdit = null;
+    }
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+
+
+                UserToEdit.profile = imageData;
+            }
+        }
+    }
+
+    private async Task HandleFileChangeForProduct(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+
+
+                productToEdit.ProductPicture = imageData;
+            }
+        }
     }
 }

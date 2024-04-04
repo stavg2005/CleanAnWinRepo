@@ -249,5 +249,35 @@ namespace DataLayer
                 Console.WriteLine(ex.Message);
             }
         }
+
+        public static async Task UpdateTrashCan(TrashCan trashCan)
+        {
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+
+                string update = $"UPDATE trashcan SET TrashCanIsFull = @isfull, lat = @lat, TrashCanWeight = @Weight, lng = @lng WHERE TrashCanID = {trashCan.id}; ";
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                    {
+                        UpdateUserCommand.Parameters.AddWithValue("@isfull", trashCan.isfull);
+                        UpdateUserCommand.Parameters.AddWithValue("@lat", trashCan.latitude);
+                        UpdateUserCommand.Parameters.AddWithValue("@lng", trashCan.longitude);
+                        UpdateUserCommand.Parameters.AddWithValue("@Weight",trashCan.weight);
+
+                        await UpdateUserCommand.ExecuteNonQueryAsync();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
 	}
 }

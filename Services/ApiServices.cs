@@ -219,6 +219,21 @@ namespace Services
 
         }
 
+        public async Task<List<ReportClean>> GetAllreports()
+        {
+            List<ReportClean> r = new List<ReportClean>();
+            try
+            {
+                string api = $"{Apiurl}/api/TrashCan/GetAllReports";
+                return await _httpClient.GetFromJsonAsync<List<ReportClean>>(api);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return r;
+            }
+        }
+
         public async Task<Product> GetProductFromPK(int id)
        {
             try
@@ -255,6 +270,53 @@ namespace Services
                 return ($"An error occurred: {ex.Message}");
 
 
+            }
+        }
+
+        public async Task<string> UpdateLocation(Locations l)
+        {
+            try
+            {
+                string api = $"{Apiurl}/UpdateLocation";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Locations>(api, l);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("PUT request successful!");
+
+                }
+                else
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    return ($"PUT request failed with status code: {response.StatusCode} and contect {content}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+
+
+            }
+        }
+
+        public async Task<string> UpdateTrashCan(TrashCan trashCan)
+        {
+            try
+            {
+                string api = $"{Apiurl}/api/TrashCan/UpdateTrashCan";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<TrashCan>(api, trashCan);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("PUT request successful!");
+                }
+                else
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    return ($"PUT request failed with status code: {response.StatusCode} and contect {content}");
+                }
+            }
+            catch(Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
             }
         }
         public async Task<string> UpdatePassword(int id, string password)

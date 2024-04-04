@@ -215,6 +215,7 @@
             Tables.Orders = await a.GetAllOrders();
             Tables.Locations = await a.GetAllLocations();
             Tables.Trashs = await a.GetAllTrashCanLocations();
+            Tables.reports = await a.GetAllreports();
             await MySession.SetAsync("name", email);
             NavManager.NavigateTo("/dashboard");
         }

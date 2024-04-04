@@ -29,5 +29,7 @@ namespace Services
         public List<Product> Products { get; set; }
 
         public List<TrashCan> Trashs { get; set; }
+
+        public List<ReportClean> reports { get; set; }
     }
 }

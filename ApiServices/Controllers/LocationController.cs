@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 
 namespace ApiServices.Controllers
 {
@@ -37,6 +38,21 @@ namespace ApiServices.Controllers
             {
                 Console.WriteLine($"An error occurred in GetAllLocations: {ex.Message}");
                 return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpPost ("UpdateLocation")]
+        public async Task<IActionResult> UpdateLocation([FromBody] Locations l)
+        {
+            try
+            {
+                await LocationsDTO.UpdateLocation(l);
+                return Ok("operation completed successfully.");
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }

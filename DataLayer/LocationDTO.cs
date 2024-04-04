@@ -13,6 +13,8 @@ namespace DataLayer
     {
         public int ID;
         public string Name;
+        public string lat;
+        public string lng;
 
         public LocationsDTO(int iD, string name)
         {
@@ -25,6 +27,8 @@ namespace DataLayer
             ID = -1;
             Name = null;
         }
+
+
 
         public static async Task<List<Locations>> GetAllLocations()
         {
@@ -90,5 +94,37 @@ namespace DataLayer
             return locations;
 
         }
+
+        public static async Task UpdateLocation(Locations l)
+        {
+           
+                string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                {
+
+                    string update = $"UPDATE Location SET LocationName = @LocationName, lat = @lat, lng = @lng WHERE LocationID = {l.ID}; ";
+
+                    try
+                    {
+                        await connection.OpenAsync();
+
+                        using (MySqlCommand UpdateLocationCommand = new MySqlCommand(update, connection))
+                        {
+                            UpdateLocationCommand.Parameters.AddWithValue("@LocationName",l.Name);
+                            UpdateLocationCommand.Parameters.AddWithValue("@lat", l.lat);
+                            UpdateLocationCommand.Parameters.AddWithValue("@lng", l.lng);
+
+
+                            await UpdateLocationCommand.ExecuteNonQueryAsync();
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
+        
     }
 }

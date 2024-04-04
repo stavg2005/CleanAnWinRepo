@@ -6,11 +6,12 @@
 @inject Data.BrowserService Service
 @inject Data.BrowserDimension d;
 @inject Services.ProductService productservice
+@inject LocationService locs;
 @using Model;
 @using Services
 
 @{
-    
+   
 }
 
 <head>
@@ -84,7 +85,8 @@
 
             var products = await api.GetALLProducts();
             productservice.ProductList = products;
-
+            var Locations = await api.GetAllLocations();
+            locs.Locations = Locations;
 
             
             Nav.NavigateTo("/main");

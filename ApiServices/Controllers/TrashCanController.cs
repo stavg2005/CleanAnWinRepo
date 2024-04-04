@@ -24,6 +24,19 @@ namespace ApiServices.Controllers
             }
         }
 
+        [HttpGet("GetAllReports")]
+        public async Task<List<ReportClean>> GetAllReports()
+        {
+            try
+            {
+                return await ReportCleanDTO.GellAllReports();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new List<ReportClean>();
+            }
+        }
         [HttpGet("GetAllTrashCanLocations")]
 
         public async Task<IActionResult> GetAllTrashCanLocation()
@@ -66,6 +79,19 @@ namespace ApiServices.Controllers
                 await TrashCanDTO.DeleteTrashCan(id); return Ok("Delete operation completed successfully.");
             }
             catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateTrashCan")]
+        public async Task<IActionResult> UpdateTrashCan([FromBody]  TrashCan t)
+        {
+            try
+            {
+                await TrashCanDTO.UpdateTrashCan(t); return Ok("Update Operation completed succefuly");
+            }
+            catch(Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }

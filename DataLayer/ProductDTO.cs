@@ -112,21 +112,32 @@ namespace DataLayer
 
         public static async Task UpdateProduct(Product P)
         {
-            try
-            {
-                MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog");
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = connection;
-                connection.Open();
-                string Query = $"UPDATE Product SET ProductName = '{P.ProductName}', ProductDes = '{P.ProductDescription}', ProductPrice = '{P.ProductPrice}' WHERE ProductID = {P.ProductID}";
-                cmd.CommandText = Query;
-
-                cmd.ExecuteNonQuery();
-                
-            }
-            catch (Exception ex)
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
 
+                string update = $"UPDATE product SET ProductName = @Name, ProductDes = @Des, ProductPrice = @Price, ProductPicture = @Pic, Levelreq = @req WHERE ProductID = {P.ProductID}; ";
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                    {
+                        UpdateUserCommand.Parameters.AddWithValue("@Name", P.ProductName);
+                        UpdateUserCommand.Parameters.AddWithValue("@Des", P.ProductDescription);
+                        UpdateUserCommand.Parameters.AddWithValue("@Price", P.ProductPrice);
+                        UpdateUserCommand.Parameters.AddWithValue("@Pic", P.ProductPicture);
+                        UpdateUserCommand.Parameters.AddWithValue("@req", P.LevelReq);
+
+                        await UpdateUserCommand.ExecuteNonQueryAsync();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
 
         }
