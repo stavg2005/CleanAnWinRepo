@@ -220,7 +220,8 @@
                     <div class="card my-4">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                                <h6 class="text-white text-capitalize ps-3">Users table</h6>          
+                                <h6 class="text-white text-capitalize ps-3">Users table</h6>  
+                              
                             </div>
                         </div>
                         <div class="card-body px-0 pb-2">
@@ -354,6 +355,7 @@
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                                 <h6 class="text-white text-capitalize ps-3">Products Table</h6>
+
                             </div>
                         </div>
                         <div class="card-body px-0 pb-2">
@@ -371,40 +373,44 @@
                                     <tbody>
                                         @if (Tables.Products != null)
                                         {
-                                            
-                                        
-                                        @foreach (Product p in Tables.Products)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex px-2">
-                                                        <div>
-                                                            <img src="@(path+Convert.ToBase64String(p.ProductPicture))" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                                            @foreach (Product p in Tables.Products)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex px-2">
+                                                            <div>
+                                                                <img src="@(path+Convert.ToBase64String(p.ProductPicture))" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                                                            </div>
+                                                            <div class="my-auto">
+                                                                <h6 class="mb-0 text-sm">@p.ProductName</h6>
+                                                            </div>
                                                         </div>
-                                                        <div class="my-auto">
-                                                            <h6 class="mb-0 text-sm">@p.ProductName</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <p class="text-sm font-weight-bold mb-0">@p.ProductDescription</p>
-                                                </td>
-                                                <td>
-                                                    <span class="text-xs font-weight-bold">@p.ProductPrice</span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-xs font-weight-bold">@p.LevelReq</span>
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <button class="btn btn-link text-secondary mb-0" @onclick="() => EditProduct(p)">
-                                                        <i class="fa fa-edit text-xs"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        }
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-sm font-weight-bold mb-0">@p.ProductDescription</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-xs font-weight-bold">@p.ProductPrice</span>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <span class="text-secondary text-xs font-weight-bold">@p.LevelReq</span>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <button class="btn btn-link text-secondary mb-0" @onclick="() => EditProduct(p)">
+                                                            <i class="fa fa-edit text-xs"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="text-end">
+                                                <button class="btn btn-primary" @onclick=AddProduct>Add Product</button>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -563,25 +569,49 @@
                                 <div class="modal-body">
                                     <!-- Form for editing product details -->
                                     <EditForm Model="@productToEdit">
-                                        <InputText @bind-Value="@productToEdit.ProductName" />
-                                        <InputText @bind-Value="@productToEdit.ProductDescription" />
-                                        <InputNumber @bind-Value="@productToEdit.ProductPrice" />
-                                        <InputNumber @bind-Value="@productToEdit.LevelReq" />
+                                        <InputText @bind-Value="@productToEdit.ProductName" placeholder="ProductName"/>
+                                        <InputText @bind-Value="@productToEdit.ProductDescription" placeholder="Description" />
+                                        <InputNumber @bind-Value="@productToEdit.ProductPrice" placeholder="Price" />
+                                        <InputNumber @bind-Value="@productToEdit.LevelReq" placeholder="LevelReq" />
                                     </EditForm>
                                 </div>
                             <div class="pl-sm-4 pl-2" id="img-section">
                                 <b>Profile Photo</b>
                                 <p>Accepted file type .png. Less than 1MB</p>
-                                <InputFile OnChange="HandleFileChangeForProduct" />Upload
+                                @if(addproduct)
+                                {
+                                    <InputFile OnChange="HandleFileChangeForNewProducts" />
+                                    
+                                    
+
+                                 }
+                                else
+                                {
+                                    <InputFile OnChange="HandleFileChangeForProduct" />
+                                    
+                                }
+                                
                             </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
-                                    <button type="button" class="btn btn-primary" @onclick="SaveProductEdit">Save changes</button>
+                                @{
+                                    if(addproduct)
+                                    {
+                                        <button type="button" class="btn btn-primary" @onclick="AddProducts">Save changes</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary" @onclick="SaveProductEdit">Save changes</button>
+                                    }
+                                }
+                                    
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
+            
+            
 
             @if (UserToEdit != null)
             {
@@ -739,11 +769,19 @@
     private Locations LocationToEdit;
     private TrashCan TrashCanToEdit;
 
+    private Product productToAdd;
+
+    bool addproduct = false;
     // Method to handle edit button click
     private void EditProduct(Product product)
     {
         // Set the product to edit
         productToEdit = product;
+    }
+    private void AddProduct()
+    {
+        productToEdit = new Product();
+        addproduct = true;
     }
     private void EditUser(Users u)
     {
@@ -759,6 +797,12 @@
         TrashCanToEdit = t;
     }
 
+
+    private async Task AddProducts()
+    {
+        await a.InsertNewProduct(productToEdit);
+        CancelEdit();
+    }
     // Method to save changes
     private async Task SaveProductEdit()
     {
@@ -806,6 +850,8 @@
         UserToEdit = null;
         LocationToEdit = null;
         TrashCanToEdit = null;
+
+        productToAdd = null;
     }
 
     private async Task HandleFileChange(InputFileChangeEventArgs e)
@@ -828,6 +874,25 @@
         }
     }
 
+    private async Task HandleFileChangeForNewProducts(InputFileChangeEventArgs e)
+    {
+        // Ensure the selected file is not null
+        if (e.File != null)
+        {
+
+            // Read the file content into a byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await e.File.OpenReadStream().CopyToAsync(memoryStream);
+                var imageData = memoryStream.ToArray();
+
+                // Create an ImageModel instance and upload the image
+
+
+                productToEdit.ProductPicture = imageData ;
+            }
+        }
+    }
     private async Task HandleFileChangeForProduct(InputFileChangeEventArgs e)
     {
         // Ensure the selected file is not null

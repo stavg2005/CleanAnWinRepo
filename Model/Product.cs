@@ -15,6 +15,7 @@ namespace Model
 			ProductDescription =null;
 			ProductPrice = -1;
             LevelReq = 0;
+            ProductPicture = new byte[0]; 
 		}
 
         public Product(int productID, string productName, string productDescription, int productPrice, byte[] productPicture)
