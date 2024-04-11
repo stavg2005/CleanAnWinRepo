@@ -179,8 +179,16 @@ namespace Services
 
         public async Task<List<Product>> GetALLProducts()
         {
-            string s = $"{Apiurl}/GetAllProducts";
-            return await _httpClient.GetFromJsonAsync<List<Product>>(s);
+            try
+            {
+                string s = $"{Apiurl}/GetAllProducts";
+                return await _httpClient.GetFromJsonAsync<List<Product>>(s);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Product>(0);
+            }
         }
 
         public async Task<string> ReportClean(int Weight, int userid, int trashcanid)
@@ -348,8 +356,13 @@ namespace Services
 
             }
         }
-        
-        
+
+        public async Task<int> GetUserIDfromEmail(string email)
+        {
+            string s = $"{Apiurl}/api/Login/GetUserIDfromEmail?email={email}";
+            return await _httpClient.GetFromJsonAsync<int>(s);
+        }
+
 
         public async Task<string> UploadImageToApi(int userId, byte[] imageData)
         {

@@ -299,5 +299,197 @@
         });
     </script>
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+
+    <script>
+
+        class Helpers {
+            static dotNetHelper;
+
+            static SetDotNetHelper(value) {
+                Helpers.dotNetHelper = value;
+            }
+
+            static async DeleteTrashCan(id) {
+                await Helpers.dotNetHelper.invokeMethodAsync('DeleteTrashCan', id);
+            }
+        }
+
+        window.Helpers = Helpers;
+    </script>
+    <script>
+
+
+        function initialize(js, dotnetHelper) {
+            var mapOptions = {
+                zoom: 15,
+                center: new google.maps.LatLng(js.lat, js.lng),
+                mapTypeId: google.maps.MapTypeId.SATELLITE,
+
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            var infoWindow = new google.maps.InfoWindow();
+            map.addListener('click', function (event) {
+                var longitude = event.latLng.lng();
+                var latitude = event.latLng.lat();
+                dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
+            });
+            console.log("WHYYYYYYY" + js.locations[0])
+            // Add waypoints
+            for (var i = 0; i < js.locations.length; i++) {
+                CreateMarker(js.locations[i], map, js.isuseradmin);
+            }
+        }
+
+        function CreateMarker(t, map, isadmin) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(t.latitude, t.longitude),
+                map: map,
+                title: 'Waypoint',
+                icon: {
+                    url: "https://cdn-icons-png.flaticon.com/256/7911/7911205.png",
+                    scaledSize: new google.maps.Size(32, 32)
+                }
+            });
+            console.log("why are you not admin " + isadmin);
+            var contentString = ``;
+            if (isadmin) {
+                contentString = `
+                    <div>
+                        <strong>${t.id}</strong><br>
+                        Weight: ${t.weight}<br>
+                        Isfull: ${t.isfull}<br>
+                         <button onclick="Helpers.DeleteTrashCan(${t.id})">Delete TrashCan</button>
+                    </div>`;
+            }
+            else {
+                contentString = `
+                    <div>
+                        <strong>${t.id}</strong><br>
+                        Weight: ${t.weight}<br>
+                        Isfull: ${t.isfull}<br>
+
+                    </div>`;
+            }
+
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            marker.addListener('click', function () {
+                infoWindow.open(map, this);
+            });
+        }
+
+    </script>
+
+    <script>
+        window.reloadPage = function () {
+            window.location.reload();
+        }
+    </script>
+
+    <script type="text/javascript">
+        window.getDimensions = function () {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        };
+    </script>
+
+    <script>
+        window.updateProgressExternally = function (value) {
+            updateCircularProgressBar(value);
+        };
+    </script>
+
+
+
+    <script>
+
+        function updateCircularProgressBar(value) {
+            const progress = document.getElementById("progress");
+            const circumference = 2 * Math.PI * progress.r.baseVal.value;
+            const targetOffset = circumference - (value / 100) * circumference;
+
+            // Set the initial state with the full circumference
+            progress.style.strokeDasharray = `${circumference} ${circumference}`;
+            progress.style.strokeDashoffset = circumference;
+
+            // Start the animation
+            animate(circumference, targetOffset, performance.now());
+        }
+
+        function animate(initialOffset, targetOffset, startTime) {
+            const progress = document.getElementById("progress");
+            const duration = 1000; // Animation duration in milliseconds (1 second in this example)
+
+            function frame(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progressPercentage = Math.min(elapsed / duration, 1);
+                const currentOffset = initialOffset - progressPercentage * (initialOffset - targetOffset);
+
+                progress.style.strokeDashoffset = currentOffset;
+
+                if (progressPercentage < 1) {
+                    requestAnimationFrame((time) => frame(time));
+                }
+            }
+
+            requestAnimationFrame((time) => frame(time));
+        }
+
+
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Simulate a 4-second loading time
+            setTimeout(function () {
+                // Add a class to hide the loader
+                document.getElementById("loader").classList.add("hidden");
+
+                // Remove the class to show the content
+                document.getElementById("content").classList.remove("hidden");
+            }, 4000);
+        });
+    </script>
+    <script>
+        function nextStep() {
+            // Add logic to handle the transition to the next step
+            var currentStep = document.querySelector('.form-step.active');
+            var nextStep = currentStep.nextElementSibling;
+
+            if (nextStep) {
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+            }
+        }
+
+        function prevStep() {
+            var currentStep = document.querySelector('.form-step.active');
+            var prevStep = currentStep.previousElementSibling;
+
+            if (prevStep) {
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+            }
+        }
+        // Add similar functions for prevStep() and showStep(stepNumber) if not already defined.
+    </script>
+
+    <script>
+        document.getElementById('toggleSidebarBtn').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('hide-sidebar');
+        });
+    </script>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8gY0PbmE1EgDjxd-SdIMWWTaQf9Mi7vc&callback=initMap"></script>
 </body>
 </html>

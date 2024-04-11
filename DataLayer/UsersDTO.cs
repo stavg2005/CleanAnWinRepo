@@ -128,6 +128,43 @@ namespace DataLayer
             return usersList;
         }
 
+        public static async Task<int> GetUserIdFromEmail(string email)
+        {
+            using (MySqlConnection c = new MySqlConnection())
+            {
+
+                int id = -1;
+                try
+                {
+                    c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                    await c.OpenAsync(); // Open the connection asynchronously
+
+                    string query = $@"SELECT UserID FROM users WHERE UserEmail= '{email}'";
+                    using (MySqlCommand cmd = new MySqlCommand(query, c))
+                    {
+                        // Execute the query asynchronously
+                        using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await r.ReadAsync())
+                            {
+                                id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
+                                
+
+
+
+                            }
+                        }
+                    }
+                    return id;
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions appropriately (e.g., log, rethrow, etc.)
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    return -1;
+                }
+            }
+        }
         public static async Task<List<Product>> GetCart(int id)
         {
 

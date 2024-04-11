@@ -61,6 +61,15 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link text-white " @onclick="GoMaps">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">table_view</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Maps</span>
+                    </a>
+                </li>
+
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
                 </li>
@@ -490,6 +499,10 @@
     private void GoTables()
     {
         nav.NavigateTo("/tables");
+    }
+    private void GoMaps(){
+
+        nav.NavigateTo($"/maps/{Tables.Trashs[0].latitude}/{Tables.Trashs[0].longitude}");
     }
     private void GoProfile(){
         nav.NavigateTo("/profile");

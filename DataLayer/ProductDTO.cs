@@ -67,22 +67,31 @@ namespace DataLayer
 
         public static async Task<List<Product>> GetAllProducts()
         {
-            List<Product> products = new List<Product>();   
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            cmd.CommandText = $@"SELECT *
-                                FROM   product;";
-            MySqlDataReader r = cmd.ExecuteReader();
-            while (r.Read())
+            try
             {
-                int id = r.GetInt32(0);
-                Product p = new Product(id,r.GetString(1),r.GetString(2),r.GetInt32(3), await ProductDTO.GetProductPictureInBytes(id),r.GetInt32(5));
-                products.Add(p);
+                List<Product> products = new List<Product>();
+                MySqlConnection c = new MySqlConnection();
+                c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                c.Open();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = c;
+                cmd.CommandText = $@"SELECT *
+                                FROM   product;";
+                MySqlDataReader r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    int id = r.GetInt32(0);
+                    Product p = new Product(id, r.GetString(1), r.GetString(2), r.GetInt32(3), await ProductDTO.GetProductPictureInBytes(id), r.GetInt32(5));
+                    products.Add(p);
+                }
+                return products;
             }
-            return products;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Product>();
+            }
+            
 
         }
 

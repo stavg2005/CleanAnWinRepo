@@ -152,5 +152,18 @@ namespace ApiServices.Controllers
                 return null;
             }
         }
+
+        [HttpGet("GetUserIDfromEmail")]
+        public async Task<int> GetUserIDfromEmail(string email)
+        {
+            try
+            {
+                return await UsersDTO.GetUserIdFromEmail(email);
+            }
+            catch(Exception ex)
+            {
+                return -1;
+            }
+        }
     }
 }

@@ -1,0 +1,229 @@
+﻿ @page "/twostep"
+@inject Data.BrowserService Service
+@inject Data.BrowserDimension d;
+@inject NavigationManager nav;
+@using Model;
+@using DataLayer;
+@using Services
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        #steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            margin-top: 50px;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+            .step.active {
+                background-color: #555;
+            }
+
+        #formSteps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .form-step {
+            display: none;
+            width: 100%;
+        }
+
+            .form-step.active {
+                display: block;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="width:@(d.Width)px;height:@(d.Height)px; background-color:#73d1f7">
+
+    <div class="container" style="margin-top:150px;">
+        <div style="opacity:0" id="steps">
+            <div class="step active" onclick="showStep(1)">Step 1</div>
+            <div class="step" onclick="showStep(2)">Step 2</div>
+            <div class="step" onclick="showStep(3)">Step 3</div>
+        </div>
+
+        <div id="formSteps">
+            <div class="form-step active">
+                <h2>Enter Your Email</h2>
+                <div class="form-group">
+                    <label for="firstName">Email:</label>
+                    <input @bind-value="Email" type="text" id="firstName">
+                </div>
+                @if (!EmailIsCorrect)
+                {
+                    <button @onclick="CheakIfEmailCorrect"> cheak Email</button>
+                }
+                @if (EmailIsCorrect)
+                {
+                    <button onclick="nextStep()">Next</button>
+                }
+                
+            </div>
+
+            <div class="form-step">
+                <h2>We Have sent you a Code </h2>
+                <div class="form-group">
+                    <label for="email">Enter Code</label>
+                    <input @bind-value="code" type="email" id="email">
+                </div>
+                @if (!CodeIsCorrect)
+                {
+                    <button @onclick="CheakIfCodeCorrect"> Cheak Code</button>
+                }
+                else
+                {
+                    <button onclick="nextStep()">Next</button>
+                }
+                
+            </div>
+
+            <div class="form-step">
+                <h2>Please Enter New Password</h2>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input @bind-value="Password" type="password" id="password">
+                </div>
+                <button onclick="prevStep()">Previous</button>
+                <button @onclick="() => Reg()">Submit</button>
+            </div>
+        </div>
+    </div>
+</body>
+@code {
+    private string UserName { get; set; }
+    private string Password { get; set; }
+    private string Email { get; set; }
+    private int location { get; set; }
+    private int id { get; set; }
+    byte[] profilepic { get; set; }
+    int n;
+    bool b = false;
+    bool CodeIsCorrect = false;
+    bool EmailIsCorrect= false;
+    string code { get; set; }
+    string RandomCode { get; set; }
+    ApiServices A = new ApiServices();
+    private const string ApiBaseUrl = "http://10.0.0.27:5087";
+    List<Locations> list;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetDimensions();
+            StateHasChanged();
+
+            list = list;
+        }
+
+    }
+
+    private async Task SendRandomCode()
+    {
+
+        Random r = new Random();
+        RandomCode = r.Next(10000, 99999).ToString() ;
+        await EmailService.SendEmailAsync(Email,"Verfication Code", $"Your verification Code is {RandomCode}");
+
+    }
+
+    private void CheakIfCodeCorrect()
+    {
+        if(code == RandomCode)
+        {
+            CodeIsCorrect = true;
+        }
+        else
+        {
+            CodeIsCorrect = false;
+        }
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        list = await A.GetAllLocations();
+        b = true;
+    }
+
+    private async Task CheakIfEmailCorrect()
+    {
+        int id = await A.GetUserIDfromEmail(Email);
+        if (id != -1)
+        {
+            EmailIsCorrect = true ;
+            await  SendRandomCode();
+        }
+        else
+        {
+            EmailIsCorrect = false;
+        }
+    }
+    public async Task Reg()
+    {
+
+        int id = await A.GetUserIDfromEmail(Email);
+        await A.UpdatePassword(id, Password);
+        nav.NavigateTo("/afterpaschange");
+
+    }
+    async Task GetDimensions()
+    {
+        var dimension = await Service.GetDimensions();
+        d.Height = dimension.Height;
+        d.Width = dimension.Width;
+    }
+    
+}
+
+
+

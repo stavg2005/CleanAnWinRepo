@@ -10,9 +10,7 @@
 @using Model;
 @using Services
 
-@{
-   
-}
+
 
 <head>
   <meta charset="UTF-8">
@@ -45,7 +43,7 @@
                     </div>
                 </div>
                 <button @onclick="LoginBitch" style=" background-color: #3e4684" class="login">Login </button>
-                <div style="position:relative" class="footer"><span @onclick="GoMain">Signup</span><span>Forgot Password?</span></div>
+        <div @onclick="Go2Step" style="position:relative" class="footer"><span>Signup</span><span>Forgot Password?</span></div>
             </div>
             <!-- partial -->
 
@@ -75,6 +73,10 @@
     private void GoMain()
     {
         Nav.NavigateTo("/reg");
+    }
+    private void Go2Step()
+    {
+        Nav.NavigateTo("/twostep");
     }
     protected override async Task OnInitializedAsync()
     {

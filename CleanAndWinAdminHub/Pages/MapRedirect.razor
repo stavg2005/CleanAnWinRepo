@@ -1,0 +1,11 @@
+﻿<h3>MapRedirect</h3>
+@page "/mapredirect"
+ @inject NavigationManager nav;
+ @inject TablesService Tables;
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        nav.NavigateTo($"/maps/{Tables.Trashs[0].latitude}/{Tables.Trashs[0].longitude}");
+    }
+}

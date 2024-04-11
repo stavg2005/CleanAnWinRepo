@@ -2,16 +2,15 @@
 @using Model;
 @inject NavigationManager NavManager;
 @inject IJSRuntime JSRuntime
-@inject UserService Userservice
-@inject AuthService AuthService
-@inject Data.BrowserService Service
-@inject Data.BrowserDimension d;
+
+
 @inject NavigationManager nav;
 @implements IDisposable
 @inject IJSRuntime JS
 @using System
 @using Services
-<div id="map" style="height:@(d.Height)px;width:@(d.Width)px;">
+<div id="map-container" ></div>
+<div id="map" style="width: 100vw;  height: 100vh;">
 </div>
 
 <div class="modal" style="display: @modalDisplay">
@@ -19,22 +18,22 @@
         <span class="close" @onclick="CloseModal">&times;</span>
         <h3>Place new TrashCan</h3>
         <p> are you sure you want to place the trash can here? \ </p>
-            </div>
-
-            <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add trashCan</button>
     </div>
+
+    <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add trashCan</button>
+</div>
 
 @code {
 
 
     [Parameter]
-    public Tuple<String,string> LatnLng { get; set; }
+    public Tuple<String, string> LatnLng { get; set; }
     private string modalDisplay = "none";
     TrashCan newTrash = new TrashCan();
     ApiServices a = new ApiServices();
 
     [Parameter]
-    public string lat{ get; set; }
+    public string lat { get; set; }
     [Parameter]
     public string lng { get; set; }
 
@@ -53,14 +52,13 @@
 
 
     [JSInvokable("DeleteTrashCan")]
-    public  async Task DeleteTrashCan(int id)
+    public async Task DeleteTrashCan(int id)
     {
-        if(Userservice.CurrentUser.IsAdmin)
-        {
+
             await a.DeleteTrashCan(id);
 
             nav.NavigateTo($"mapredirect");
-        }
+        
 
 
 
@@ -80,21 +78,16 @@
 
     private async Task InsertValuesToUserService()
     {
-        Userservice.CurrentUser = await AuthService.GetUserInfo();
+        
 
     }
-    async Task GetDimensions()
-    {
-        var dimension = await Service.GetDimensions();
-        d.Height = dimension.Height;
-        d.Width = dimension.Width;
-    }
+
 
     protected override async Task OnInitializedAsync()
     {
-        await InsertValuesToUserService();
+        
         ApiServices a = new ApiServices();
-        await GetDimensions();
+
 
 
 
@@ -114,8 +107,8 @@
         List<TrashCan> locations = await a.GetAllTrashCanLocations();
         if (locations != null)
         {
-            Javascriptquery js = new Javascriptquery(locations, lat, lng,Userservice.CurrentUser.IsAdmin);
-            await JSRuntime.InvokeVoidAsync("initialize", js,DotNetObjectReference.Create(this));
+            Javascriptquery js = new Javascriptquery(locations, lat, lng,true);
+            await JSRuntime.InvokeVoidAsync("initialize", js, DotNetObjectReference.Create(this));
         }
 
     }
@@ -137,13 +130,12 @@
     [JSInvokable]
     public async Task HandleMapClick(double latitude, double longitude)
     {
-        if (Userservice.CurrentUser.IsAdmin)
-        {
+
             newTrash.latitude = latitude.ToString();
             newTrash.longitude = longitude.ToString();
             OpenModal();
             StateHasChanged();
-        }
+        
 
     }
 
@@ -162,7 +154,7 @@
 
     public class Javascriptquery
     {
-        public Javascriptquery(List<TrashCan> locations, string lat, string lng,bool IsUserAdmin)
+        public Javascriptquery(List<TrashCan> locations, string lat, string lng, bool IsUserAdmin)
         {
             this.locations = locations;
             this.lat = lat;
@@ -173,9 +165,10 @@
         public List<TrashCan> locations { get; set; }
         public string lat { get; set; }
         public string lng { get; set; }
-        public bool isuseradmin {get;set;}
-        
+        public bool isuseradmin { get; set; }
+
     }
 
 }
+
 
