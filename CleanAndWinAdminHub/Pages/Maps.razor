@@ -9,19 +9,25 @@
 @inject IJSRuntime JS
 @using System
 @using Services
-<div id="map-container" ></div>
-<div id="map" style="width: 100vw;  height: 100vh;">
-</div>
 
-<div class="modal" style="display: @modalDisplay">
-    <div class="modal-content">
-        <span class="close" @onclick="CloseModal">&times;</span>
+<!-- Modal container -->
+<div class="modal" style="display: @modalDisplay; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.5);">
+    <!-- Modal content -->
+    <div class="modal-content" style="z-index: 100; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+        <span class="close" @onclick="CloseModal" style="cursor: pointer; font-size: 24px;">&times;</span>
         <h3>Place new TrashCan</h3>
-        <p> are you sure you want to place the trash can here? \ </p>
+        <p>Are you sure you want to place the trash can here?</p>
+        <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add TrashCan</button>
     </div>
-
-    <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add trashCan</button>
 </div>
+
+<!-- Map container -->
+<div id="map-container" style="position: fixed; z-index: 1; width: 100vw; height: 100vh;">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+</div>
+
+
+
 
 @code {
 
@@ -117,7 +123,7 @@
 
     public void OpenModal()
     {
-        modalDisplay = "block";
+        modalDisplay = "flex";
         Console.WriteLine("Modal opened");
     }
 
