@@ -37,6 +37,18 @@ namespace ApiServices.Controllers
             }
         }
 
+        [HttpPost("AddNewTask")]
+        public async Task AddTask([FromBody] Project_Task p)
+        {
+            try
+            {
+                await Project_TaskDTO.AddNewTask(p);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
         [HttpGet("GetAllCurrentTasks")]
         public async Task<List<Project_Task>> GetAllCurrentTasks()
         {

@@ -587,7 +587,7 @@
         }
     }
 
-    private void SaveTaskEdit()
+    private async void SaveTaskEdit()
     {
         // Update PTask.admins based on the selected admins
         PTask.Admins = availableAdmins
@@ -595,7 +595,8 @@
             .Select(admin => admin)
             .ToList();
 
-            
+        await a.AddNewTask(PTask);
+
         AddNewTask = false;
     }
 

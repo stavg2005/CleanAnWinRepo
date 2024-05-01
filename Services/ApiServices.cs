@@ -638,6 +638,27 @@ namespace Services
                 return new List<Admin>();
             }
         }
+
+        public async Task<string> AddNewTask(Project_Task task)
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Admin/AddNewTask";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Project_Task>(url, task);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
         public async Task<string> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
         {
 
