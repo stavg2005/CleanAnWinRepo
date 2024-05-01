@@ -1,5 +1,6 @@
 ﻿
 @page "/dashboard"
+@using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager nav;
 @inject ProtectedSessionStorage MySession;
 @inject Admin_Service Current;
@@ -303,7 +304,7 @@
                                             <i class="fa fa-ellipsis-v text-secondary"></i>
                                         </a>
                                         <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Add Task</a></li>
+                                            <li><a @onclick="Addnewtask" class="dropdown-item border-radius-md" href="javascript:;">Add Task</a></li>
                                             <li><a class="dropdown-item border-radius-md" href="javascript:;">Remove Task</a></li>
                                             <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
                                         </ul>
@@ -487,6 +488,50 @@
         <p>@P.Name</p>
     }
 
+    @if (AddNewTask)
+    {
+        <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Task</h5>
+                        <button type="button" class="close" aria-label="Close" @onclick="Cancel">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form for editing task details -->
+                        <EditForm Model="@PTask">
+                            <div>
+                                <label for="taskName">Task Name:</label>
+                                <InputText id="taskName" @bind-Value="@PTask.Name" />
+                            </div>
+
+                            <div>
+                                <label for="taskBudget">Task Budget:</label>
+                                <InputNumber id="taskBudget" @bind-Value="@PTask.Budget" />
+                            </div>
+
+                            <div>
+                                <h6>Select Admins:</h6>
+                                @foreach (var admin in availableAdmins)
+                                {
+                                    <div>
+                                        <InputCheckbox @bind-Value="@admin.IsSelected" />
+                                        <span>@admin.Name</span>
+                                    </div>
+                                }
+                            </div>
+                        </EditForm>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="SaveTaskEdit">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </body>
 
 </html>
@@ -496,6 +541,12 @@
     int TotalUsers { get; set; }
     int TotalOrders { get; set; }
     int totalkg { get; set; }
+    bool AddNewTask = false;
+    List<Admin> availableAdmins = new List<Admin>();
+    Project_Task PTask = new Project_Task();
+    ApiServices a = new ApiServices();
+
+
     private void GoTables()
     {
         nav.NavigateTo("/tables");
@@ -535,6 +586,27 @@
             totalkg = +r.weight;
         }
     }
+
+    private void SaveTaskEdit()
+    {
+        // Update PTask.admins based on the selected admins
+        PTask.Admins = availableAdmins
+            .Where(admin => admin.IsSelected)
+            .Select(admin => admin)
+            .ToList();
+
+            
+        AddNewTask = false;
+    }
+
+    private void Addnewtask()
+    {
+        AddNewTask = true;
+    }
+    private void Cancel()
+    {
+        AddNewTask = false;
+    }
     private string UserName;
     string path = "data:image/png;base64,";
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -556,10 +628,17 @@
 
     }
 
+    private async void GetAllAdmins()
+    {
+        availableAdmins = await a.GetALLAdmins();
+        
+    }
+
     protected override async Task OnInitializedAsync()
     {
         GetSumOfAllCoins();
         GetAmountOfAllusers();
         GetTotalKG();
+        GetAllAdmins();
     }
 }

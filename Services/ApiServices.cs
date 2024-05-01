@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.30:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -623,6 +623,21 @@ namespace Services
             }
         }
 
+        public async Task<List<Admin>> GetALLAdmins()
+        {
+            List<Admin> admins = new List<Admin>();
+            try
+            {
+                string url = $"{Apiurl}/api/Admin/GetAllAdmins";
+                admins =  await _httpClient.GetFromJsonAsync<List<Admin>>(url);
+                return admins;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine ($"An error occurred: {ex.Message}");
+                return new List<Admin>();
+            }
+        }
         public async Task<string> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
         {
 

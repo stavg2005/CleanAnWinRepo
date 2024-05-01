@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySqlConnector;
 using Dapper;
+using Google.Protobuf.WellKnownTypes;
 
 namespace DataLayer
 {
@@ -81,7 +82,58 @@ namespace DataLayer
             }
         }
 
-        public static async Task<byte[]> GetProfilePhotoInByte(int id)
+        public static async Task<List<Admin>> GetAllAdmins()
+        {
+            List<Admin> AdminList = new List<Admin>();
+
+            // Use a using statement to ensure proper disposal of resources
+            using (MySqlConnection c = new MySqlConnection())
+            {
+                try
+                {
+                    c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                    await c.OpenAsync(); // Open the connection asynchronously
+
+                    string query = @"SELECT * FROM admin";
+                    using (MySqlCommand cmd = new MySqlCommand(query, c))
+                    {
+                        // Execute the query asynchronously
+                        using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await r.ReadAsync())
+                            {
+                                int id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
+
+
+                                // Fetch related data asynchronously using separate methods
+                                Admin admin = new Admin(
+                                    id,
+                                    r.GetString(1),
+                                    r.GetString(7),
+                                    r.GetString(4),
+                                    await GetProfilePhotoInByte(id),
+                                    r.GetString(6),
+                                    r.GetString(2),
+                                    new List<Project_Task>()
+                                );
+
+                                AdminList.Add(admin);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions appropriately (e.g., log, rethrow, etc.)
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+            }
+
+            return AdminList;
+        }
+
+    
+    public static async Task<byte[]> GetProfilePhotoInByte(int id)
         {
             string query = $"Select ProfilePhoto From admin Where AdminID ={id}";
 

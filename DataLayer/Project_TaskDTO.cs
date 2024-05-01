@@ -82,7 +82,7 @@ namespace DataLayer
             }
             return projectTasks;
         }
-        
+
         //public static async Task AddNewTask(Project_Task task)
         //{
         //    string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -102,7 +102,7 @@ namespace DataLayer
         //            string getLastInsertIdQuery = "SELECT LAST_INSERT_ID()";
         //            MySqlCommand getLastInsertIdCommand = new MySqlCommand(getLastInsertIdQuery, connection);
         //            int taskid = int.Parse(getLastInsertIdCommand.ExecuteScalar());
-                    
+
         //            foreach (Admin adminId in task.Admins)
         //            {
         //                string insertAdminProjectQuery = "INSERT INTO Admin_Projects (AdminID, Project_TaskID) VALUES (@AdminID, @Project_TaskID)";
@@ -115,13 +115,14 @@ namespace DataLayer
         //            }
         //        }
         //    }
-        //    catch(Exception ex){
+        //    catch (Exception ex)
+        //    {
         //        Console.WriteLine(ex.Message);
         //    }
-            
+
         //}
 
-        
+
 
     }
 }

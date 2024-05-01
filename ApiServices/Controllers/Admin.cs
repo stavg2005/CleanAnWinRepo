@@ -23,6 +23,19 @@ namespace ApiServices.Controllers
             }
         }
 
+        [HttpGet("GetAllAdmins")]
+        public async Task<List<Model.Admin>> GetAllAdmins()
+        {
+            try
+            {
+                return await AdminDTO.GetAllAdmins();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<Model.Admin>();
+            }
+        }
 
         [HttpGet("GetAllCurrentTasks")]
         public async Task<List<Project_Task>> GetAllCurrentTasks()

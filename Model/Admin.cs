@@ -18,6 +18,7 @@ namespace Model
             this.phone = phone;
             Email = email;
             Tasks = tasks;
+            IsSelected = false;
         }
 
         public Admin()
@@ -37,5 +38,6 @@ namespace Model
         public string Email { get; set; }
 
         public List<Project_Task> Tasks { get; set; }
+        public bool IsSelected { get; set; }
     }
 }
