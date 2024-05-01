@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.30:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -652,6 +652,50 @@ namespace Services
                 else
                 {
                     return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> UpdateTask(Project_Task p)
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Admin/UpdateTask";
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync<Project_Task>(url, p);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("PUT request successful!");
+                }
+                else
+                {
+                    return ($"PUT request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<string> DeleteTask(int id)
+        {
+            try
+            {
+                string s = JsonSerializer.Serialize(id);
+                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
+                string url = $"{Apiurl}/api/Admin/DeleteTask?projectid={id}";
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<string>(url,s);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("Delete request successful!");
+                }
+                else
+                {
+                    return ($"Delete request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
                 }
             }
             catch (Exception ex)

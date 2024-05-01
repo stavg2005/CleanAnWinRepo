@@ -62,5 +62,35 @@ namespace ApiServices.Controllers
                 return new List<Project_Task>();
             }
         }
+
+        [HttpPut("UpdateTask")]
+        public async Task<string> UpdateTask([FromBody] Project_Task p)
+        {
+            try
+            {
+                await Project_TaskDTO.EditTask(p);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return ex.Message;
+            }
+        }
+
+        [HttpPost("DeleteTask")]
+        public async Task<string> DeleteTask(int projectid)
+        {
+            try
+            {
+                await Project_TaskDTO.DeleteTask(projectid);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return ex.Message;
+            }
+        }
     }
 }
