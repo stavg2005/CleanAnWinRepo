@@ -27,6 +27,8 @@ namespace Model
 
         public List<ReportClean> reportCleans { get; set; }  
 
+        
+
         // constructor withouth  profile picture
         public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin, List<Order> orders)
         {

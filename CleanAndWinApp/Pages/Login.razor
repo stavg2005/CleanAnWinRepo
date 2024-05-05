@@ -43,7 +43,8 @@
                     </div>
                 </div>
                 <button @onclick="LoginBitch" style=" background-color: #3e4684" class="login">Login </button>
-        <div @onclick="Go2Step" style="position:relative" class="footer"><span>Signup</span><span>Forgot Password?</span></div>
+        <div @onclick="Go2Step" style="position:absolute" class="footer"></div>
+        <div style="position:relative" class="footer" @onclick="GoReg">register</div>
             </div>
             <!-- partial -->
 
@@ -77,6 +78,11 @@
     private void Go2Step()
     {
         Nav.NavigateTo("/twostep");
+    }
+
+    private void GoReg()
+    {
+        Nav.NavigateTo("/reg");
     }
     protected override async Task OnInitializedAsync()
     {
