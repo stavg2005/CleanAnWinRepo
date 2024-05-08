@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Model;
+using Services;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
@@ -163,6 +164,52 @@ namespace ApiServices.Controllers
             catch(Exception ex)
             {
                 return -1;
+            }
+        }
+
+
+        [HttpGet("GetTopUsers")]
+        public async Task<List<LeaderboardUser>> GetTopUsers()
+        {
+            List<Users> all = await GetAllUsers();
+            all.Sort((user1,user2) => user1.TotalKg.CompareTo(user2.TotalKg));
+            List<LeaderboardUser> TopUsers = new List<LeaderboardUser>();
+            foreach(Users user in all)
+            {
+                TopUsers.Add(new LeaderboardUser(user.UserName,user.TotalKg));
+            }
+            TopUsers.Reverse();
+            return TopUsers;
+
+        }
+
+        [HttpGet("GetTopUsersToday")]
+
+        public async Task<List<LeaderboardUser>> GetTopUsersToday()
+        {
+            try
+            {
+                return await UsersDTO.GetTopUsersToday();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<LeaderboardUser>(0);
+            }
+
+        }
+
+        [HttpGet("GetTopUsersThisWeek")]
+        public async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
+        {
+            try
+            {
+                return await UsersDTO.GetTopUsersThisWeek();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<LeaderboardUser>(0);
             }
         }
     }

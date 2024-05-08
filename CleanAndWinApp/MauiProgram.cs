@@ -1,6 +1,7 @@
 ﻿using CleanAndWinApp.Data;
 using Microsoft.Extensions.Logging;
 using Model;
+using Services;
 using ZstdSharp.Unsafe;
 
 namespace CleanAndWinApp
@@ -32,6 +33,7 @@ namespace CleanAndWinApp
             
             builder.Services.AddSingleton<Services.ProductService>();
             builder.Services.AddSingleton<LocationService>();
+            builder.Services.AddSingleton<LeaderBoardService>();
 
 
             return builder.Build();

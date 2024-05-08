@@ -21,39 +21,13 @@
     if (Userservice.CurrentUser != null)
     {
 
-            if (Userservice.CurrentUser.IsAdmin)
-            {
-            <div>
-                <div class="centered-div">Hello Admin</div>
-
-                 
-
-
-                <img class="profile-pic" src="@path" />
-                <div class="progress-container" style="position:fixed;left:-80px;margin-top:20px">
-                    <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
-                        <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
-                        <circle id="progress" cx="250" cy="250" r="150" stroke="#6db7c1" stroke-width="10" fill="transparent"></circle>
-                    </svg>
-                </div>
-                <input style="opacity:0" @bind-value="progressValue" />
-                <button style="opacity:0">Update Progress</button>
-                <div class="nav-bar" style="width:300px;height:50px;margin-top:615px;height:80px">
-                </div>
-                <h1 style="margin-top:225px;position:fixed;margin-left:120px"> Level:∞</h1>
-                <button @onclick="Report" class="button-9" style="margin-top:430px;height:100px" role="button">Report Clean</button>
-
-            </div>
-            }
-            else
-            {
             <div>
                 <div class="centered-div">Hello  @Userservice.CurrentUser.UserName!</div>
 
                  
 
 
-                <img class="profile-pic" src="@path" />
+                <img @onclick="ToggleSidebar" class="profile-pic" src="@path"  />
                 <img style="left:0;width:50px;height:50px;position:absolute;top:5px" src="css/imags/shopping-cart.png" @onclick="GoCart"/>
                 <div class="progress-container" style="position:fixed;left:-100px;margin-top:20px">
                     <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
@@ -71,7 +45,7 @@
                 </div>
 
 
-            }
+      }
 
 
 
@@ -79,15 +53,12 @@
 
                 <img @onclick="Gomap" src="css/imags/bin.png" style="width:50px;height:50px" />
                 <img @onclick="GoStroe" src="css/imags/bag.png" style="width:50px;height:50px" />
-                <img @onclick ="ToggleSidebar" src="css/imags/user.png" style="width:50px;height:50px" />
+                <img @onclick ="GoLeader" src="css/imags/leader.png" style="width:50px;height:50px" />
 
             </div> 
 
 
     }
-   
-}
-
 else
 {
     <p>User not logged in.</p>
@@ -148,6 +119,7 @@ else
 @code {
     string path = "data:image/png;base64,";
 
+
     private int progressValue  { get; set; }
     int level { get; set; }
     Services.ApiServices a = new Services.ApiServices();
@@ -178,6 +150,10 @@ else
         nav.NavigateTo($"maps/{Userservice.CurrentUser.location.lat}/{Userservice.CurrentUser.location.lng}");
     }
 
+    private void GoLeader()
+    {
+        nav.NavigateTo("/leaders");
+    }
     private void GoSettings()
     {
         nav.NavigateTo("/setting");

@@ -15,6 +15,7 @@ using MySqlConnector;
 using Org.BouncyCastle.X509;
 using System.Diagnostics;
 
+
 namespace DataLayer
 {
     public class UsersDTO
@@ -148,7 +149,7 @@ namespace DataLayer
                             while (await r.ReadAsync())
                             {
                                 id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
-                                
+
 
 
 
@@ -269,7 +270,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin,await OrderDTO.GetOrdersByUserId(id),await ReportCleanDTO.GellAllReports(id));
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -319,7 +320,7 @@ namespace DataLayer
                 {
                     isadmin = true;
                 }
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id),await ReportCleanDTO.GellAllReports(id));
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -368,8 +369,8 @@ namespace DataLayer
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
-                
-                string update  = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture, IsAdmin = @IsAdmin WHERE UserID = { u.UserID }; ";
+
+                string update = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture, IsAdmin = @IsAdmin WHERE UserID = {u.UserID}; ";
 
                 try
                 {
@@ -377,7 +378,7 @@ namespace DataLayer
 
                     using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
                     {
-                        UpdateUserCommand.Parameters.AddWithValue("@UserEmail",u.Email);
+                        UpdateUserCommand.Parameters.AddWithValue("@UserEmail", u.Email);
                         UpdateUserCommand.Parameters.AddWithValue("@Usercoin", u.Coin);
                         UpdateUserCommand.Parameters.AddWithValue("@UserName", u.Username);
                         UpdateUserCommand.Parameters.AddWithValue("@Userxp", u.Userxp);
@@ -407,7 +408,7 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        
+
 
         public static async Task DeleteCart(int Userid)
         {
@@ -465,7 +466,7 @@ namespace DataLayer
                     }
 
                     // Step 3: Use the retrieved OrderID to insert records into the "order_product" table
-                    await AddProductsToOrder((int)lastInsertedOrderId, products,UserID);
+                    await AddProductsToOrder((int)lastInsertedOrderId, products, UserID);
                 }
                 catch (Exception ex)
                 {
@@ -501,13 +502,68 @@ namespace DataLayer
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-           
+
+        }
+
+        public static async Task<List<LeaderboardUser>> GetTopUsersToday()
+        {
+            string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            // Define the start and end of today
+            DateTime startOfToday = DateTime.Today;
+            DateTime endOfToday = startOfToday.AddDays(1);
+
+            // Query to get top users who cleaned the most today
+            string query = @"
+            SELECT u.Name, SUM(cr.Weight) AS TotalWeight
+            FROM CleanReports cr
+            JOIN Users u ON cr.UserId = u.UserId
+            WHERE cr.Date >= @startOfToday AND cr.Date < @endOfToday
+            GROUP BY u.Name
+            ORDER BY TotalWeight DESC
+            LIMIT 5";
+
+            using var connection = new MySqlConnection(_connectionString);
+            var topUsersToday = connection.Query<LeaderboardUser>(query, new
+            {
+                startOfToday,
+                endOfToday
+            }).ToList();
+
+            return topUsersToday;
+        }
+
+        public static async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
+        {
+            string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            // Define the start of the current week (assuming Monday as the first day of the week)
+            DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1);
+            DateTime endOfWeek = startOfWeek.AddDays(7);
+
+            // Query to get top users who cleaned the most this week
+            string query = @"
+            SELECT u.Name, SUM(cr.Weight) AS TotalWeight
+            FROM clean_report
+            JOIN Users u ON cr.UserId = u.UserId
+            WHERE cr.Date >= @startOfWeek AND cr.Date < @endOfWeek
+            GROUP BY u.Name
+            ORDER BY TotalWeight DESC
+            LIMIT 5";
+
+            using var connection = new MySqlConnection(_connectionString);
+            var topUsersThisWeek = connection.Query<LeaderboardUser>(query, new
+            {
+                startOfWeek,
+                endOfWeek
+            }).ToList();
+
+            return topUsersThisWeek;
         }
     }
 }
+
 
 

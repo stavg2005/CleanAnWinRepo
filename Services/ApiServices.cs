@@ -781,6 +781,57 @@ namespace Services
                 return (new List<Project_Task>(0));
             }
         }
+
+        public async Task<List<LeaderboardUser>> GetTopUsers()
+        {
+            List<LeaderboardUser> top = new List<LeaderboardUser>(0);
+           try
+          {
+                string url = $"{Apiurl}/api/Login/GetTopUsers";
+                top = await _httpClient.GetFromJsonAsync<List<LeaderboardUser>>(url);
+                return top;
+          }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return top;
+            }
+
+        }
+
+        public async Task<List<LeaderboardUser>> GetTopUsersToday()
+        {
+            List<LeaderboardUser> top = new List<LeaderboardUser>(0);
+            try
+            {
+                string url = $"{Apiurl}/api/Login/GetTopUsersToday";
+                top = await _httpClient.GetFromJsonAsync<List<LeaderboardUser>>(url);
+                return top;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return top;
+            }
+
+        }
+
+        public async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
+        {
+            List<LeaderboardUser> top = new List<LeaderboardUser>(0);
+            try
+            {
+                string url = $"{Apiurl}/api/Login/GetTopUsersThisWeek";
+                top = await _httpClient.GetFromJsonAsync<List<LeaderboardUser>>(url);
+                return top;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return top;
+            }
+
+        }
     }
 
 

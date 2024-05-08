@@ -1,0 +1,14 @@
+﻿<h3>LeaderBoard</h3>
+@page "/leaders"
+@inject LeaderBoardService leaderboard;
+
+<h1> Top Users All time</h1>
+<ul>
+    @foreach(LeaderboardUser u in leaderboard.TopUsers)
+    {
+        <li>@u.Name, @u.KgCleaned </li>
+    }
+</ul>
+@code {
+
+}

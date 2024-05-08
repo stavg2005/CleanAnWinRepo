@@ -7,6 +7,7 @@
 @inject Data.BrowserDimension d;
 @inject Services.ProductService productservice
 @inject LocationService locs;
+@inject LeaderBoardService leaderboard;
 @using Model;
 @using Services
 
@@ -95,8 +96,10 @@
             productservice.ProductList = products;
             var Locations = await api.GetAllLocations();
             locs.Locations = Locations;
+            leaderboard.TopUsers = await api.GetTopUsers();
+            leaderboard.TopUsersThisWeek = await api.GetTopUsersThisWeek();
+            leaderboard.TopUsersToday = await api.GetTopUsersToday();
 
-            
             Nav.NavigateTo("/main");
 
 
@@ -104,6 +107,8 @@
 
 
     }
+
+   
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

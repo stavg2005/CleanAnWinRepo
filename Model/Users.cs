@@ -27,6 +27,8 @@ namespace Model
 
         public List<ReportClean> reportCleans { get; set; }  
 
+        public int TotalKg { get;set; }
+
         
 
         // constructor withouth  profile picture
@@ -57,6 +59,7 @@ namespace Model
             IsAdmin = isadmin;
             this.orders = orders;
             this.reportCleans = reportClean;
+            this.TotalKg = GetTotalKG(reportClean);
         }
 
 
@@ -120,6 +123,15 @@ namespace Model
 
         }
 
+        private int GetTotalKG(List<ReportClean> reportClean)
+        {
+            int totalKG = 0;
+            foreach( ReportClean r in reportClean)
+            { 
+                totalKG = TotalKg +r.weight;
+            }
+            return totalKG;
+        }
         public void Dispose()
         {
             throw new NotImplementedException();
