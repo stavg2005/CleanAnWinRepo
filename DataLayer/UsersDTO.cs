@@ -511,56 +511,115 @@ namespace DataLayer
 
         public static async Task<List<LeaderboardUser>> GetTopUsersToday()
         {
-            string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            // Define the start and end of today
-            DateTime startOfToday = DateTime.Today;
-            DateTime endOfToday = startOfToday.AddDays(1);
-
-            // Query to get top users who cleaned the most today
-            string query = @"
-            SELECT u.Name, SUM(cr.Weight) AS TotalWeight
-            FROM CleanReports cr
+            try
+            {
+                string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                // Define the start and end of today
+                DateTime startOfToday = DateTime.Today;
+                
+                DateTime endOfToday = startOfToday.AddDays(1).AddTicks(-1);
+                string s = startOfToday.ToString() + "end of day is " + endOfToday.ToString();
+                // Query to get top users who cleaned the most today
+                string query = @"
+            SELECT u.UserName, SUM(cr.Weight) AS TotalWeight
+            FROM clean_report cr
             JOIN Users u ON cr.UserId = u.UserId
-            WHERE cr.Date >= @startOfToday AND cr.Date < @endOfToday
-            GROUP BY u.Name
+            WHERE cr.Date >= @startOfToday AND cr.Date <= @endOfToday
+            GROUP BY u.UserName
             ORDER BY TotalWeight DESC
             LIMIT 5";
 
-            using var connection = new MySqlConnection(_connectionString);
-            var topUsersToday = connection.Query<LeaderboardUser>(query, new
-            {
-                startOfToday,
-                endOfToday
-            }).ToList();
+                var topUsersToday = new List<LeaderboardUser>();
 
-            return topUsersToday;
+                await using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        // Add parameters to the query
+                        command.Parameters.AddWithValue("@startOfToday", startOfToday);
+                        command.Parameters.AddWithValue("@endOfToday", endOfToday);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var name = reader.GetString(0);
+                                var totalWeight = reader.GetDecimal(1);
+
+                                topUsersToday.Add(new LeaderboardUser
+                                {
+                                    Name = name,
+                                    KgCleaned = Convert.ToInt32(totalWeight)
+                                });
+                            }
+                        }
+                    }
+                }
+                return topUsersToday;
+            }
+            catch(Exception ex)
+            { 
+                Console.WriteLine(ex.ToString());
+                throw new Exception(ex.Message);
+            }
+            
         }
 
         public static async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
         {
-            string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            // Define the start of the current week (assuming Monday as the first day of the week)
-            DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1);
-            DateTime endOfWeek = startOfWeek.AddDays(7);
+            try
+            {
+                string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                // Define the start of the current week (assuming Monday as the first day of the week)
+                DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1);
+                DateTime endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
 
-            // Query to get top users who cleaned the most this week
-            string query = @"
-            SELECT u.Name, SUM(cr.Weight) AS TotalWeight
-            FROM clean_report
+                // Query to get top users who cleaned the most this week
+                string query = @"
+            SELECT u.UserName, SUM(cr.Weight) AS TotalWeight
+            FROM clean_report cr
             JOIN Users u ON cr.UserId = u.UserId
-            WHERE cr.Date >= @startOfWeek AND cr.Date < @endOfWeek
-            GROUP BY u.Name
+            WHERE cr.Date >= @startOfWeek AND cr.Date <= @endOfWeek
+            GROUP BY u.UserName
             ORDER BY TotalWeight DESC
             LIMIT 5";
 
-            using var connection = new MySqlConnection(_connectionString);
-            var topUsersThisWeek = connection.Query<LeaderboardUser>(query, new
-            {
-                startOfWeek,
-                endOfWeek
-            }).ToList();
+                var topUsersThisWeek = new List<LeaderboardUser>();
 
-            return topUsersThisWeek;
+                await using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        // Add parameters to the query
+                        command.Parameters.AddWithValue("@startOfWeek", startOfWeek);
+                        command.Parameters.AddWithValue("@endOfWeek", endOfWeek);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var name = reader.GetString(0);
+                                var totalWeight = reader.GetDecimal(1);
+
+                                topUsersThisWeek.Add(new LeaderboardUser
+                                {
+                                    Name = name,
+                                    KgCleaned = Convert.ToInt32(totalWeight)
+                                });
+                            }
+                        }
+                    }
+                }
+                return topUsersThisWeek;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw new Exception();
+            }
+           
         }
     }
 }
