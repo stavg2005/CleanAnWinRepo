@@ -174,7 +174,7 @@
         if (UserService.CurrentUser.coins > sum)
         {
             int pay = UserService.CurrentUser.coins - sum;
-            
+
             Response = await a.UpdateUserCoin(UserService.CurrentUser.UserID, pay);
             await a.AddNewOrder(UserService.CurrentUser.UserID, UserService.CurrentUser.products);
             await a.DeleteUserCart(UserService.CurrentUser.UserID);
@@ -199,10 +199,10 @@
         Tuple<int, int> userIDproductID = new Tuple<int, int>(userID, productid);
         await a.DeleteProductFromUserCart(userIDproductID);
 
-        
+
         Console.WriteLine();
         UserService.CurrentUser.products = await a.Getc(userID, true);
-        NavManager.NavigateTo("main");
+        StateHasChanged();
     }
 
     private int Getsum()

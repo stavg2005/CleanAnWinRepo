@@ -127,6 +127,24 @@ namespace Services
             string s = $"{Apiurl}/GetLocationFromPK?id={id}";
             return await _httpClient.GetFromJsonAsync<Locations>(s);
         }
+
+        public async Task<string> AddNewLocation(Locations l)
+        {
+            string s = $"{Apiurl}/AddNewLocation";
+
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Locations>(s, l);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return ("POST request successful!");
+
+            }
+            else
+            {
+                return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+            }
+            
+        }
         public async Task<string> Register(string email, string password, string username, int location, byte[] imagedata)
         {
             // Create a new UsersDTO object
@@ -832,6 +850,8 @@ namespace Services
             }
 
         }
+
+        
     }
 
 

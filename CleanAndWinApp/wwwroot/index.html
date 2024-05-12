@@ -28,46 +28,7 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8gY0PbmE1EgDjxd-SdIMWWTaQf9Mi7vc&callback=initMap"></script>
-    <!--<script>
-        function initialize(lat, lng) {
-            var latlng = new google.maps.LatLng(lat, lng);
-            var options = {
-                zoom: 20, center: latlng,
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            };
-            var map = new google.maps.Map(document.getElementById("map"), options);
-        }
-      </script>-->
-    
-    <!--script>
-        function initialize(locations) {
-            var mapOptions = {
-                zoom: 15,
-                center: new google.maps.LatLng(lat, lng), // Default center coordinates
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            };
 
-            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-            // Add waypoints
-            var waypoints = [
-                { lat: lat, lng: lng },
-                { lat: lat, lng: lng },
-                // Add more waypoints as needed
-            ];
-
-            // Create a marker for each waypoint
-            waypoints.forEach(function (waypoint) {
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(waypoint.lat, waypoint.lng),
-                    map: map,
-                    title: 'Waypoint'
-                });
-            });
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
-    </script>-->
 
     <script>
 

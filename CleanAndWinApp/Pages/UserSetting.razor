@@ -132,8 +132,8 @@
             copy.location = await a.GetLocationFromPK(location);
         }
         await a.UpdateUser(copy);
-
-        Logout();
+        StateHasChanged();
+        Nav.NavigateTo("/main");
 
 
     }

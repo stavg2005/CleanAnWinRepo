@@ -124,7 +124,37 @@ namespace DataLayer
                         Console.WriteLine(ex.ToString());
                     }
                 }
+         }
+
+        public static async Task AddLocation(Locations l)
+        {
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+
+                string update = $"Insert into Location (LocationName,lat,lng) VALUES  (@LocationName, @lat, @lng);  ";
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand UpdateLocationCommand = new MySqlCommand(update, connection))
+                    {
+                        UpdateLocationCommand.Parameters.AddWithValue("@LocationName", l.Name);
+                        UpdateLocationCommand.Parameters.AddWithValue("@lat", l.lat);
+                        UpdateLocationCommand.Parameters.AddWithValue("@lng", l.lng);
+
+
+                        await UpdateLocationCommand.ExecuteNonQueryAsync();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
+        }
         
     }
 }

@@ -55,5 +55,18 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost ("AddNewLocation")]
+        public async Task<IActionResult> AddNewLocation([FromBody] Locations l)
+        {
+            try
+            {
+                await LocationsDTO.AddLocation(l); return Ok("operation completed successfully.");
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

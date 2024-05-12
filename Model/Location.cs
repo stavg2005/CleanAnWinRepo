@@ -25,7 +25,7 @@ namespace Model
 		public Locations()
 		{
 			ID =-1;
-			Name = null;
+			Name = "Defult";
 			lat = "";
 			lng = "";
 		}
