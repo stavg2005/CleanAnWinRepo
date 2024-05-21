@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://192.168.1.64:5087";
+        private string Apiurl = "http://10.0.0.23:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -851,7 +851,46 @@ namespace Services
 
         }
 
-        
+        public async Task<string> AddWeight(int trashCanID, int weight)
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/TrashCan/AddWeight";
+                var weightEntry = new WeightEntry { TrashCanID = trashCanID, Weight = weight };
+
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync(url, weightEntry);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return "POST request successful!";
+                }
+                else
+                {
+                    return $"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"An error occurred: {ex.Message}";
+            }
+        }
+
+        public async Task<int> CheckForNewEntryAsync(int trashCanID)
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/TrashCan/CheckForNewEntryAsync?TrashCanID={trashCanID}";
+                return await _httpClient.GetFromJsonAsync<int>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return -1;
+            }
+
+        }
+
+
     }
 
 

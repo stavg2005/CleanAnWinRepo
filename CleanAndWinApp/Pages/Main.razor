@@ -166,13 +166,7 @@ else
         nav.NavigateTo("reports");
     }
 
-    private void GoProductControl()
-    {
-        if (Userservice.CurrentUser.IsAdmin)
-        {
-            nav.NavigateTo("/pcontrol");
-        }
-    }
+
     private void GoCart()
     {
         nav.NavigateTo("/cart");
@@ -200,7 +194,7 @@ else
     {
         if (!firstRender)
         {
-            if(!Userservice.CurrentUser.IsAdmin)
+            
                 await UpdateProgressBar(progressValue);
         }
 

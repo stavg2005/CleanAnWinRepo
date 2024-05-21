@@ -20,7 +20,7 @@ namespace DataLayer
 {
     public class UsersDTO
     {
-        public UsersDTO(int userID, string email, string password, int coin, string username, int userxp, int userLocation, byte[] profilePicture, bool isAdmin)
+        public UsersDTO(int userID, string email, string password, int coin, string username, int userxp, int userLocation, byte[] profilePicture)
         {
             UserID = userID;
             Email = email;
@@ -30,7 +30,7 @@ namespace DataLayer
             Userxp = userxp;
             UserLocation = userLocation;
             ProfilePicture = profilePicture;
-            IsAdmin = isAdmin;
+            
         }
 
         public UsersDTO(string email, string password, string username, int userLocation, byte[] profilePicture)
@@ -43,7 +43,7 @@ namespace DataLayer
             Userxp = 0;
             UserLocation = userLocation;
             ProfilePicture = profilePicture;
-            IsAdmin = false;
+
         }
 
         public UsersDTO(Users U)
@@ -56,7 +56,7 @@ namespace DataLayer
             Userxp = U.xp;
             UserLocation = U.location.ID;
             ProfilePicture = U.profile;
-            IsAdmin = U.IsAdmin;
+
         }
 
         public UsersDTO()
@@ -72,7 +72,7 @@ namespace DataLayer
         public int UserLocation { get; set; }
         public byte[] ProfilePicture { get; set; }
 
-        public bool IsAdmin { get; set; }
+
 
 
         public static async Task<List<Users>> GetAllUsers()
@@ -97,7 +97,6 @@ namespace DataLayer
                             {
                                 int id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
 
-                                bool isAdmin = r.GetInt32(8) == 1;
 
                                 // Fetch related data asynchronously using separate methods
                                 Users user = new Users(
@@ -109,7 +108,6 @@ namespace DataLayer
                                     await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
                                     await UsersDTO.GetCart(id),
                                     await UsersDTO.GetProfilePhotoInByte(id),
-                                    isAdmin,
                                     await OrderDTO.GetOrdersByUserId(id),
                                     await ReportCleanDTO.GellAllReports(id)
                                 );
@@ -221,8 +219,8 @@ namespace DataLayer
                 {
                     await connection.OpenAsync();
 
-                    string query = @"INSERT INTO users (UserEmail, userPassword, usercoin, UserName, Userxp, UserLocation, ProfilePicture, IsAdmin) 
-                             VALUES (@UserEmail, @userPassword, @usercoin, @UserName, @Userxp, @UserLocation, @ProfilePicture, @IsAdmin)";
+                    string query = @"INSERT INTO users (UserEmail, userPassword, usercoin, UserName, Userxp, UserLocation, ProfilePicture) 
+                             VALUES (@UserEmail, @userPassword, @usercoin, @UserName, @Userxp, @UserLocation, @ProfilePicture)";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -233,7 +231,7 @@ namespace DataLayer
                         cmd.Parameters.AddWithValue("@Userxp", 0); // Assuming Userxp should be defaulted to 0
                         cmd.Parameters.AddWithValue("@UserLocation", user.UserLocation);
                         cmd.Parameters.AddWithValue("@ProfilePicture", user.ProfilePicture);
-                        cmd.Parameters.AddWithValue("@IsAdmin", 0); // Assuming IsAdmin should be defaulted to 0
+                        
 
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
                         Debug.WriteLine($"{rowsAffected} row(s) affected.");
@@ -265,12 +263,8 @@ namespace DataLayer
             {
                 await r.ReadAsync();
                 int id = r.GetInt32(0);
-                bool isadmin = false;
-                if (r.GetBoolean(8) == true)
-                {
-                    isadmin = true;
-                }
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
+     
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -315,12 +309,7 @@ namespace DataLayer
             if (r.HasRows)
             {
                 r.Read();
-                bool isadmin = false;
-                if (r.GetInt32(8) == 1)
-                {
-                    isadmin = true;
-                }
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), isadmin, await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
 
             }
             return ca;
@@ -370,7 +359,7 @@ namespace DataLayer
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
 
-                string update = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture, IsAdmin = @IsAdmin WHERE UserID = {u.UserID}; ";
+                string update = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture WHERE UserID = {u.UserID}; ";
 
                 try
                 {
@@ -384,7 +373,6 @@ namespace DataLayer
                         UpdateUserCommand.Parameters.AddWithValue("@Userxp", u.Userxp);
                         UpdateUserCommand.Parameters.AddWithValue("@UserLocation", u.UserLocation);
                         UpdateUserCommand.Parameters.AddWithValue("@ProfilePicture", u.ProfilePicture);
-                        UpdateUserCommand.Parameters.AddWithValue("@IsAdmin", u.IsAdmin);
 
                         await UpdateUserCommand.ExecuteNonQueryAsync();
                     }

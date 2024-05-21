@@ -60,11 +60,7 @@
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             var infoWindow = new google.maps.InfoWindow();
-            map.addListener('click', function (event) {
-                var longitude = event.latLng.lng();
-                var latitude = event.latLng.lat();
-                dotnetHelper.invokeMethodAsync('HandleMapClick', latitude, longitude);
-            });
+
             console.log("WHYYYYYYY" + js.locations[0])
             // Add waypoints
             for (var i = 0; i < js.locations.length; i++) {
@@ -83,25 +79,16 @@
                 }
             });
             console.log( "why are you not admin " +isadmin);
-            var contentString = ``;
-            if (isadmin) {
+
                 contentString = `
-            <div>
-                <strong>${t.id}</strong><br>
-                Weight: ${t.weight}<br>
-                Isfull: ${t.isfull}<br>
-                 <button onclick="Helpers.DeleteTrashCan(${t.id})">Delete TrashCan</button>
-            </div>`;
-            }
-            else {
-                 contentString = `
             <div>
                 <strong>${t.id}</strong><br>
                 Weight: ${t.weight}<br>
                 Isfull: ${t.isfull}<br>
                  
             </div>`;
-            }
+            
+ 
             
 
             var infoWindow = new google.maps.InfoWindow({

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using Dapper;
 using Google.Protobuf.WellKnownTypes;
 using Model;
 using MySqlConnector;
 
 namespace DataLayer
 {
-    public class TrashCanDTO
+    public class TrashCanDTO:BaseDTO
     {
         public int ID;
         public int Location;
@@ -278,6 +279,119 @@ namespace DataLayer
                     Console.WriteLine(ex.ToString());
                 }
             }
+
         }
-	}
+        public async Task AddWeightAsync(int trashCanId, float newWeight)
+        {
+            using (var connection = CreateConnection())
+            {
+                await connection.OpenAsync();
+                var currentWeight = await connection.QueryFirstOrDefaultAsync<float?>(
+                    "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId", new { TrashCanId = trashCanId });
+
+                if (currentWeight.HasValue)
+                {
+                    var oldWeight = currentWeight.Value;
+                    var weightDifference = newWeight;
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        // Update the trash_can table
+                        await connection.ExecuteAsync(
+                            "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId",
+                            new { TrashCanId = trashCanId, NewWeight = newWeight + oldWeight },
+                            transaction: transaction);
+
+                        // Insert into the weight_log table
+                        await connection.ExecuteAsync(
+                            @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference,change_time)
+                          VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference,NOW())",
+                            new { TrashCanId = trashCanId, OldWeight = oldWeight, NewWeight = newWeight + oldWeight, WeightDifference = newWeight },
+                            transaction: transaction);
+
+                        transaction.Commit();
+                    }
+                }
+                else
+                {
+                    throw new Exception("Trash can not found");
+                }
+            }
+        }
+
+        public async Task<bool> HasWeightChangedAsync(int trashCanId, DateTime lastCheckTime)
+        {
+            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = @"
+                SELECT COUNT(*)
+                FROM weight_log
+                WHERE TrashCanID = @TrashCanId
+                AND change_time > @LastCheckTime";
+
+                    int count = await connection.ExecuteScalarAsync<int>(query, new { TrashCanId = trashCanId, LastCheckTime = lastCheckTime });
+                    return count > 0;
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine("MySQL Error: " + ex.Message);
+                // Log the error or handle it appropriately
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                // Log the error or handle it appropriately
+                return false;
+            }
+        }
+
+        public async Task<int> CheckForNewEntryAsync(int trashCanId)
+        {
+            try
+            {
+                string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    // Query to check if there is a new entry in the weight log within the last 30 minutes
+                    string query = @"
+                SELECT weight_difference
+                FROM weight_log
+                WHERE TrashCanID = @TrashCanID
+                AND change_time > DATE_SUB(NOW(), INTERVAL 30 SECOND)
+                ORDER BY change_time DESC
+                LIMIT 1";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@TrashCanID", trashCanId);
+                        var result = await command.ExecuteScalarAsync();
+
+                        if (result != null)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return -1; // No new entry found
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here, such as logging or returning false
+                Console.WriteLine($"Error checking for new entry: {ex.Message}");
+                return -1;
+            }
+        }
+    }
 }

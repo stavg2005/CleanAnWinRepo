@@ -1,6 +1,7 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
 using Model;
+using Services;
 using System.Net.Http;
 
 namespace ApiServices.Controllers
@@ -94,6 +95,36 @@ namespace ApiServices.Controllers
             catch(Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("AddWeight")]
+        public async Task<IActionResult> AddWeight([FromBody] WeightEntry weightEntry)
+        {
+            try
+            {
+                TrashCanDTO t = new TrashCanDTO();
+                await t.AddWeightAsync(weightEntry.TrashCanID, weightEntry.Weight);
+                return Ok("Added Weight succefuly");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("CheckForNewEntryAsync")]
+        public async Task<int> CheckForNewEntryAsync(int TrashCanID)
+        {
+            try
+            {
+                TrashCanDTO t = new TrashCanDTO();
+                return await t.CheckForNewEntryAsync(TrashCanID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return -1;
             }
         }
     }

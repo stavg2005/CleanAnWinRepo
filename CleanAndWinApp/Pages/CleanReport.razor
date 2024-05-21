@@ -1,37 +1,104 @@
 ﻿@page "/report"
-@using Model;
+@using Model
 @using Services
 @inject UserService Userservice
-@inject NavigationManager NavManager;
-<link rel="stylesheet" href="css/report.css">
-<body>
+@inject NavigationManager NavManager
 
-    <div class="container">
-        <h1>Dev Testing, Pre Electronics</h1>
-        <div class="input-field">
-            <label for="weight">Weight:</label>
-            <input @bind-value="weight" type="text" id="weight" name="weight" placeholder="Enter weight...">
-        </div>
-        <div class="input-field">
-            <label for="trashcan-id">Trash Can ID:</label>
-            <input @bind-value="trashcanid" type="text" id="trashcan-id" name="trashcan-id" placeholder="Enter trash can ID...">
-        </div>
-        <button @onclick="Click" class="btn">Submit</button>
-    </div>
+<link rel="stylesheet" href="css/cleanreport.css">
 
-</body>
-<p  style="font-size:12px;margin-top:50px;">@error</p>
+<div class="report-container">
 
-@code {
-    int weight;
-    int userid;
-    int trashcanid;
-    string error { get; set; }
-    ApiServices a = new ApiServices();
-    public async Task Click()
+
+    @if (!TrashCanEntered)
     {
-        error= await a.ReportClean(weight, Userservice.CurrentUser.UserID, trashcanid);
-        NavManager.NavigateTo($"afterclean/{weight.ToString()}");
+        <div class="form-section">
+            <h2>Please enter the TrashCan ID</h2>
+            <div class="input-field">
+                <label for="trashcan-id">Trash Can ID:</label>
+                <input @bind="trashCanId" type="number" id="trashcan-id" name="trashcan-id" placeholder="Enter TrashCan ID...">
+            </div>
+            <button @onclick="ConfirmTrashCanId" class="btn">Confirm</button>
+        </div>
+    }
+    else if (!WeightEntered)
+    {
+        <div class="form-section">
+            <h2>Please put Weight on TrashCan</h2>
+            <div class="input-field">
+                <label for="weight">Weight:</label>
+                <input @bind="weight" type="number" id="weight" name="weight" placeholder="Enter weight for testing without real trashcan">
+            </div>
+            <button @onclick="AddWeight" class="btn">Add Weight</button>
+            <button @onclick="ConfirmWeight" class="btn">I have Put the Weight on the TrashCan</button>
+        </div>
+    }
+    else
+    {
+        <div class="confirmation-section">
+            <h2>Thank you for confirming!</h2>
+            @if (WeightChanged > 0)
+            {
+
+                <p class="success-message">Thank you for cleaning @WeightChanged kg of trash you have been awarded @coins coins!</p>
+                <button class="btn" @onclick="GoHome"> Go Home</button>
+
+            }
+            else
+            {
+                <p class="error-message">No change in weight detected.</p>
+            }
+        </div>
     }
 
+    <p class="error-message">@error</p>
+</div>
+
+@code {
+    int trashCanId;
+    int weight;
+    bool TrashCanEntered = false;
+    bool WeightEntered = false;
+    int WeightChanged = -1;
+    string error { get; set; }
+    int coins { get; set; }
+    ApiServices a = new ApiServices();
+
+    private async Task ConfirmTrashCanId()
+    {
+        TrashCanEntered = true;
+    }
+
+    private async Task ConfirmWeight()
+    {
+        // Set WeightEntered to true to display the confirmation message
+        WeightChanged = await a.CheckForNewEntryAsync(trashCanId);
+        WeightEntered = true;
+
+        StateHasChanged();
+        if (WeightChanged > 0)
+        {
+
+            await ReportClean();
+        }
+    }
+    private async Task ReportClean()
+    {
+        await a.ReportClean(WeightChanged, Userservice.CurrentUser.UserID, trashCanId);
+        int IntWeight = WeightChanged;
+        Users copy = new Users(Userservice.CurrentUser);
+        copy.coins = Userservice.CurrentUser.coins + IntWeight * 100;
+        coins = IntWeight * 10;
+        copy.xp = Userservice.CurrentUser.xp + IntWeight * 15;
+        await a.UpdateUser(copy);
+    }
+    private async Task AddWeight()
+    {
+
+        await a.AddWeight(trashCanId, weight);
+    }
+
+    private void GoHome()
+    {
+        NavManager.NavigateTo("/main");
+    }
 }

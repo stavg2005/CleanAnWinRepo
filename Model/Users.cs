@@ -23,7 +23,6 @@ namespace Model
 
         public Byte[] profile { get; set; }
 
-        public bool IsAdmin { get; set; }
 
         public List<ReportClean> reportCleans { get; set; }  
 
@@ -32,7 +31,7 @@ namespace Model
         
 
         // constructor withouth  profile picture
-        public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l,bool isadmin, List<Order> orders)
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location,List<Product> l, List<Order> orders)
         {
             this.UserName = UserName;
             Email = UserEmail;
@@ -41,12 +40,12 @@ namespace Model
             this.coins = coins;
             products = l;
             profile = null;
-            IsAdmin = isadmin;
+   
             this.orders = orders;
         }
 
         // constructor with everything
-        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile, bool isadmin, List<Order> orders, List<ReportClean> reportClean)
+        public Users(int userID, string UserEmail, int coins, string UserName, int xp, Locations location, List<Product> l, byte[] profile,  List<Order> orders, List<ReportClean> reportClean)
         {
             UserID = userID;
             this.UserName = UserName;
@@ -56,7 +55,6 @@ namespace Model
             this.coins = coins;
             products = l;
             this.profile = profile;
-            IsAdmin = isadmin;
             this.orders = orders;
             this.reportCleans = reportClean;
             this.TotalKg = GetTotalKG(reportClean);
@@ -64,7 +62,7 @@ namespace Model
 
 
         //constructor without UserID
-        public Users(string UserEmail, int coins, string UserName, int xp, Locations location, byte[] profile, bool isadmin, List<Order> orders)
+        public Users(string UserEmail, int coins, string UserName, int xp, Locations location, byte[] profile, List<Order> orders)
         {
             this.UserName = UserName;
             Email = UserEmail;
@@ -73,7 +71,6 @@ namespace Model
             this.coins = coins;
             products = new List<Product>(); ;
             this.profile = profile;
-            IsAdmin = isadmin;
             this.orders = orders;
         }
 
@@ -89,7 +86,6 @@ namespace Model
             this.xp = 0;
             this.coins = 0;
             products = new List<Product>();
-            IsAdmin = false;
             this.orders = new List<Order>(0);
             reportCleans = new List<ReportClean>();
         }
@@ -104,7 +100,6 @@ namespace Model
 			this.xp = -1;
 			this.coins = -1;
             products = null;
-            IsAdmin = false;
 		}
 
         //constructor for copying exsisting user
@@ -119,7 +114,6 @@ namespace Model
             this.products = u.products;
             this.profile = u.profile;
             this.orders = u.orders;
-            this.IsAdmin = u.IsAdmin;
 
         }
 
