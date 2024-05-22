@@ -177,11 +177,10 @@ namespace DataLayer
                         while (reader.Read())
                         {
                             int id = reader.GetInt32(0);
-                            int isfull = int.Parse(reader.GetString(1));
-                            int weight = int.Parse(reader.GetString(2));
-                            string lng = reader.GetString(4);
-                            string lat = reader.GetString(3);
-                            l.Add(new TrashCan(id,isfull,weight,lng,lat));
+                            int weight = reader.GetInt32(1);
+                            string lng = reader.GetString(3);
+                            string lat = reader.GetString(2);
+                            l.Add(new TrashCan(id,weight,lng,lat));
 
                         }
                     }
@@ -204,7 +203,7 @@ namespace DataLayer
                 {
                     connection.Open();
 
-                    string query = $"Insert into trashcan  (TrashCanIsFull,TrashCanWeight,Lat,Lng) VALUES ('{trashCan.isfull.ToString()}', '{trashCan.weight.ToString()}','{trashCan.latitude}','{trashCan.longitude}');";
+                    string query = $"Insert into trashcan  (TrashCanWeight,Lat,Lng) VALUES ('{trashCan.weight.ToString()}','{trashCan.latitude}','{trashCan.longitude}');";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -257,7 +256,7 @@ namespace DataLayer
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
 
-                string update = $"UPDATE trashcan SET TrashCanIsFull = @isfull, lat = @lat, TrashCanWeight = @Weight, lng = @lng WHERE TrashCanID = {trashCan.id}; ";
+                string update = $"UPDATE trashcan SET  lat = @lat, TrashCanWeight = @Weight, lng = @lng WHERE TrashCanID = {trashCan.id}; ";
 
                 try
                 {
@@ -265,7 +264,6 @@ namespace DataLayer
 
                     using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
                     {
-                        UpdateUserCommand.Parameters.AddWithValue("@isfull", trashCan.isfull);
                         UpdateUserCommand.Parameters.AddWithValue("@lat", trashCan.latitude);
                         UpdateUserCommand.Parameters.AddWithValue("@lng", trashCan.longitude);
                         UpdateUserCommand.Parameters.AddWithValue("@Weight",trashCan.weight);
@@ -366,7 +364,7 @@ namespace DataLayer
                 SELECT weight_difference
                 FROM weight_log
                 WHERE TrashCanID = @TrashCanID
-                AND change_time > DATE_SUB(NOW(), INTERVAL 30 SECOND)
+                AND change_time > DATE_SUB(NOW(), INTERVAL 30 SECOND) AND weight_difference>0
                 ORDER BY change_time DESC
                 LIMIT 1";
 
@@ -393,5 +391,44 @@ namespace DataLayer
                 return -1;
             }
         }
+        public   async Task<string> RemoveWeightAsync(int trashCanId, int weight)
+        {
+            using(var connection = CreateConnection())
+            {
+                await connection.OpenAsync();
+                var currentWeight = await connection.QueryFirstOrDefaultAsync<float?>(
+                    "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId", new { TrashCanId = trashCanId });
+
+                if (currentWeight.HasValue)
+                {
+                    var oldWeight = currentWeight.Value;
+                    var weightDifference = weight-oldWeight;
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        // Update the trash_can table
+                        await connection.ExecuteAsync(
+                            "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId",
+                            new { TrashCanId = trashCanId, NewWeight = oldWeight- weight },
+                            transaction: transaction);
+
+                        // Insert into the weight_log table
+                        await connection.ExecuteAsync(
+                            @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference,change_time)
+                          VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference,NOW())",
+                            new { TrashCanId = trashCanId, OldWeight = oldWeight, NewWeight = -weight, WeightDifference = weightDifference },
+                            transaction: transaction);
+
+                        transaction.Commit();
+                    }
+                    return "Weight removal succefull";
+                }
+                else
+                {
+                    throw new Exception("Trash can not found");
+                }
+            }
+        }
+
     }
 }

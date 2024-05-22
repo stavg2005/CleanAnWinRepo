@@ -4,15 +4,15 @@ namespace CleanAndWinAdminHub
 {
     public class Admin_Service
     {
-        public Admin admin { get; set; }
+        public Users admin { get; set; }
 
-        public Admin_Service(Admin admin)
+        public Admin_Service(Users admin)
         {
             this.admin = admin;
         }
         public Admin_Service()
         {
-            admin = new Admin();
+            admin = new Users();
         }
     }
 }

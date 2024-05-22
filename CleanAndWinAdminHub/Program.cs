@@ -6,10 +6,8 @@ using Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<Admin_Service>();
-builder.Services.AddSingleton<Task_Service>();
 builder.Services.AddSingleton<TablesService>();
-
+builder.Services.AddSingleton<Admin_Service>();
 
 
 var app = builder.Build();

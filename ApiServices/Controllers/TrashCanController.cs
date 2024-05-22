@@ -39,7 +39,6 @@ namespace ApiServices.Controllers
             }
         }
         [HttpGet("GetAllTrashCanLocations")]
-
         public async Task<IActionResult> GetAllTrashCanLocation()
         {
 
@@ -85,7 +84,7 @@ namespace ApiServices.Controllers
             }
         }
 
-        [HttpPost("UpdateTrashCan")]
+        [HttpPut("UpdateTrashCan")]
         public async Task<IActionResult> UpdateTrashCan([FromBody]  TrashCan t)
         {
             try

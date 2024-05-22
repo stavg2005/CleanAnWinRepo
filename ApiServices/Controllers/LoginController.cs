@@ -12,9 +12,11 @@ namespace ApiServices.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
+        UsersDTO u = new UsersDTO();
         [HttpGet($"Login")]
         public async Task<Users> GetAllProducts(string email, string password)
         {
+            
             return await (UsersDTO.Login(email, password));
         }
 
@@ -32,6 +34,8 @@ namespace ApiServices.Controllers
             }
         }
 
+
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UsersDTO user)
         {
@@ -48,9 +52,10 @@ namespace ApiServices.Controllers
         }
 
         [HttpGet("GetUser")]
-        public async Task<IActionResult> GetUser(int id)
+        public async Task<Users> GetUser(int id)
         {
-            return Ok(UsersDTO.GetUserByID(id));
+            Users u = await UsersDTO.GetUserByID(id);
+            return (u);
         }
 
         [HttpPost("UpdatePassword")]

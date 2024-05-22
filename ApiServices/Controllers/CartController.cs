@@ -8,8 +8,8 @@ namespace ApiServices.Controllers
     [ApiController]
     public class CartControllercs : ControllerBase
     {
-        [HttpGet($"GetAllProducts")]
-        public async Task<List<Product>> GetAllProducts(int id)
+        [HttpGet($"GetCart")]
+        public async Task<List<Product>> GetCart(int id)
         {
             return  await UsersDTO.GetCart(id);
         }

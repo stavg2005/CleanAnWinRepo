@@ -10,81 +10,42 @@ using Google.Protobuf.WellKnownTypes;
 
 namespace DataLayer
 {
-    public class AdminDTO
+    public class AdminDTO:UsersDTO
     {
 
-        public static async Task<Admin> Login(string Email, string password)
-        {           
-            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-            {
+        
 
-                string update = $"SELECT * FROM admin WHERE Password = '{password}' AND Email = '{Email}'";
-                Admin ca = new Admin();
-                try
+        public static async Task<Users> LoginAdmin(string email ,string password)
+        {
+            
+            
+                MySqlConnection c = new MySqlConnection();
+                c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                c.Open();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = c;
+                cmd.CommandText = $@"SELECT *
+                                FROM   users
+                                WHERE  (UserPassword = '{password}') AND
+ 				 (UserEmail = '{email}') AND (IsAdmin = 1)";
+                MySqlDataReader r = cmd.ExecuteReader();
+                Users ca = new Users();
+                if (r.HasRows)
                 {
-                    await connection.OpenAsync();
+                    await r.ReadAsync();
+                    int id = r.GetInt32(0);
 
-                    using (MySqlCommand cmd = new MySqlCommand(update, connection))
-                    {
-                        MySqlDataReader r = cmd.ExecuteReader();
-                        
-                        if (r.HasRows)
-                        {
-                            await r.ReadAsync();
-                            int id = r.GetInt32(0);
-                            ca = new Admin(id, r.GetString(1), r.GetString(7), r.GetString(4), new byte[0], r.GetString(6), r.GetString(2), new List<Project_Task>());
-
-                        }
-                        return ca;
-                    }
+                    ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id), r.GetBoolean(8));
 
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return ca;
-                }
-            }
+                return ca;
+
+            
         }
 
-        public static async Task<Admin> GetAdminById(int id)
+        public static async Task<List<Users>> GetAllAdmins()
         {
-            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-            {
-
-                string update = $"SELECT * FROM admin WHERE AdminID = '{id}'";
-                Admin ca = new Admin();
-                try
-                {
-                    await connection.OpenAsync();
-
-                    using (MySqlCommand cmd = new MySqlCommand(update, connection))
-                    {
-                        MySqlDataReader r = cmd.ExecuteReader();
-
-                        if (r.HasRows)
-                        {
-                            await r.ReadAsync();
-                            ca = new Admin(id, r.GetString(1), r.GetString(7), r.GetString(4), await AdminDTO.GetProfilePhotoInByte(id), r.GetString(6), r.GetString(2), new List<Project_Task>());
-
-                        }
-                        return ca;
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return ca;
-                }
-            }
-        }
-
-        public static async Task<List<Admin>> GetAllAdmins()
-        {
-            List<Admin> AdminList = new List<Admin>();
+            List<Users> usersList = new List<Users>();
 
             // Use a using statement to ensure proper disposal of resources
             using (MySqlConnection c = new MySqlConnection())
@@ -94,7 +55,7 @@ namespace DataLayer
                     c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
                     await c.OpenAsync(); // Open the connection asynchronously
 
-                    string query = @"SELECT * FROM admin";
+                    string query = @"SELECT * FROM users Where IsAdmin =1";
                     using (MySqlCommand cmd = new MySqlCommand(query, c))
                     {
                         // Execute the query asynchronously
@@ -106,18 +67,21 @@ namespace DataLayer
 
 
                                 // Fetch related data asynchronously using separate methods
-                                Admin admin = new Admin(
+                                Users user = new Users(
                                     id,
                                     r.GetString(1),
-                                    r.GetString(7),
+                                    r.GetInt32(3),
                                     r.GetString(4),
-                                    await GetProfilePhotoInByte(id),
-                                    r.GetString(6),
-                                    r.GetString(2),
-                                    new List<Project_Task>()
+                                    r.GetInt32(5),
+                                    await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
+                                    await UsersDTO.GetCart(id),
+                                    await UsersDTO.GetProfilePhotoInByte(id),
+                                    await OrderDTO.GetOrdersByUserId(id),
+                                    await ReportCleanDTO.GellAllReports(id),
+                                    r.GetBoolean(8)
                                 );
 
-                                AdminList.Add(admin);
+                                usersList.Add(user);
                             }
                         }
                     }
@@ -129,13 +93,14 @@ namespace DataLayer
                 }
             }
 
-            return AdminList;
+            return usersList;
         }
+        
 
     
     public static async Task<byte[]> GetProfilePhotoInByte(int id)
         {
-            string query = $"Select ProfilePhoto From admin Where AdminID ={id}";
+            string query = $"Select ProfilePhoto From users Where UserID ={id}";
 
             using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
             {

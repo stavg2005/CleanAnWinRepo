@@ -9,22 +9,29 @@ namespace ApiServices.Controllers
     public class Admin : ControllerBase
     {
         [HttpGet("Login")]
-        public async Task<Model.Admin> Login(string Email, string Password)
+        public async Task<Users> Login(string Email, string Password)
         {
             try
             {
-                Model.Admin a = await AdminDTO.Login(Email, Password);
-                return a;
+                Users u = await UsersDTO.Login(Email, Password  );
+                if(u != null && u.IsAdmin)
+                { 
+                    return u;
+                }
+                else
+                {
+                    return new Users();
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return null;
+                return null ;
             }
         }
 
         [HttpGet("GetAllAdmins")]
-        public async Task<List<Model.Admin>> GetAllAdmins()
+        public async Task<List<Users>> GetAllAdmins()
         {
             try
             {
@@ -33,64 +40,10 @@ namespace ApiServices.Controllers
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
-                return new List<Model.Admin>();
+                return new List<Users>();
             }
         }
 
-        [HttpPost("AddNewTask")]
-        public async Task AddTask([FromBody] Project_Task p)
-        {
-            try
-            {
-                await Project_TaskDTO.AddNewTask(p);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        [HttpGet("GetAllCurrentTasks")]
-        public async Task<List<Project_Task>> GetAllCurrentTasks()
-        {
-            try
-            {
-                return await Project_TaskDTO.GetAllCurrentTasks();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-                return new List<Project_Task>();
-            }
-        }
-
-        [HttpPut("UpdateTask")]
-        public async Task<string> UpdateTask([FromBody] Project_Task p)
-        {
-            try
-            {
-                await Project_TaskDTO.EditTask(p);
-                return "Success";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return ex.Message;
-            }
-        }
-
-        [HttpPost("DeleteTask")]
-        public async Task<string> DeleteTask(int projectid)
-        {
-            try
-            {
-                await Project_TaskDTO.DeleteTask(projectid);
-                return "Success";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return ex.Message;
-            }
-        }
+        
     }
 }

@@ -18,8 +18,10 @@
 
 
 </head>
-
+@{
     
+}
+
         <body>
             <title>CodePen - Finance Mobile Application-UX/UI Design Screen One</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
@@ -68,6 +70,7 @@
     string password;
     string Email;
     string error;
+    string path = "data:image/png;base64,";
     ApiServices api = new ApiServices();
     public int Height { get; set; }
     public int Width { get; set; }
@@ -91,14 +94,8 @@
         //AuthService.ClearAuthToken();
         if (AuthService!=null &&AuthService.IsUserAuthenticated)
         {
+            await GetAllData();
 
-            var products = await api.GetALLProducts();
-            productservice.ProductList = products;
-            var Locations = await api.GetAllLocations();
-            locs.Locations = Locations;
-            leaderboard.TopUsers = await api.GetTopUsers();
-            leaderboard.TopUsersThisWeek = await api.GetTopUsersThisWeek();
-            leaderboard.TopUsersToday = await api.GetTopUsersToday();
 
             Nav.NavigateTo("/main");
 
@@ -108,7 +105,28 @@
 
     }
 
-   
+    private async Task InsertValuesToUserService()
+    {
+        if (AuthService.IsUserAuthenticated)
+        {
+            Userservice.CurrentUser = await AuthService.GetUserInfo();
+            Userservice.CurrentUser = Userservice.CurrentUser;
+            path = path + Convert.ToBase64String(Userservice.CurrentUser.profile);
+        }
+
+    }
+    private async Task GetAllData()
+    {
+        await InsertValuesToUserService();
+        var products = await api.GetALLProducts();
+        productservice.ProductList = products;
+        var Locations = await api.GetAllLocations();
+        locs.Locations = Locations;
+        leaderboard.TopUsers = await api.GetTopUsers();
+        leaderboard.TopUsersThisWeek = await api.GetTopUsersThisWeek();
+        leaderboard.TopUsersToday = await api.GetTopUsersToday();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -129,12 +147,11 @@
     {
         // Perform authentication logic (replace this with your actual logic)
         bool isAuthenticated = await PerformLogin(Email, password);
-        isAuthenticated = isAuthenticated;
         if (isAuthenticated)
         {
             // Set authentication token
-            AuthService.SetAuthToken($"{Email},{password}");
-
+            AuthService.SetAuthToken($"{Email}");
+            await GetAllData();
             // Redirect to the main page or another relevant page
             Nav.NavigateTo("/main");
         }

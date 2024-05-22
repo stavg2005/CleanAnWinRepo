@@ -39,26 +39,15 @@ namespace CleanAndWinApp
         public async Task<Users> GetUserInfo()
         {
             ApiServices api = new ApiServices();
-            Tuple<string,string> t = await GetEmailAndPasswordFromToken();
-            Users u = await api.Login(t.Item1, t.Item2);
+            
+           
+            String token = GetAuthToken();
+            token = token;
+            int id = await api.GetUserIDfromEmail(token);
+            Users u = await api.GetUser(id);
             return u;
         }
 
-        private async Task<Tuple<string,string>> GetEmailAndPasswordFromToken()
-        {
-            int index = 0;
-            string key = GetAuthToken();
-            for (int i=0;i< key.Length; i++)
-            {
-                if (key[i] == ',')
-                {
-                    index = i;
-                }
-            }
-            string Email = key.Substring(0, index);
-            string password = key.Substring(index+1);
-            return new Tuple<string,string>(Email, password);
-
-        }
+        
     }
 }

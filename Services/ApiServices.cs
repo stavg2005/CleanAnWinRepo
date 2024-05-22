@@ -21,54 +21,21 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.23:5087";
+        private string Apiurl = "http://10.0.0.34:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
-            IPV4 = GetIpv4Address();
+           
 
         }
 
-        private string GetIpv4Address()
-        {
-            string ipv4Address = string.Empty;
 
-            // Get the host name of the local machine
-            string hostName = Dns.GetHostName();
 
-            // Get the IP addresses associated with the host
-            IPAddress[] addresses = Dns.GetHostAddresses(hostName);
 
-            // Find the first IPv4 address
-            foreach (IPAddress address in addresses)
-            {
-                if (address.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipv4Address = address.ToString();
-                    break;
-                }
-            }
-
-            return ipv4Address;
-        }
-
-        public async Task<Admin> Login_Admin(string email, string password)
-        {
-            string s = $"{Apiurl}/api/Admin/Login?Email={email}&Password={password}";
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<Admin>(s);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
         public async Task<List<Product>> Getc(int id, bool isphone)
         {
 
-                string s = $"{Apiurl}/api/CartControllercs/GetAllProducts?id={id}";
+                string s = $"{Apiurl}/api/CartControllercs/GetCart?id={id}";
                 var value = await _httpClient.GetFromJsonAsync<List<Product>>(s);
                 value = value;
                 return value;
@@ -109,6 +76,20 @@ namespace Services
         {
             string s = $"{Apiurl}/api/Login/Login?email={email}&password={password}";
             return await _httpClient.GetFromJsonAsync<Users>(s);
+        }
+
+        public async Task<Users> LoginAdmin(string email, string password)
+        {
+            string s = $"{Apiurl}/api/admin/Login?Email={email}&Password={password}";
+            return await _httpClient.GetFromJsonAsync<Users>(s);
+        }
+
+        
+        public async Task<Users> GetUser(int ID)
+        {
+            string s = $"{Apiurl}/api/Login/GetUser?id={ID}";
+            Users U = await _httpClient.GetFromJsonAsync<Users>(s);
+            return U;
         }
 
         public async Task<string> GetProfilePhoto(int id)
@@ -641,86 +622,27 @@ namespace Services
             }
         }
 
-        public async Task<List<Admin>> GetALLAdmins()
+        public async Task<List<Users>> GetALLAdmins()
         {
-            List<Admin> admins = new List<Admin>();
+            List<Users> admins = new List<Users>();
             try
             {
                 string url = $"{Apiurl}/api/Admin/GetAllAdmins";
-                admins =  await _httpClient.GetFromJsonAsync<List<Admin>>(url);
+                admins =  await _httpClient.GetFromJsonAsync<List<Users>>(url);
                 return admins;
             }
             catch(Exception ex)
             {
                 Console.WriteLine ($"An error occurred: {ex.Message}");
-                return new List<Admin>();
+                return new List<Users>();
             }
         }
 
-        public async Task<string> AddNewTask(Project_Task task)
-        {
-            try
-            {
-                string url = $"{Apiurl}/api/Admin/AddNewTask";
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<Project_Task>(url, task);
-                if (response.IsSuccessStatusCode)
-                {
-                    return ("POST request successful!");
-                }
-                else
-                {
-                    return ($"POST request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"An error occurred: {ex.Message}");
-            }
-        }
 
-        public async Task<string> UpdateTask(Project_Task p)
-        {
-            try
-            {
-                string url = $"{Apiurl}/api/Admin/UpdateTask";
-                HttpResponseMessage response = await _httpClient.PutAsJsonAsync<Project_Task>(url, p);
-                if (response.IsSuccessStatusCode)
-                {
-                    return ("PUT request successful!");
-                }
-                else
-                {
-                    return ($"PUT request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"An error occurred: {ex.Message}");
-            }
-        }
 
-        public async Task<string> DeleteTask(int id)
-        {
-            try
-            {
-                string s = JsonSerializer.Serialize(id);
-                HttpContent content = new StringContent(s, System.Text.Encoding.UTF8);
-                string url = $"{Apiurl}/api/Admin/DeleteTask?projectid={id}";
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<string>(url,s);
-                if (response.IsSuccessStatusCode)
-                {
-                    return ("Delete request successful!");
-                }
-                else
-                {
-                    return ($"Delete request failed with status code: {response.StatusCode} and content {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"An error occurred: {ex.Message}");
-            }
-        }
+        
+
+        
         public async Task<string> DeleteProductFromUserCart(Tuple<int,int> userIDproductID)
         {
 
@@ -785,20 +707,7 @@ namespace Services
             }
         }
 
-        public async Task<List<Project_Task>> GetAllcurrentTasks()
-        {
-            try
-            {
-                string url = $"{Apiurl}/api/Admin/GetAllCurrentTasks";
-                List<Project_Task> p = await _httpClient.GetFromJsonAsync<List<Project_Task>>(url);
-                return p;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return (new List<Project_Task>(0));
-            }
-        }
+        
 
         public async Task<List<LeaderboardUser>> GetTopUsers()
         {

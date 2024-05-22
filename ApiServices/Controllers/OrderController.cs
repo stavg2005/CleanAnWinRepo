@@ -39,7 +39,6 @@ namespace ApiServices.Controllers
         }
 
         [HttpGet("GetAllOrders")]
-
         public async Task<List<Order>> GetAllOrders()
         {
             try

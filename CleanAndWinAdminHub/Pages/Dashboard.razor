@@ -3,8 +3,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager nav;
 @inject ProtectedSessionStorage MySession;
-@inject Admin_Service Current;
-@inject Task_Service AdminTasks;
+@inject Admin_Service Current
 @inject TablesService Tables;
 <!DOCTYPE html>
 <html lang="en">
@@ -286,98 +285,7 @@
                 </div>
             </div>
 
-            <div class="row mb-4" style="margin-top:50px">
-                <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-                    <div class="card">
-                        <div class="card-header pb-0">
-                            <div class="row">
-                                <div class="col-lg-6 col-7">
-                                    <h6>Projects</h6>
-                                    <p class="text-sm mb-0">
-                                        <i class="fa fa-check text-info" aria-hidden="true"></i>
-                                        <span class="font-weight-bold ms-1">30 done</span> this month
-                                    </p>
-                                </div>
-                                <div class="col-lg-6 col-5 my-auto text-end">
-                                    <div class="dropdown float-lg-end pe-4" style="z-index:99">
-                                        <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-v text-secondary"></i>
-                                        </a>
-                                        <ul class=" px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable" style="z-index:99">
-                                            <li><a @onclick="Addnewtask" class="dropdown-item border-radius-md" href="javascript:;">Add Task</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body px-0 pb-2">
-                            <div class="table-responsive">
-                                <table class="table align-items-center mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Companies</th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Members</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-
-
-                                        @foreach (Project_Task P in AdminTasks.Tasks)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex px-2 py-1">
-                                                        <div>
-                                                            <img src="../assets/img/small-logos/logo-slack.svg" class="avatar avatar-sm me-3" alt="team7">
-                                                        </div>
-                                                        <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">@P.Name</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="avatar-group mt-2">
-                                                        @foreach (Admin A in P.Admins)
-                                                        {
-                                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@A.Name">
-                                                                <img src="@(path + Convert.ToBase64String(A.Profile))" alt="team8">
-                                                            </a>
-                                                        }
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <span class="text-xs font-weight-bold"> Not set </span>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <div class="progress-wrapper w-75 mx-auto">
-                                                        <div class="progress-info">
-                                                            <div class="progress-percentage">
-                                                                <span class="text-xs font-weight-bold">@(P.Completion)%</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="progress">
-                                                            <div class="progress-bar bg-gradient-success w-@(P.Completion)%" role="progressbar" aria-valuenow="@(P.Completion)" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <button class="btn btn-danger" @onclick="() => DeleteTask(P.ID)" >Remove Task</button>
-                                                    <button class="btn btn-primary" @onclick=" () => Edit(P)" >Edit Task</button>
-                                                </td>
-                                            </tr>
-                                        }
-                                      
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
+           
             <footer class="footer py-4  ">
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-lg-between">
@@ -484,67 +392,9 @@
             </div>
         </div>
     </div>
-    @foreach(Project_Task P in AdminTasks.Tasks)
-    {
-        <p>@P.Name</p>
-    }
+    
 
-    @if (AddNewTask || EditTask)
-    {
-        <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Task</h5>
-                        <button type="button" class="close" aria-label="Close" @onclick="Cancel">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Form for editing task details -->
-                        <EditForm Model="@PTask">
-                            <div>
-                                <label for="taskName">Task Name:</label>
-                                <InputText id="taskName" @bind-Value="@PTask.Name" />
-                            </div>
-
-                            <div>
-                                <label for="taskBudget">Task Budget:</label>
-                                <InputNumber id="taskBudget" @bind-Value="@PTask.Budget" />
-                            </div>
-                            @if(EditTask){
-                                <div>
-                                    <label for="taskBudget">Complection:</label>
-                                    <InputNumber id="taskBudget" @bind-Value="@PTask.Completion" />
-                                </div>
-                            }
-                            <div>
-                                <h6>Select Admins:</h6>
-                                @foreach (var admin in availableAdmins)
-                                {
-                                    <div>
-                                        <InputCheckbox @bind-Value="@admin.IsSelected" />
-                                        <span>@admin.Name</span>
-                                    </div>
-                                }
-                            </div>
-                        </EditForm>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-                        @if (EditTask)
-                        {
-                            <button type="button" class="btn btn-primary" @onclick="SaveTaskEdit">Save changes</button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-primary" @onclick="AddTask">Add Task</button>
-                        }
-
-                    </div>
-                </div>
-            </div>
-        </div>
+    
     }
 </body>
 
@@ -557,8 +407,7 @@
     int totalkg { get; set; }
     bool AddNewTask = false;
     bool EditTask = false;
-    List<Admin> availableAdmins = new List<Admin>();
-    Project_Task PTask = new Project_Task();
+
     ApiServices a = new ApiServices();
 
 
@@ -602,53 +451,9 @@
         }
     }
 
-    private async Task DeleteTask(int id)
-    {
-        await a.DeleteTask(id);
-        AdminTasks.Tasks = await a.GetAllcurrentTasks();
-        StateHasChanged();
-    }
+    
 
-    private async void SaveTaskEdit()
-    {
-        PTask.Admins = availableAdmins
-        .Where(admin => admin.IsSelected)
-        .Select(admin => admin)
-        .ToList();
-
-        await a.UpdateTask(PTask);
-        EditTask = false;
-        StateHasChanged();
-    }
-    private async void AddTask()
-    {
-        // Update PTask.admins based on the selected admins
-        PTask.Admins = availableAdmins
-            .Where(admin => admin.IsSelected)
-            .Select(admin => admin)
-            .ToList();
-
-        await a.AddNewTask(PTask);
-        PTask = new Project_Task();
-        AddNewTask = false;
-        AdminTasks.Tasks = await a.GetAllcurrentTasks();
-        StateHasChanged();
-    }
-
-    private void Edit(Project_Task p)
-    {
-        EditTask = true;
-        PTask = p;
-    }
-
-    private void Addnewtask()
-    {
-        AddNewTask = true;
-    }
-    private void Cancel()
-    {
-        AddNewTask = false;
-    }
+    
     private string UserName;
     string path = "data:image/png;base64,";
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -670,18 +475,14 @@
 
     }
 
-    private async void GetAllAdmins()
-    {
-        availableAdmins = await a.GetALLAdmins();
-        
-    }
+
 
     protected override async Task OnInitializedAsync()
     {
         GetSumOfAllCoins();
         GetAmountOfAllusers();
         GetTotalKG();
-        GetAllAdmins();
+        
         StateHasChanged();
     }
 }

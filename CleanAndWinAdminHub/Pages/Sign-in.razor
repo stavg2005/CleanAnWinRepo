@@ -2,9 +2,8 @@
 
 @inject ProtectedSessionStorage MySession
 @inject NavigationManager NavManager;
-@inject Admin_Service Current;
-@inject Task_Service AdminTasks;
 @inject TablesService Tables;
+@inject Admin_Service Current;
 @using DataLayer
 
 
@@ -53,6 +52,7 @@
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                                 <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
                                     <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h4>
+                                    <h3>@error</h3>
                                     <div class="row mt-3">
 
                                     </div>
@@ -95,14 +95,14 @@
 @code {
     public string email = "";
     public string password = "";
+    string error = "";
     public ApiServices a = new ApiServices();
     private async Task LoginAPI()
     {
-        Admin c = await a.Login_Admin(email, password);
-        if (c != null)
+        Users c = await a.LoginAdmin(email, password);
+        if (c != null && c.UserID!=-1)
         {
             Current.admin = c;
-            AdminTasks.Tasks = await a.GetAllcurrentTasks();
             Tables.Users = await a.GetAllUsers();
             Tables.Products = await a.GetALLProducts();
             Tables.Orders = await a.GetAllOrders();
@@ -111,6 +111,10 @@
             Tables.reports = await a.GetAllreports();
             await MySession.SetAsync("name", email);
             NavManager.NavigateTo("/dashboard");
+        }
+        else
+        {
+            error = "Email or password are not correct";
         }
     }
 }

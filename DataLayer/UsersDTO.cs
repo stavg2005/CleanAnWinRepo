@@ -96,7 +96,7 @@ namespace DataLayer
                             while (await r.ReadAsync())
                             {
                                 int id = r.GetInt32(0); // Assuming UserID is at index 0 in the result set
-
+      
 
                                 // Fetch related data asynchronously using separate methods
                                 Users user = new Users(
@@ -109,7 +109,8 @@ namespace DataLayer
                                     await UsersDTO.GetCart(id),
                                     await UsersDTO.GetProfilePhotoInByte(id),
                                     await OrderDTO.GetOrdersByUserId(id),
-                                    await ReportCleanDTO.GellAllReports(id)
+                                    await ReportCleanDTO.GellAllReports(id),
+                                    r.GetBoolean(8)
                                 );
 
                                 usersList.Add(user);
@@ -264,12 +265,14 @@ namespace DataLayer
                 await r.ReadAsync();
                 int id = r.GetInt32(0);
      
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
             }
             return ca;
 
         }
+
+        
 
         public static async Task<string> GetProfilePhoto(int id)
         {
@@ -309,7 +312,7 @@ namespace DataLayer
             if (r.HasRows)
             {
                 r.Read();
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id));
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
             }
             return ca;

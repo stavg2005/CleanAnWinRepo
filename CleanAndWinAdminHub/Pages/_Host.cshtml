@@ -352,26 +352,13 @@
                     scaledSize: new google.maps.Size(32, 32)
                 }
             });
-            console.log("why are you not admin " + isadmin);
-            var contentString = ``;
-            if (isadmin) {
-                contentString = `
+               var contentString = `
                     <div>
                         <strong>${t.id}</strong><br>
-                        Weight: ${t.weight}<br>
-                        Isfull: ${t.isfull}<br>
+                         Weight: ${t.weight}<br>
                          <button onclick="Helpers.DeleteTrashCan(${t.id})">Delete TrashCan</button>
                     </div>`;
-            }
-            else {
-                contentString = `
-                    <div>
-                        <strong>${t.id}</strong><br>
-                        Weight: ${t.weight}<br>
-                        Isfull: ${t.isfull}<br>
 
-                    </div>`;
-            }
 
 
             var infoWindow = new google.maps.InfoWindow({

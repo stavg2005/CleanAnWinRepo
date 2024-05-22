@@ -69,11 +69,10 @@ namespace Test
             //Tuple<int, int> uIDpID = new Tuple<int, int>(1, 13);
             //Console.WriteLine(await a.DeleteProductFromUserCart(uIDpID));
             //Console.ReadLine();
-            List<Admin> l = new List<Admin>();
-            l.Add(await AdminDTO.GetAdminById(1));
-            l.Add(await AdminDTO.GetAdminById(2));
-            Project_Task p = new Project_Task("Ability to add Tasks",10,500,l);
-            await Project_TaskDTO.AddNewTask(p);
+            TrashCanDTO t = new TrashCanDTO();
+            string p = await t.RemoveWeightAsync(2, 1000);
+            Console.WriteLine(p);
+            Console.ReadLine();
         }
 
         static string GetIPv4Address(string adapterName)
