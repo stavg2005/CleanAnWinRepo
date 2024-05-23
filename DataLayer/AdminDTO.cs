@@ -15,7 +15,7 @@ namespace DataLayer
 
         
 
-        public static async Task<Users> LoginAdmin(string email ,string password)
+        public  async Task<Users> LoginAdmin(string email ,string password)
         {
             
             
@@ -35,7 +35,7 @@ namespace DataLayer
                     await r.ReadAsync();
                     int id = r.GetInt32(0);
 
-                    ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id), r.GetBoolean(8));
+                    ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await base.GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id), r.GetBoolean(8));
 
                 }
                 return ca;
@@ -43,7 +43,7 @@ namespace DataLayer
             
         }
 
-        public static async Task<List<Users>> GetAllAdmins()
+        public  async Task<List<Users>> GetAllAdmins()
         {
             List<Users> usersList = new List<Users>();
 
@@ -74,8 +74,8 @@ namespace DataLayer
                                     r.GetString(4),
                                     r.GetInt32(5),
                                     await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
-                                    await UsersDTO.GetCart(id),
-                                    await UsersDTO.GetProfilePhotoInByte(id),
+                                    await GetUserCart(id),
+                                    await GetProfilePhotoInByte(id),
                                     await OrderDTO.GetOrdersByUserId(id),
                                     await ReportCleanDTO.GellAllReports(id),
                                     r.GetBoolean(8)
@@ -97,7 +97,32 @@ namespace DataLayer
         }
         
 
-    
+    public  async Task<int> MakeUserAdmin(int UserID)
+        {
+            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            {
+
+                string update = $"UPDATE users SET IsAdmin = @IsAdmin WHERE UserID = {UserID}; ";
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                    {
+                        UpdateUserCommand.Parameters.AddWithValue("@IsAdmin", 1);
+                        return await UpdateUserCommand.ExecuteNonQueryAsync();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    return -1;
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
     public static async Task<byte[]> GetProfilePhotoInByte(int id)
         {
             string query = $"Select ProfilePhoto From users Where UserID ={id}";

@@ -30,7 +30,7 @@ namespace DataLayer
 
 
 
-        public static async Task<List<Locations>> GetAllLocations()
+        public  async Task<List<Locations>> GetAllLocations()
         {
             List<Locations> locations = new List<Locations>();
 

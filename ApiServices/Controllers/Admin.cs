@@ -8,15 +8,16 @@ namespace ApiServices.Controllers
     [ApiController]
     public class Admin : ControllerBase
     {
+        private readonly AdminDTO u;
         [HttpGet("Login")]
         public async Task<Users> Login(string Email, string Password)
         {
             try
             {
-                Users u = await UsersDTO.Login(Email, Password  );
-                if(u != null && u.IsAdmin)
+                Users us = await u.Login(Email, Password  );
+                if(us != null && us.IsAdmin)
                 { 
-                    return u;
+                    return us;
                 }
                 else
                 {
@@ -35,12 +36,26 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await AdminDTO.GetAllAdmins();
+                return await u.GetAllAdmins();
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
                 return new List<Users>();
+            }
+        }
+
+        [HttpPut("MakeUserAdmin")]
+        public async Task<IActionResult> MakeUserAdmin(int userid)
+        {
+            try
+            {
+                return Ok( await u.MakeUserAdmin(userid));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
             }
         }
 

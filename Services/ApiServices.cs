@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.34:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -84,6 +84,29 @@ namespace Services
             return await _httpClient.GetFromJsonAsync<Users>(s);
         }
 
+        public async Task<string> MakeUserAdmin(int userID)
+        {
+            try
+            {
+                string s = $"{Apiurl}/api/admin/MakeUserAdmin?Userid={userID}";
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync<int>(s,userID);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ("POST request successful!");
+
+                }
+                else
+                {
+                    return ($"POST request failed with status code: {response.StatusCode} and contect {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ex.Message;
+            }
+        } 
         
         public async Task<Users> GetUser(int ID)
         {

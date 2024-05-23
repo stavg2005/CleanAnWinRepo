@@ -8,10 +8,11 @@ namespace ApiServices.Controllers
     [ApiController]
     public class CartControllercs : ControllerBase
     {
+        private readonly UsersDTO u;
         [HttpGet($"GetCart")]
         public async Task<List<Product>> GetCart(int id)
         {
-            return  await UsersDTO.GetCart(id);
+            return  await u.GetUserCart(id);
         }
 
         [HttpPost("AddProductTocart")]
@@ -33,7 +34,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await UsersDTO.DeleteProductFromUserCart(userIDproductID.Item1, userIDproductID.Item2);
+                await u.DeleteProductFromUserCart(userIDproductID.Item1, userIDproductID.Item2);
                 return Ok("Cart operation completed successfully.");
             }
             catch (Exception ex)

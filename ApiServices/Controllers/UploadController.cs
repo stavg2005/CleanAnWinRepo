@@ -16,6 +16,7 @@ namespace ApiServices.Controllers
     public class UploadController : ControllerBase
     {
         private readonly IWebHostEnvironment env;
+        private readonly UsersDTO u;
         private readonly string _connectionString = "server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
         public UploadController(IWebHostEnvironment env)
         {
@@ -25,7 +26,7 @@ namespace ApiServices.Controllers
         [HttpGet($"GetImageUri")]
         public IActionResult GetImageUri(int id)
         {
-            return Ok(UsersDTO.GetProfilePhoto(id));
+            return Ok(u.GetProfilePhoto(id));
         }
 
 

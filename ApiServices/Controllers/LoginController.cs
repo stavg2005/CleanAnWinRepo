@@ -12,12 +12,12 @@ namespace ApiServices.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        UsersDTO u = new UsersDTO();
+        private readonly UsersDTO u = new UsersDTO();
         [HttpGet($"Login")]
         public async Task<Users> GetAllProducts(string email, string password)
         {
             
-            return await (UsersDTO.Login(email, password));
+            return await (u.Login(email, password));
         }
 
         [HttpGet("GetAllUsers")]
@@ -25,7 +25,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await UsersDTO.GetAllUsers();
+                return await u.GetAllUsers();
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return Ok(await UsersDTO.Register(user));
+                return Ok(await u.Register(user));
             }
             catch (Exception ex)
             {
@@ -54,8 +54,8 @@ namespace ApiServices.Controllers
         [HttpGet("GetUser")]
         public async Task<Users> GetUser(int id)
         {
-            Users u = await UsersDTO.GetUserByID(id);
-            return (u);
+            Users us = await u.GetUserByID(id);
+            return (us);
         }
 
         [HttpPost("UpdatePassword")]
@@ -63,7 +63,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await (UsersDTO.UpdatePassword(id, password));
+                await (u.UpdatePassword( id,password));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)
@@ -74,11 +74,11 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost("UpdateUser")]
-        public async Task<IActionResult> UpdateUser([FromBody] UsersDTO u)
+        public async Task<IActionResult> UpdateUser([FromBody] UsersDTO us)
         {
             try
             {
-                await (UsersDTO.UpdateUser(u));
+                await (u.UpdateUser(us));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)
@@ -87,49 +87,7 @@ namespace ApiServices.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        //[HttpPost("UpdateUserName")]
-        //public async Task<IActionResult> UpdateUserName(int id, string username)
-        //{
-        //    try
-        //    {
-        //        await (UsersDTO.UpdateUserName(id, username));
-        //        return Ok("operation completed successfully.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception or handle it as needed
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
 
-        //[HttpPost("UpdateEmail")]
-
-        //public async Task<IActionResult> UpdateUserEmail(int id, string username)
-        //{
-        //    try
-        //    {
-        //        await (UsersDTO.UpdateUserEmail(id, username));
-        //        return Ok("operation completed successfully.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception or handle it as needed
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
-        //[HttpPost("UpdateUserCoin")]
-        //public async Task<IActionResult> UpdateUserCoin(int id , int coin)
-        //{
-        //    try
-        //    {
-        //        await UsersDTO.UpdateUserCoin(id, coin);
-        //        return Ok("Payment successfull");
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        return StatusCode(500,ex.Message);
-        //    }
-        //}
 
         [HttpPost("DeleteUserCart")]
 
@@ -137,7 +95,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await UsersDTO.DeleteCart(id);
+                await u.DeleteCart(id);
                 return Ok("shii got killed");
             }
             catch(Exception ex)
@@ -151,7 +109,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await UsersDTO.GetCart(id);
+                return await u.GetUserCart(id);
             }
             catch (Exception ex)
             {
@@ -164,7 +122,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await UsersDTO.GetUserIdFromEmail(email);
+                return await u.GetUserIdFromEmail(email);
             }
             catch(Exception ex)
             {
@@ -194,7 +152,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await UsersDTO.GetTopUsersToday();
+                return await u.GetTopUsersToday();
             }
             catch(Exception ex)
             {
@@ -209,7 +167,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await UsersDTO.GetTopUsersThisWeek();
+                return await u.GetTopUsersThisWeek();
             }
             catch(Exception ex)
             {

@@ -9,12 +9,14 @@ namespace ApiServices.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        private readonly UsersDTO u;
+        private readonly OrderDTO o;
         [HttpPost("AddOrderToUser")]
         public async Task<IActionResult> AddNewOrder([FromBody] OrderRequestModel orderRequest)
         {
             try
             {
-                await UsersDTO.AddNewOrder(orderRequest.UserID, orderRequest.Products, DateTime.Now);
+                await u.AddNewOrder(orderRequest.UserID,orderRequest.Products, DateTime.Now);
                 return Ok("Added Order Successfully");
             }
             catch (Exception ex)

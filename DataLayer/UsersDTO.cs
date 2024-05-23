@@ -14,6 +14,7 @@ using Dapper;
 using MySqlConnector;
 using Org.BouncyCastle.X509;
 using System.Diagnostics;
+using System.Data.SqlTypes;
 
 
 namespace DataLayer
@@ -30,7 +31,7 @@ namespace DataLayer
             Userxp = userxp;
             UserLocation = userLocation;
             ProfilePicture = profilePicture;
-            
+
         }
 
         public UsersDTO(string email, string password, string username, int userLocation, byte[] profilePicture)
@@ -59,10 +60,7 @@ namespace DataLayer
 
         }
 
-        public UsersDTO()
-        {
 
-        }
         public int UserID { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
@@ -73,9 +71,18 @@ namespace DataLayer
         public byte[] ProfilePicture { get; set; }
 
 
+        public UsersDTO()
+        {
+            
+
+            
+        }
 
 
-        public static async Task<List<Users>> GetAllUsers()
+
+
+
+        public  async Task<List<Users>> GetAllUsers()
         {
             List<Users> usersList = new List<Users>();
 
@@ -106,8 +113,8 @@ namespace DataLayer
                                     r.GetString(4),
                                     r.GetInt32(5),
                                     await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
-                                    await UsersDTO.GetCart(id),
-                                    await UsersDTO.GetProfilePhotoInByte(id),
+                                    await GetUserCart(id),
+                                    await GetProfilePhotoInByte(id),
                                     await OrderDTO.GetOrdersByUserId(id),
                                     await ReportCleanDTO.GellAllReports(id),
                                     r.GetBoolean(8)
@@ -128,7 +135,7 @@ namespace DataLayer
             return usersList;
         }
 
-        public static async Task<int> GetUserIdFromEmail(string email)
+        public  async Task<int> GetUserIdFromEmail(string email)
         {
             using (MySqlConnection c = new MySqlConnection())
             {
@@ -165,7 +172,8 @@ namespace DataLayer
                 }
             }
         }
-        public static async Task<List<Product>> GetCart(int id)
+
+        public async Task<List<Product>> GetUserCart(int id)
         {
 
 
@@ -210,7 +218,7 @@ namespace DataLayer
             return productIds;
         }
 
-        public static async Task<string> Register(UsersDTO user)
+        public async Task<string> Register(UsersDTO user)
         {
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
 
@@ -247,7 +255,7 @@ namespace DataLayer
             }
         }
 
-        public static async Task<Users> Login(string email, string password)
+        public async Task<Users> Login(string email, string password)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -265,7 +273,7 @@ namespace DataLayer
                 await r.ReadAsync();
                 int id = r.GetInt32(0);
      
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
+                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
             }
             return ca;
@@ -274,7 +282,7 @@ namespace DataLayer
 
         
 
-        public static async Task<string> GetProfilePhoto(int id)
+        public  async Task<string> GetProfilePhoto(int id)
         {
             string query = $"Select ProfilePicture From users Where UserID ={id}";
 
@@ -285,7 +293,7 @@ namespace DataLayer
                 return $"\"{Convert.ToBase64String(result)}\"";
             }
         }
-        public static async Task<byte[]> GetProfilePhotoInByte(int id)
+        public async Task<byte[]> GetProfilePhotoInByte(int id)
         {
             string query = $"Select ProfilePicture From users Where UserID ={id}";
 
@@ -297,7 +305,8 @@ namespace DataLayer
             }
         }
 
-        public static async Task<Users> GetUserByID(int id)
+        
+        public  async Task<Users> GetUserByID(int id)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -312,13 +321,13 @@ namespace DataLayer
             if (r.HasRows)
             {
                 r.Read();
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await UsersDTO.GetCart(id), await UsersDTO.GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
+                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
             }
             return ca;
         }
 
-        public static async Task<Tuple<int, int>> GetLevelAndPrecentage(int id)
+        public async Task<Tuple<int, int>> GetLevelAndPrecentage(int id)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -356,7 +365,7 @@ namespace DataLayer
             return lastDigit;
         }
 
-        public static async Task UpdateUser(UsersDTO u)
+        public  async Task UpdateUser(UsersDTO u)
         {
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
@@ -387,7 +396,7 @@ namespace DataLayer
                 }
             }
         }
-        public static async Task UpdatePassword(int id, string password)
+        public  async Task UpdatePassword(int id, string password)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -401,7 +410,7 @@ namespace DataLayer
 
 
 
-        public static async Task DeleteCart(int Userid)
+        public async Task DeleteCart(int Userid)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -414,7 +423,7 @@ namespace DataLayer
         }
 
 
-        public static async Task DeleteProductFromUserCart(int Userid, int productid)
+        public  async Task DeleteProductFromUserCart(int Userid, int productid)
         {
             MySqlConnection c = new MySqlConnection();
             c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -426,7 +435,7 @@ namespace DataLayer
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public static async Task AddNewOrder(int UserID, List<Product> products, DateTime Date)
+        public  async Task AddNewOrder(int UserID, List<Product> products, DateTime Date)
         {
 
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -467,7 +476,7 @@ namespace DataLayer
         }
 
 
-        private static async Task AddProductsToOrder(int OrderID, List<Product> products, int UserID)
+        private async Task AddProductsToOrder(int OrderID, List<Product> products, int UserID)
         {
 
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
@@ -500,7 +509,7 @@ namespace DataLayer
 
         }
 
-        public static async Task<List<LeaderboardUser>> GetTopUsersToday()
+        public  async Task<List<LeaderboardUser>> GetTopUsersToday()
         {
             try
             {
@@ -557,7 +566,7 @@ namespace DataLayer
             
         }
 
-        public static async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
+        public  async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
         {
             try
             {
