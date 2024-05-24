@@ -8,7 +8,8 @@ namespace ApiServices.Controllers
     [ApiController]
     public class CartControllercs : ControllerBase
     {
-        private readonly UsersDTO u;
+        private readonly UsersDTO u = new UsersDTO();
+        private readonly ProductDTO p = new ProductDTO();
         [HttpGet($"GetCart")]
         public async Task<List<Product>> GetCart(int id)
         {
@@ -20,7 +21,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await ProductDTO.AddTocart(userid, productid);
+                await p.AddTocart(userid, productid);
                 return Ok("Cart operation completed successfully.");
             }
             catch (Exception ex)

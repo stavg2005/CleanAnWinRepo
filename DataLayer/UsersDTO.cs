@@ -19,7 +19,7 @@ using System.Data.SqlTypes;
 
 namespace DataLayer
 {
-    public class UsersDTO
+    public class UsersDTO:BaseDTO
     {
         public UsersDTO(int userID, string email, string password, int coin, string username, int userxp, int userLocation, byte[] profilePicture)
         {
@@ -69,7 +69,9 @@ namespace DataLayer
         public int Userxp { get; set; }
         public int UserLocation { get; set; }
         public byte[] ProfilePicture { get; set; }
-
+        protected LocationsDTO l = new LocationsDTO();
+        protected ReportCleanDTO cl = new ReportCleanDTO();
+        protected OrderDTO or = new OrderDTO();
 
         public UsersDTO()
         {
@@ -82,7 +84,7 @@ namespace DataLayer
 
 
 
-        public  async Task<List<Users>> GetAllUsers()
+        public override  async Task<List<Users>> SelectAll()
         {
             List<Users> usersList = new List<Users>();
 
@@ -91,7 +93,7 @@ namespace DataLayer
             {
                 try
                 {
-                    c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                    c.ConnectionString = _connectionString;
                     await c.OpenAsync(); // Open the connection asynchronously
 
                     string query = @"SELECT * FROM users";
@@ -112,11 +114,11 @@ namespace DataLayer
                                     r.GetInt32(3),
                                     r.GetString(4),
                                     r.GetInt32(5),
-                                    await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
+                                    await l.GetByPK(r.GetInt32(6)),
                                     await GetUserCart(id),
                                     await GetProfilePhotoInByte(id),
-                                    await OrderDTO.GetOrdersByUserId(id),
-                                    await ReportCleanDTO.GellAllReports(id),
+                                    await or.GetOrdersByUserId(id),
+                                    await cl.GetAllReportsForUser(id),
                                     r.GetBoolean(8)
                                 );
 
@@ -143,7 +145,7 @@ namespace DataLayer
                 int id = -1;
                 try
                 {
-                    c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                    c.ConnectionString = _connectionString;
                     await c.OpenAsync(); // Open the connection asynchronously
 
                     string query = $@"SELECT UserID FROM users WHERE UserEmail= '{email}'";
@@ -174,17 +176,10 @@ namespace DataLayer
         }
 
         public async Task<List<Product>> GetUserCart(int id)
-        {
-
-
-
-
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            int userId = id; // Replace with the UserID you want to use.
-
+        { 
             List<Product> productIds = new List<Product>();
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -195,14 +190,15 @@ namespace DataLayer
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@UserID", id);
                     try
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
+                            ProductDTO p = new ProductDTO();
                             while (reader.Read())
                             {
-                                Product productId = await ProductDTO.GetProuctFromIndex(reader.GetInt32("ProductID"));
+                                Product productId = await p.GetByPK(reader.GetInt32("ProductID"));
                                 productIds.Add(productId);
                             }
                         }
@@ -218,13 +214,48 @@ namespace DataLayer
             return productIds;
         }
 
+        public override async Task<string> Insert(object o)
+        {
+            if (o is UsersDTO)
+            {
+                UsersDTO user = (UsersDTO)o;
+                return await Register(user);
+            }
+            return "An error has occurred";
+        }
+        public override async Task<string> Delete(int id)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
+                {
+                    connection.Open();
+
+                    string query = $"Delete from users where UserID ={id};";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                    }
+                    return "Delete Operation Succecfull";
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ex.Message;
+            }
+        }
         public async Task<string> Register(UsersDTO user)
         {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();
 
@@ -257,26 +288,53 @@ namespace DataLayer
 
         public async Task<Users> Login(string email, string password)
         {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            cmd.CommandText = $@"SELECT *
-                                FROM   users
-                                WHERE  (UserPassword = '{password}') AND
- 				 (UserEmail = '{email}')";
-            MySqlDataReader r = cmd.ExecuteReader();
-            Users ca = new Users();
-            if (r.HasRows)
+            Users user = new Users();
+            try
             {
-                await r.ReadAsync();
-                int id = r.GetInt32(0);
-     
-                ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
+            
+            // Use a using statement to ensure the connection is disposed
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                // Use parameterized queries to prevent SQL injection
+                using (var command = new MySqlCommand("SELECT * FROM users WHERE UserEmail = @Email AND UserPassword = @Password", connection))
+                {
+                    command.Parameters.AddWithValue("@Email", email);
+                    command.Parameters.AddWithValue("@Password", password);
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            int id = reader.GetInt32(0);
+                            user = new Users(
+                                id,
+                                email,
+                                reader.GetInt32(3),
+                                reader.GetString(4),
+                                reader.GetInt32(5),
+                                await l.GetByPK(reader.GetInt32(6)),
+                                await GetUserCart(id),
+                                await GetProfilePhotoInByte(id),
+                                await or.GetOrdersByUserId(id),
+                                await cl.GetAllReportsForUser(id),
+                                reader.GetBoolean(8)
+                            );
+                        }
+                    }
+                }
+                    return user;
+              }
             }
-            return ca;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return user;
+            }
+
+            
 
         }
 
@@ -284,71 +342,130 @@ namespace DataLayer
 
         public  async Task<string> GetProfilePhoto(int id)
         {
-            string query = $"Select ProfilePicture From users Where UserID ={id}";
+            
 
-            using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
-            {
-                connection.Open();
-                var result = connection.QueryFirstOrDefault<byte[]>(query);
-                return $"\"{Convert.ToBase64String(result)}\"";
-            }
+            return $"\"{Convert.ToBase64String(await GetProfilePhotoInByte(id))}\"";
+            
         }
         public async Task<byte[]> GetProfilePhotoInByte(int id)
         {
-            string query = $"Select ProfilePicture From users Where UserID ={id}";
-
-            using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
+             string query = "SELECT ProfilePicture FROM users WHERE UserID = @UserID";
+            try
             {
-                connection.Open();
-                var result = connection.QueryFirstOrDefault<byte[]>(query);
-                return result;
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        // Use parameterized query to prevent SQL injection
+                        command.Parameters.AddWithValue("@UserID", id);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                return reader["ProfilePicture"] as byte[];
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
             }
         }
 
         
-        public  async Task<Users> GetUserByID(int id)
+        public override async Task<Users> GetByPK(int id)
         {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            cmd.CommandText = $@"SELECT *
-                                FROM   users
-                                WHERE  UserID ='{id}'";
-            MySqlDataReader r = cmd.ExecuteReader();
-            Users ca = new Users();
-            if (r.HasRows)
+             string query = "SELECT * FROM users WHERE UserID = @UserId";
+            try
             {
-                r.Read();
-                ca = new Users(id, r.GetString(1), r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), await LocationsDTO.GetLocationFromPK(r.GetInt32(6)), await GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id),r.GetBoolean(8));
 
+
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@UserId", id);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                return new Users(
+                                    id,
+                                    reader.GetString(1),
+                                    reader.GetInt32(3),
+                                    reader.GetString(4),
+                                    reader.GetInt32(5),
+                                    await l.GetByPK(reader.GetInt32(6)),
+                                    await GetUserCart(id),
+                                    await GetProfilePhotoInByte(id),
+                                    await or.GetOrdersByUserId(id),
+                                    await cl.GetAllReportsForUser(id),
+                                    reader.GetBoolean(8)
+                                );
+                            }
+                        }
+                    }
+                    return new Users();
+                }
             }
-            return ca;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new Users();
+            }
+            
         }
 
         public async Task<Tuple<int, int>> GetLevelAndPrecentage(int id)
         {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"Select UserXp From users WHERE UserID={id}";
-            cmd.CommandText = query;
+
             int xp = 0;
-            MySqlDataReader r = cmd.ExecuteReader();
-            if (r.HasRows)
+            string query = $"Select UserXp From users WHERE UserID=@user id";
+            try
             {
-                r.Read();
-                xp = r.GetInt32(0);
 
 
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                xp = reader.GetInt32(0);
+
+
+                            }
+                            int level = xp / 10;
+
+                            int precentage = await GetLastDigit(level) * 10;
+                            return new Tuple<int, int>(level, precentage);
+                        }
+                    }
+                }
             }
-            int level = xp / 10;
-
-            int precentage = await GetLastDigit(level) * 10;
-            return new Tuple<int, int>(level, precentage);
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+            
+        
+            
         }
 
         private static async Task<int> GetLastDigit(int number)
@@ -365,149 +482,130 @@ namespace DataLayer
             return lastDigit;
         }
 
-        public  async Task UpdateUser(UsersDTO u)
+        public override  async Task Update(object O)
         {
-            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+            if (O is UsersDTO)
             {
-
-                string update = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture WHERE UserID = {u.UserID}; ";
-
-                try
+                UsersDTO u = (UsersDTO)O;
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
-                    await connection.OpenAsync();
 
-                    using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                    string update = $"UPDATE users SET UserEmail = @UserEmail, Usercoin = @Usercoin, UserName = @UserName, Userxp = @Userxp, UserLocation = @UserLocation, ProfilePicture = @ProfilePicture WHERE UserID = {u.UserID}; ";
+
+                    try
                     {
-                        UpdateUserCommand.Parameters.AddWithValue("@UserEmail", u.Email);
-                        UpdateUserCommand.Parameters.AddWithValue("@Usercoin", u.Coin);
-                        UpdateUserCommand.Parameters.AddWithValue("@UserName", u.Username);
-                        UpdateUserCommand.Parameters.AddWithValue("@Userxp", u.Userxp);
-                        UpdateUserCommand.Parameters.AddWithValue("@UserLocation", u.UserLocation);
-                        UpdateUserCommand.Parameters.AddWithValue("@ProfilePicture", u.ProfilePicture);
+                        await connection.OpenAsync();
 
-                        await UpdateUserCommand.ExecuteNonQueryAsync();
+                        using (MySqlCommand UpdateUserCommand = new MySqlCommand(update, connection))
+                        {
+                            UpdateUserCommand.Parameters.AddWithValue("@UserEmail", u.Email);
+                            UpdateUserCommand.Parameters.AddWithValue("@Usercoin", u.Coin);
+                            UpdateUserCommand.Parameters.AddWithValue("@UserName", u.Username);
+                            UpdateUserCommand.Parameters.AddWithValue("@Userxp", u.Userxp);
+                            UpdateUserCommand.Parameters.AddWithValue("@UserLocation", u.UserLocation);
+                            UpdateUserCommand.Parameters.AddWithValue("@ProfilePicture", u.ProfilePicture);
+
+                             await UpdateUserCommand.ExecuteNonQueryAsync();
+                        }
+                        
                     }
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
             }
+           
         }
         public  async Task UpdatePassword(int id, string password)
         {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"UPDATE users SET UserPassword = '{password}' where UserID={id};";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-
-
-        public async Task DeleteCart(int Userid)
-        {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"Delete from cart where userID = '{Userid}'";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-
-        public  async Task DeleteProductFromUserCart(int Userid, int productid)
-        {
-            MySqlConnection c = new MySqlConnection();
-            c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            c.Open();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = c;
-            string query = $"Delete from cart where userID = '{Userid}' And ProductID = '{productid}' ";
-            cmd.CommandText = query;
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-        public  async Task AddNewOrder(int UserID, List<Product> products, DateTime Date)
-        {
-
-            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            using (MySqlConnection connection = new MySqlConnection(ConnectionString))
-            {
-                // Step 1: Insert a new order into the "order" table
-                string insertOrderQuery = $"INSERT INTO `order` (OrderDate, UserID) VALUES (@Date, @UserID);";
-
-                try
-                {
-                    await connection.OpenAsync();
-
-                    using (MySqlCommand insertOrderCommand = new MySqlCommand(insertOrderQuery, connection))
-                    {
-                        insertOrderCommand.Parameters.AddWithValue("@Date", Date);
-                        insertOrderCommand.Parameters.AddWithValue("@UserID", UserID);
-
-                        await insertOrderCommand.ExecuteNonQueryAsync();
-                    }
-
-                    // Step 2: Retrieve the auto-generated OrderID after insertion
-                    string getLastInsertedIdQuery = "SELECT LAST_INSERT_ID();";
-                    ulong lastInsertedOrderId;
-
-                    using (MySqlCommand getLastInsertedIdCommand = new MySqlCommand(getLastInsertedIdQuery, connection))
-                    {
-                        lastInsertedOrderId = (ulong)await getLastInsertedIdCommand.ExecuteScalarAsync();
-                    }
-
-                    // Step 3: Use the retrieved OrderID to insert records into the "order_product" table
-                    await AddProductsToOrder((int)lastInsertedOrderId, products, UserID);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-            }
-        }
-
-
-        private async Task AddProductsToOrder(int OrderID, List<Product> products, int UserID)
-        {
-
-            string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            int q = 1;
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                string query = "UPDATE users SET UserPassword = @password WHERE UserID = @id";
+                using (MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
                 {
                     await connection.OpenAsync();
 
-                    foreach (Product product in products)
+                    using (MySqlCommand cmd = new MySqlCommand(query,connection))
                     {
-                        string insertProductQuery = $"INSERT INTO order_product (Order_ID, ProductID,quantity) VALUES (@OrderID, @ProductID,@q);";
+                        cmd.Parameters.AddWithValue("@password", password);
+                        cmd.Parameters.AddWithValue("@id", id);
 
-                        using (MySqlCommand insertProductCommand = new MySqlCommand(insertProductQuery, connection))
-                        {
-                            insertProductCommand.Parameters.AddWithValue("@OrderID", OrderID);
-                            insertProductCommand.Parameters.AddWithValue("@ProductID", product.ProductID);
-                            insertProductCommand.Parameters.AddWithValue("@q", q);
-
-                            await insertProductCommand.ExecuteNonQueryAsync();
-                        }
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                
+                Console.WriteLine("An error occurred: " + ex.Message);
+                
             }
 
+          
         }
+
+
+
+        public async Task DeleteCart(int UserID)
+        {
+            try
+            {
+                string query = "DELETE FROM cart WHERE userID = @userId";
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (MySqlCommand cmd = new MySqlCommand(query,connection))
+                    {
+
+                        cmd.Parameters.AddWithValue("@userId", UserID);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine("An error occurred: " + ex.Message);
+                
+            }
+
+            
+        }
+
+
+        public  async Task DeleteProductFromUserCart(int Userid, int productid)
+        {
+             string query = "DELETE FROM cart WHERE userID = @UserId AND ProductID = @ProductId";
+
+            try
+            {
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        // Use parameterized queries to prevent SQL injection
+                        command.Parameters.AddWithValue("@UserId", Userid);
+                        command.Parameters.AddWithValue("@ProductId", productid);
+
+                        await command.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        
+
+
+        
 
         public  async Task<List<LeaderboardUser>> GetTopUsersToday()
         {

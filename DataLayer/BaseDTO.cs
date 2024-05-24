@@ -8,15 +8,16 @@ using MySql.Data.MySqlClient;
 
 namespace DataLayer
 {
-    public class BaseDTO
+    public abstract class BaseDTO
     {
 
         protected readonly string _connectionString = "server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
 
 
-        protected MySqlConnection CreateConnection()
-        {
-            return new MySqlConnection(_connectionString);
-        }
+        public abstract  Task Insert(object o);
+        public abstract Task Update(object o);
+        public abstract Task Delete(int id);
+        public abstract Task GetByPK(int Id);
+        public abstract Task SelectAll();
     }
 }

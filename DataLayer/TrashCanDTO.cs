@@ -13,92 +13,91 @@ namespace DataLayer
 {
     public class TrashCanDTO:BaseDTO
     {
-        public int ID;
-        public int Location;
-        public int IsFull;
-		public int Weight;
-		public string Coordinates;
 
-		public TrashCanDTO(int iD, int location, int isFull, int weight, string coordinates)
-		{
-			ID = iD;
-			Location = location;
-			IsFull = isFull;
-			Weight = weight;
-			Coordinates = coordinates;
-		}
 
 		public TrashCanDTO()
 		{
-			ID = -1;
-			Location = -1;
-			IsFull = -1;
-			Weight = -1;
-			Coordinates = "";
+	
 		}
 
-        public static async Task ReportClean(int userid,int weight,int trashcanID)
+        public async Task ReportClean(int userid,int weight,int trashcanID)
         {
+            const string query = "INSERT INTO clean_report (UserID, TrashCanID, Weight, Date) VALUES (@UserId, @TrashCanId, @Weight, @Date)";
+
             try
             {
-                DateTime now = DateTime.Now;
-                string formattedDate = now.ToString("yyyy-MM-dd HH:mm:ss"); ;
-                string q = $"Insert into clean_report (UserID,TrashCanID,Weight,Date) values ('{userid}','{trashcanID}','{weight}','{formattedDate}')";
-                MySqlConnection c = new MySqlConnection();
-                c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-                c.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = c;
-                cmd.CommandText = q;
-                await cmd.ExecuteNonQueryAsync();
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@UserId", userid);
+                        command.Parameters.AddWithValue("@TrashCanId", trashcanID);
+                        command.Parameters.AddWithValue("@Weight", weight);
+                        command.Parameters.AddWithValue("@Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                        await command.ExecuteNonQueryAsync();
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                // Consider more sophisticated logging in a real-world application
                 Console.WriteLine(ex.ToString());
             }
 
         }
 
-		private static string GetLatByPK(int id)
+		private  string GetLatByPK(int id)
 		{
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            int userId = id; // Replace with the UserID you want to use.
-
-            string lat = "";
-            string Lng = "";
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                connection.Open();
 
-                string query = $"SELECT Lat from trashcan where TrashCanID ={id};";
 
-                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                string lat = "";
+                string Lng = "";
+
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
-                    
+                    connection.Open();
 
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    string query = $"SELECT Lat from trashcan where TrashCanID ={id};";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
-                        while (reader.Read())
+
+
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
-                            lat = reader.GetString(0);
+                            while (reader.Read())
+                            {
+                                lat = reader.GetString(0);
+                            }
                         }
                     }
+                    connection.Close();
+                    return lat;
                 }
-                connection.Close();
-                return lat;
             }
-            
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+
+
+
+
         }
 
-        private static string GetLngByPK(int id)
+        private  string GetLngByPK(int id)
         {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-            int userId = id; // Replace with the UserID you want to use.
+
 
             string Lng = "";
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -120,8 +119,32 @@ namespace DataLayer
                 return Lng;
             }
         }
+        public override async Task<TrashCan> GetByPK(int id)
+        {
+            using (MySqlConnection c = new MySqlConnection(_connectionString))
+            {
+                await c.OpenAsync();
 
-        public static Tuple<string,string> GetLatLngFromPK(int id)
+                string query = @"SELECT * FROM trashcan WHERE TrashCanID = @id";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, c))
+                {
+                    // Use parameters to prevent SQL injection
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await r.ReadAsync())
+                        {
+                            return new TrashCan(id, r.GetInt32(1), r.GetString(2), r.GetString(3));
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public  Tuple<string,string> GetLatLngFromPK(int id)
         {
             string Lat = GetLatByPK(id);
             string lng = GetLngByPK(id);
@@ -129,7 +152,7 @@ namespace DataLayer
             return t;
         }
 
-        public static int countRows()
+        public int countRows()
         {
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             int num = 0;
@@ -157,12 +180,10 @@ namespace DataLayer
                 return num;
             }
         }
-        public static async Task<List<TrashCan>> GetAlltrashCanLocations()
+        public override  async Task<List<TrashCan>> SelectAll()
         {
-            int i = 1;
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             List<TrashCan> l = new List<TrashCan>(countRows());
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -193,8 +214,9 @@ namespace DataLayer
 
         }
 
-        public static async Task InsertTrashCan(TrashCan trashCan)
+        public override  async Task Insert(Object o)
         {
+            TrashCan trashCan =(TrashCan)o;
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"; 
 
             try
@@ -208,7 +230,7 @@ namespace DataLayer
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                     }
                     connection.Close();
@@ -222,13 +244,13 @@ namespace DataLayer
             
         }
 
-        public static async Task DeleteTrashCan(int id)
+        public  override async Task Delete(int id)
         {
-            String connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
 
@@ -237,7 +259,7 @@ namespace DataLayer
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                     }
                     connection.Close();
@@ -250,8 +272,9 @@ namespace DataLayer
             }
         }
 
-        public static async Task UpdateTrashCan(TrashCan trashCan)
+        public override async Task Update(Object o)
         {
+            TrashCan trashCan = (TrashCan)o;
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
@@ -279,41 +302,63 @@ namespace DataLayer
             }
 
         }
-        public async Task AddWeightAsync(int trashCanId, float newWeight)
+        public async Task<string> AddWeightAsync(int trashCanId, float newWeight)
         {
-            using (var connection = CreateConnection())
+            try
             {
-                await connection.OpenAsync();
-                var currentWeight = await connection.QueryFirstOrDefaultAsync<float?>(
-                    "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId", new { TrashCanId = trashCanId });
-
-                if (currentWeight.HasValue)
+                using (var connection = new MySqlConnection(_connectionString))
                 {
-                    var oldWeight = currentWeight.Value;
-                    var weightDifference = newWeight;
+                    await connection.OpenAsync();
 
-                    using (var transaction = connection.BeginTransaction())
+                    // Fetch the current weight
+                    string selectQuery = "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId";
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
-                        // Update the trash_can table
-                        await connection.ExecuteAsync(
-                            "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId",
-                            new { TrashCanId = trashCanId, NewWeight = newWeight + oldWeight },
-                            transaction: transaction);
+                        selectCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
+
+                        var result = await selectCommand.ExecuteScalarAsync();
+                        if (result == null)
+                        {
+                            throw new Exception("Trash can not found");
+                        }
+
+                        float oldWeight = Convert.ToSingle(result);
+                        float updatedWeight = newWeight + oldWeight;
+                        float weightDifference = newWeight;
+
+                        // Update the trashcan table
+                        string updateQuery = "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId";
+                        using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                        {
+                            updateCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
+                            updateCommand.Parameters.AddWithValue("@NewWeight", updatedWeight);
+
+                            await updateCommand.ExecuteNonQueryAsync();
+                        }
 
                         // Insert into the weight_log table
-                        await connection.ExecuteAsync(
-                            @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference,change_time)
-                          VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference,NOW())",
-                            new { TrashCanId = trashCanId, OldWeight = oldWeight, NewWeight = newWeight + oldWeight, WeightDifference = newWeight },
-                            transaction: transaction);
+                        string insertQuery = @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference, change_time)
+                                       VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference, NOW())";
+                        using (var insertCommand = new MySqlCommand(insertQuery, connection))
+                        {
+                            insertCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
+                            insertCommand.Parameters.AddWithValue("@OldWeight", oldWeight);
+                            insertCommand.Parameters.AddWithValue("@NewWeight", updatedWeight);
+                            insertCommand.Parameters.AddWithValue("@WeightDifference", weightDifference);
 
-                        transaction.Commit();
+                            await insertCommand.ExecuteNonQueryAsync();
+                        }
+
+                        return "Weight update successful";
                     }
                 }
-                else
-                {
-                    throw new Exception("Trash can not found");
-                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging framework)
+                Console.WriteLine(ex.Message);
+                // Optionally, handle the exception appropriately (e.g., rethrow, return an error message, etc.)
+                throw;
             }
         }
 
@@ -393,40 +438,58 @@ namespace DataLayer
         }
         public   async Task<string> RemoveWeightAsync(int trashCanId, int weight)
         {
-            using(var connection = CreateConnection())
+            try
             {
-                await connection.OpenAsync();
-                var currentWeight = await connection.QueryFirstOrDefaultAsync<float?>(
-                    "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId", new { TrashCanId = trashCanId });
-
-                if (currentWeight.HasValue)
+                using (var connection = new MySqlConnection(_connectionString))
                 {
-                    var oldWeight = currentWeight.Value;
-                    var weightDifference = weight-oldWeight;
+                    await connection.OpenAsync();
 
-                    using (var transaction = connection.BeginTransaction())
+                    string selectQuery = "SELECT TrashCanWeight FROM trashcan WHERE TrashCanId = @TrashCanId";
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
-                        // Update the trash_can table
-                        await connection.ExecuteAsync(
-                            "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId",
-                            new { TrashCanId = trashCanId, NewWeight = oldWeight- weight },
-                            transaction: transaction);
+                        selectCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
 
-                        // Insert into the weight_log table
-                        await connection.ExecuteAsync(
-                            @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference,change_time)
-                          VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference,NOW())",
-                            new { TrashCanId = trashCanId, OldWeight = oldWeight, NewWeight = -weight, WeightDifference = weightDifference },
-                            transaction: transaction);
+                        var result = await selectCommand.ExecuteScalarAsync();
+                        if (result == null)
+                        {
+                            throw new Exception("Trash can not found");
+                        }
 
-                        transaction.Commit();
+                        float oldWeight = Convert.ToSingle(result);
+                        float newWeight = oldWeight - weight;
+                        float weightDifference = weight;
+
+                        string updateQuery = "UPDATE trashcan SET TrashCanWeight = @NewWeight WHERE TrashCanID = @TrashCanId";
+                        using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                        {
+                            updateCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
+                            updateCommand.Parameters.AddWithValue("@NewWeight", newWeight);
+
+                            await updateCommand.ExecuteNonQueryAsync();
+                        }
+
+                        string insertQuery = @"INSERT INTO weight_log (TrashCanID, old_weight, new_weight, weight_difference, change_time)
+                                       VALUES (@TrashCanId, @OldWeight, @NewWeight, @WeightDifference, NOW())";
+                        using (var insertCommand = new MySqlCommand(insertQuery, connection))
+                        {
+                            insertCommand.Parameters.AddWithValue("@TrashCanId", trashCanId);
+                            insertCommand.Parameters.AddWithValue("@OldWeight", oldWeight);
+                            insertCommand.Parameters.AddWithValue("@NewWeight", newWeight);
+                            insertCommand.Parameters.AddWithValue("@WeightDifference", weightDifference);
+
+                            await insertCommand.ExecuteNonQueryAsync();
+                        }
+
+                        return "Weight removal successful";
                     }
-                    return "Weight removal succefull";
                 }
-                else
-                {
-                    throw new Exception("Trash can not found");
-                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging framework)
+                Console.WriteLine(ex.Message);
+                // Optionally, handle the exception appropriately (e.g., rethrow, return an error message, etc.)
+                throw;
             }
         }
 

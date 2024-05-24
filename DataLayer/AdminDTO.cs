@@ -19,26 +19,12 @@ namespace DataLayer
         {
             
             
-                MySqlConnection c = new MySqlConnection();
-                c.ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-                c.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = c;
-                cmd.CommandText = $@"SELECT *
-                                FROM   users
-                                WHERE  (UserPassword = '{password}') AND
- 				 (UserEmail = '{email}') AND (IsAdmin = 1)";
-                MySqlDataReader r = cmd.ExecuteReader();
-                Users ca = new Users();
-                if (r.HasRows)
-                {
-                    await r.ReadAsync();
-                    int id = r.GetInt32(0);
-
-                    ca = new Users(id, email, r.GetInt32(3), r.GetString(4), (r.GetInt32(5)), (await LocationsDTO.GetLocationFromPK(r.GetInt32(6))), await base.GetUserCart(id), await GetProfilePhotoInByte(id), await OrderDTO.GetOrdersByUserId(id), await ReportCleanDTO.GellAllReports(id), r.GetBoolean(8));
-
-                }
-                return ca;
+            Users admin =await Login(email, password);
+            if(admin != null && admin.IsAdmin)
+            {
+                return admin;
+            }
+            return null;
 
             
         }
@@ -73,11 +59,11 @@ namespace DataLayer
                                     r.GetInt32(3),
                                     r.GetString(4),
                                     r.GetInt32(5),
-                                    await LocationsDTO.GetLocationFromPK(r.GetInt32(6)),
+                                    await l.GetByPK(r.GetInt32(6)),
                                     await GetUserCart(id),
                                     await GetProfilePhotoInByte(id),
-                                    await OrderDTO.GetOrdersByUserId(id),
-                                    await ReportCleanDTO.GellAllReports(id),
+                                    await or.GetOrdersByUserId(id),
+                                    await cl.GetAllReportsForUser(id),
                                     r.GetBoolean(8)
                                 );
 
@@ -118,21 +104,12 @@ namespace DataLayer
                 }
                 catch (Exception ex)
                 {
-                    return -1;
+                    
                     Console.WriteLine(ex.ToString());
+                    return -1;
                 }
             }
         }
-    public static async Task<byte[]> GetProfilePhotoInByte(int id)
-        {
-            string query = $"Select ProfilePhoto From users Where UserID ={id}";
 
-            using (var connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
-            {
-                connection.Open();
-                var result = connection.QueryFirstOrDefault<byte[]>(query);
-                return result;
-            }
-        }
     }
 }

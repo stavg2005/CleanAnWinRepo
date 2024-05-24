@@ -10,12 +10,14 @@ namespace ApiServices.Controllers
     [ApiController]
     public class TrashCanController : ControllerBase
     {
+        private readonly TrashCanDTO t = new TrashCanDTO(); 
+        private readonly ReportCleanDTO r = new ReportCleanDTO();
         [HttpPost ("ReportClean")]
         public async Task<IActionResult> ReportClean([FromBody] ReportClean r)
         {
             try
             {
-                await (TrashCanDTO.ReportClean(r.Userid, r.weight, r.TrashCanId));
+                await (t.ReportClean(r.Userid, r.weight, r.TrashCanId));
                 return Ok("ReportClean operation completed successfully.");
             }
             catch (Exception ex)
@@ -30,7 +32,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await ReportCleanDTO.GellAllReports();
+                return await r.SelectAll();
             }
             catch(Exception ex)
             {
@@ -45,7 +47,7 @@ namespace ApiServices.Controllers
 
             try
             {
-                List<TrashCan> l = await TrashCanDTO.GetAlltrashCanLocations();
+                List<TrashCan> l = await t.SelectAll();
                 l = l;
                 return Ok(l);
             }
@@ -59,11 +61,11 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost("InsertTrashCan")]
-        public async Task<IActionResult> InsertTrashCan([FromBody]TrashCan t)
+        public async Task<IActionResult> InsertTrashCan([FromBody]TrashCan tr)
         {
             try
             {
-                await TrashCanDTO.InsertTrashCan(t); return Ok("Post operation completed successfully.");
+                await t.Insert(tr); return Ok("Post operation completed successfully.");
             }
             catch (Exception ex)
             {
@@ -76,7 +78,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await TrashCanDTO.DeleteTrashCan(id); return Ok("Delete operation completed successfully.");
+                await t.Delete(id); return Ok("Delete operation completed successfully.");
             }
             catch (Exception ex)
             {
@@ -85,11 +87,11 @@ namespace ApiServices.Controllers
         }
 
         [HttpPut("UpdateTrashCan")]
-        public async Task<IActionResult> UpdateTrashCan([FromBody]  TrashCan t)
+        public async Task<IActionResult> UpdateTrashCan([FromBody]  TrashCan tr)
         {
             try
             {
-                await TrashCanDTO.UpdateTrashCan(t); return Ok("Update Operation completed succefuly");
+                await t.Update(tr); return Ok("Update Operation completed succefuly");
             }
             catch(Exception ex)
             {

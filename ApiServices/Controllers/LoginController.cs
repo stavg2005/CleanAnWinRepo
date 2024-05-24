@@ -25,7 +25,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await u.GetAllUsers();
+                return await u.SelectAll();
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace ApiServices.Controllers
         [HttpGet("GetUser")]
         public async Task<Users> GetUser(int id)
         {
-            Users us = await u.GetUserByID(id);
+            Users us = await u.GetByPK(id);
             return (us);
         }
 
@@ -78,7 +78,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                await (u.UpdateUser(us));
+                await (u.Update(us));
                 return Ok("operation completed successfully.");
             }
             catch (Exception ex)

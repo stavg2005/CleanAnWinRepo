@@ -24,7 +24,7 @@ namespace Model
         public Byte[] profile { get; set; }
 
 
-        public List<ReportClean> reportCleans { get; set; }  
+        public List<ReportClean> reportCleans { get; set; }
 
         public int TotalKg { get;set; }
 
@@ -122,7 +122,6 @@ namespace Model
             this.IsAdmin = u.IsAdmin;
 
         }
-
         private int GetTotalKG(List<ReportClean> reportClean)
         {
             int totalKG = 0;

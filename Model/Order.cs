@@ -12,7 +12,7 @@ namespace Model
         {
 			OrderID = orderID;
 			UserID = userID;
-			Date = DateTime.Now.ToString();
+			Date = DateTime.Now;
 			this.Products = Products;
 		}
 
@@ -20,14 +20,14 @@ namespace Model
 		{
             OrderID = -1;
             UserID=-1;
-			Date =DateTime.Now.ToString(); ;
+			Date =DateTime.Now ;
 			Products = new List<Product>();
 		}
 
 		public int OrderID { get; set; }
         public int UserID { get; set; }
 
-        public string  Date { get; set; }
+        public DateTime  Date { get; set; }
 
         public List<Product> Products { get; set; }	
 

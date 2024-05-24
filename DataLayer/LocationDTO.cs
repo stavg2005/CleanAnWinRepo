@@ -9,7 +9,7 @@ using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace DataLayer
 {
-    public class LocationsDTO
+    public class LocationsDTO:BaseDTO
     {
         public int ID;
         public string Name;
@@ -30,39 +30,45 @@ namespace DataLayer
 
 
 
-        public  async Task<List<Locations>> GetAllLocations()
+        public override async Task<List<Locations>> SelectAll()
         {
             List<Locations> locations = new List<Locations>();
-
-            using (MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
+            try
             {
-                connection.Open();
-                string query = "SELECT LocationID, LocationName,lat,lng FROM location";
-
-                using (MySqlCommand command = new MySqlCommand(query, connection))
+                using (MySqlConnection connection = new MySqlConnection(@"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"))
                 {
-                    using (MySqlDataReader reader =  command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Locations location = new Locations
-                            {
-                                ID = Convert.ToInt32(reader["LocationID"]),
-                                Name = Convert.ToString(reader["LocationName"]),
-                                lat = Convert.ToString(reader["lat"]),
-                                lng = Convert.ToString(reader["lng"])
-                                
-                            };
+                    await connection.OpenAsync();
+                    string query = "SELECT LocationID, LocationName, lat, lng FROM location";
 
-                            locations.Add(location);
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                Locations loc = new Locations
+                                {
+                                    ID = reader.GetInt32(0),
+                                    Name = reader.GetString(1),
+                                    lat = reader.GetString(2),
+                                    lng = reader.GetString(3)
+                                };
+
+                                locations.Add(loc);
+                            }
                         }
                     }
                 }
             }
-            return locations;
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine("An error occurred: " + ex.Message);
+                
+            }
+            return locations; 
         }
-
-        public static async Task<Locations> GetLocationFromPK(int id)
+        public override   async Task<Locations> GetByPK(int id)
         {
             Locations locations = new Locations();
 
@@ -79,10 +85,10 @@ namespace DataLayer
                         {
                             Locations locationtemp = new Locations
                             {
-                                ID = Convert.ToInt32(reader["LocationID"]),
-                                Name = Convert.ToString(reader["LocationName"]),
-                                lat = Convert.ToString(reader["lat"]),
-                                lng = Convert.ToString(reader["lng"])
+                                ID = reader.GetInt32(0),
+                                Name = reader.GetString(1),
+                                lat = reader.GetString(2),
+                                lng = reader.GetString(3)
 
                             };
                             locations = locationtemp;
@@ -95,11 +101,10 @@ namespace DataLayer
 
         }
 
-        public static async Task UpdateLocation(Locations l)
+        public override async Task Update(object o)
         {
-           
-                string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
-                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                Locations l = (Locations)o;
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
 
                     string update = $"UPDATE Location SET LocationName = @LocationName, lat = @lat, lng = @lng WHERE LocationID = {l.ID}; ";
@@ -126,8 +131,9 @@ namespace DataLayer
                 }
          }
 
-        public static async Task AddLocation(Locations l)
+        public override async Task Insert(object o)
         {
+            Locations l = (Locations)o;
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
             using (MySqlConnection connection = new MySqlConnection(ConnectionString))
             {
@@ -153,6 +159,32 @@ namespace DataLayer
                 {
                     Console.WriteLine(ex.ToString());
                 }
+            }
+        }
+
+        public override async Task Delete(int id)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
+                {
+                    connection.Open();
+
+                    string query = $"Delete from location where LocationID ={id};";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                    }
+                    connection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
         

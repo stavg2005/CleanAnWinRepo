@@ -10,13 +10,14 @@ namespace ApiServices.Controllers
         {
             return View();
         }
+        private readonly LocationsDTO l = new LocationsDTO();
 
         [HttpGet ("GetAllLocation")]
         public async Task<IActionResult> GetAllLocations()
         {
             try
             {
-                var locations = await LocationsDTO.GetAllLocations();
+                var locations = await l.SelectAll();
                 return Ok(locations);
             }
             catch (Exception ex)
@@ -31,7 +32,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                var locations = await LocationsDTO.GetLocationFromPK(id);
+                var locations = await l.GetByPK(id);
                 return  Ok(locations);
             }
             catch (Exception ex)
@@ -42,11 +43,11 @@ namespace ApiServices.Controllers
         }
 
         [HttpPost ("UpdateLocation")]
-        public async Task<IActionResult> UpdateLocation([FromBody] Locations l)
+        public async Task<IActionResult> UpdateLocation([FromBody] Locations lo)
         {
             try
             {
-                await LocationsDTO.UpdateLocation(l);
+                await l.Update(lo);
                 return Ok("operation completed successfully.");
             }
             catch(Exception ex) 
@@ -56,11 +57,11 @@ namespace ApiServices.Controllers
             }
         }
         [HttpPost ("AddNewLocation")]
-        public async Task<IActionResult> AddNewLocation([FromBody] Locations l)
+        public async Task<IActionResult> AddNewLocation([FromBody] Locations lo)
         {
             try
             {
-                await LocationsDTO.AddLocation(l); return Ok("operation completed successfully.");
+                await l.Insert(lo); return Ok("operation completed successfully.");
             }
             catch(Exception ex) 
             {

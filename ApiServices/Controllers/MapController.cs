@@ -7,10 +7,11 @@ namespace ApiServices.Controllers
     [ApiController]
     public class MapController : ControllerBase
     {
-        [HttpGet($"GetLocation")]
-        public async Task<IActionResult> GetAllLocation (int id)
-        {
-            return Ok(TrashCanDTO.GetLatLngFromPK(id));
-        }
+        //[HttpGet($"GetLocation")]
+        
+        //public async Task<IActionResult> GetAllLocation (int id)
+        //{
+        //    return Ok(TrashCanDTO.GetLatLngFromPK(id));
+        //}
     }
 }

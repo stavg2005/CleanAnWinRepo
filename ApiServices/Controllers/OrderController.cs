@@ -9,14 +9,14 @@ namespace ApiServices.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly UsersDTO u;
-        private readonly OrderDTO o;
+        private readonly UsersDTO u = new UsersDTO();
+        private readonly OrderDTO o = new OrderDTO();
         [HttpPost("AddOrderToUser")]
         public async Task<IActionResult> AddNewOrder([FromBody] OrderRequestModel orderRequest)
         {
             try
             {
-                await u.AddNewOrder(orderRequest.UserID,orderRequest.Products, DateTime.Now);
+                await o.AddNewOrder(orderRequest.UserID,orderRequest.Products, DateTime.Now);
                 return Ok("Added Order Successfully");
             }
             catch (Exception ex)
@@ -31,7 +31,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return (await OrderDTO.GetOrdersByUserId(userid));
+                return (await o.GetOrdersByUserId(userid));
             }
             catch(Exception ex)
             {
@@ -45,7 +45,7 @@ namespace ApiServices.Controllers
         {
             try
             {
-                return await OrderDTO.GetAllOrders();
+                return await o.SelectAll();
             }
             catch (Exception ex)
             {
