@@ -154,7 +154,7 @@ namespace DataLayer
 
         public int countRows()
         {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            string connectionString = _connectionString;
             int num = 0;
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -214,7 +214,7 @@ namespace DataLayer
 
         }
 
-        public override  async Task Insert(Object o)
+        public override  async Task Insert(object o)
         {
             TrashCan trashCan =(TrashCan)o;
             string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog"; 
@@ -272,7 +272,7 @@ namespace DataLayer
             }
         }
 
-        public override async Task Update(Object o)
+        public override async Task Update(object o)
         {
             TrashCan trashCan = (TrashCan)o;
             string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";

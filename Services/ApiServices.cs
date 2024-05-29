@@ -21,7 +21,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.34:5087";
+        private string Apiurl = "http://10.0.0.25:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();

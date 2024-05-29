@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class Users:IDisposable
+    public class Users
     {
         public int UserID { get; set; }
         public string UserName { get; set; }
@@ -131,9 +131,6 @@ namespace Model
             }
             return totalKG;
         }
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

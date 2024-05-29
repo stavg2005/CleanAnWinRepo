@@ -14,15 +14,7 @@
 <div id="map" style="height:@(d.Height-20)px;width:@(d.Width-20)px;">
 </div>
 
-<div class="modal" style="display: @modalDisplay">
-    <div class="modal-content">
-        <span class="close" @onclick="CloseModal">&times;</span>
-        <h3>Place new TrashCan</h3>
-        <p> are you sure you want to place the trash can here? \ </p>
-            </div>
 
-            <button type="button" class="btn btn-primary" @onclick="CreateTrashCan">Add trashCan</button>
-    </div>
 
 @code {
 
@@ -83,7 +75,10 @@
         ApiServices a = new ApiServices();
         await GetDimensions();
 
-
+        if (!AuthService.IsUserAuthenticated)
+        {
+            NavManager.NavigateTo("Login");
+        }
 
 
 
@@ -109,29 +104,11 @@
 
 
 
-    public void OpenModal()
-    {
-        modalDisplay = "block";
-        Console.WriteLine("Modal opened");
-    }
-
-
-    private void CloseModal()
-    {
-        modalDisplay = "none";
-    }
 
 
 
-    private async Task CreateTrashCan()
-    {
 
-        await a.InsertTrashCan(newTrash);
-        nav.NavigateTo($"mapredirect");
-        CloseModal();
-
-
-    }
+ 
 
 
 

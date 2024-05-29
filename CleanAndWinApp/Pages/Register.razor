@@ -92,60 +92,68 @@
         <div class="step" onclick="showStep(2)">Step 2</div>
         <div class="step" onclick="showStep(3)">Step 3</div>
     </div>
-
-    <div id="formSteps" >
-        <div class="form-step active">
-            <h2>Please Enter Your ID and UserName</h2>
-            <div class="form-group">
-                <label for="firstName">UserName:</label>
-                <input @bind-value="UserName" type="text" id="firstName">
-            </div>
-                <div class="form-group">
-                    <label for="cities">Select a city:</label>
-                    <select id="cities" name="cities" @bind="location">
-                        @{
-                            if (b)
-                            {
-                                foreach (Locations l in list)
+        @if (firststep)
+        {
+            <div>
+                <div>
+                    <h2>Please Enter Your ID and UserName</h2>
+                    <div class="form-group">
+                        <label for="firstName">UserName:</label>
+                        <input @bind-value="UserName" type="text" id="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label for="cities">Select a city:</label>
+                        <select id="cities" name="cities" @bind="location">
+                            @{
+                                if (b)
                                 {
-                                    <option value="@l.ID" @key="@l.ID">@l.Name</option>
+                                    foreach (Locations l in list)
+                                    {
+                                        <option value="@l.ID" @key="@l.ID">@l.Name</option>
+                                    }
                                 }
+
                             }
-                    
-                    }
-                    </select>
+                        </select>
                         <!-- Add more options as needed -->
-                    
+
+                    </div>
+                    <div class="form-group">
+                        <label for="cities">Add Profile Photo:</label>
+                        <InputFile OnChange="HandleFileChange" />
+                    </div>
+                    <button @onclick=StartSecondStep>Next</button>
                 </div>
-                <div class="form-group">
-                    <label for="cities">Add Profile Photo:</label>
-                    <InputFile OnChange="HandleFileChange" />
                 </div>
-            <button onclick="nextStep()">Next</button>
-        </div>
+        }
+                @if (secondstep)
+                {
+                    <div >
+                        <h2>Please Enter Email</h2>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input @bind-value="Email" type="email" id="email">
+                        </div>
+                        <button @onclick=StartSecondStep>Previous</button>
+                        <button @onclick=StartLastStep>Next</button>
+                    </div>
+                }
+                @if(laststep)
+                {
+                    <div >
+                        <h2>Please EnterPasswor</h2>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input @bind-value="Password" type="password" id="password">
+                        </div>
 
-        <div class="form-step">
-            <h2>Please Enter Email</h2>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input @bind-value="Email" type="email" id="email">
-            </div>
-            <button onclick="prevStep()">Previous</button>
-            <button onclick="nextStep()">Next</button>
-        </div>
+                        <button @onclick="() => Reg()">Submit</button>
+                    </div>
+                }
+        
 
 
-        <div class="form-step">
-            <h2>Please EnterPasswor</h2>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input @bind-value="Password" type="password" id="password">
-            </div>
-            <button onclick="prevStep()">Previous</button>
-                <button @onclick="() => Reg()">Submit</button>
-        </div>
-    </div>
-</div>
+      </div>
 </body>
 @code {
     private string UserName { get; set; }
@@ -156,8 +164,10 @@
     byte[] profilepic { get; set; }
     int n;
     bool b = false;
+    bool firststep = true;
+    bool secondstep = false;
+    bool laststep = false;
     ApiServices A = new ApiServices();
-    private const string ApiBaseUrl = "http://10.0.0.27:5087";
     List<Locations> list;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -177,6 +187,18 @@
         b = true;
     }
 
+    private void StartSecondStep()
+    {
+        firststep = false;
+        secondstep = true;
+        laststep = false;
+    }
+    private void StartLastStep()
+    {
+        laststep = true;
+        firststep = false;
+        secondstep = false;
+    }
     public async Task Reg()
     {
         string g = "hi";
@@ -209,45 +231,7 @@
             }
         }
     }
-    private async Task<string> UploadImageToApi(int userId, byte[] imageData)
-    {
-
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            using (MultipartFormDataContent content = new MultipartFormDataContent())
-            {
-                // Your API endpoint URL
-                string apiUrl = $"{ApiBaseUrl}/api/upload/uploadImage/{userId}";
-
-                // Convert byte array to Base64 string
-                string base64Image = Convert.ToBase64String(imageData);
-
-                // Add the image data as a binary content
-                ByteArrayContent imageContent = new ByteArrayContent(imageData);
-                content.Add(imageContent, "imageData", "image.jpg"); // "imageData" is the parameter name expected by the server
-
-                // Make the POST request
-                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    // Image uploaded successfully
-                    return ("Image uploaded successfully");
-                }
-                else
-                {
-                    // Handle the error
-                    return ($"Error: {response.StatusCode}");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions
-            return ($"Exception: {ex.Message}");
-        }
-}
+    
 }
 
 

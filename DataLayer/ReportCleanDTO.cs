@@ -12,7 +12,7 @@ namespace DataLayer
     {
         public async Task<List<ReportClean>> GetAllReportsForUser(int userID)
         {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            string connectionString = _connectionString;
 
             List<ReportClean> L = new List<ReportClean>();
             try
@@ -54,7 +54,7 @@ namespace DataLayer
 
         public override async Task<List<ReportClean>> SelectAll()
         {
-            string connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+            string connectionString =_connectionString;
 
             List<ReportClean> L = new List<ReportClean>();
             try
@@ -136,7 +136,7 @@ namespace DataLayer
             if (o is ReportClean)
             {
                 ReportClean r = (ReportClean)o;
-                string ConnectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+                string ConnectionString = _connectionString;
                 using (MySqlConnection connection = new MySqlConnection(ConnectionString))
                 {
 

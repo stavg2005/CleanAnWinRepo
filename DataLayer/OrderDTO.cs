@@ -68,10 +68,8 @@ namespace DataLayer
             }
             catch (Exception ex)
             {
-                // Log the exception (consider using a logging framework)
                 Console.WriteLine(ex.Message);
-                // Optionally, rethrow the exception or handle it appropriately
-                // throw;
+     
             }
 
             return productList;

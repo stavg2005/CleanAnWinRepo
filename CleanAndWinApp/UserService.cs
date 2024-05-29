@@ -9,17 +9,9 @@ namespace CleanAndWinApp
 {
     public class UserService
     {
-        private Users currentUser;
+        public Users CurrentUser { get; set; }
 
-        public Users CurrentUser
-        {
-            get => currentUser;
-            set
-            {
-                currentUser = value;
-                // You can also add additional logic here if needed
-            }
-        }
+        
 
         public bool IsUserAuthenticated => CurrentUser != null && CurrentUser.UserID != -1;
 

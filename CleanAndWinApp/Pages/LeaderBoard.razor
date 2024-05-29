@@ -185,6 +185,7 @@
     static int count = 0;
     private int blur = 0;
     private bool _sidebarVisible = false;
+    ApiServices a = new ApiServices();
 
     private void ToggleSidebar()
     {
@@ -271,11 +272,13 @@
         {
 
             await GetDimensions();
-            // var Orders = await a.GetAllOrders(Userservice.CurrentUser.UserID);
-            // if (Orders.Count != 0)
-            // {
-            //     Userservice.CurrentUser.orders = Orders;
-            // }
+            leaderboard.TopUsers = await a.GetTopUsers();
+            leaderboard.TopUsersThisWeek = await a.GetTopUsersThisWeek();
+            leaderboard.TopUsersToday = await a.GetTopUsersToday();
+        }
+        else
+        {
+            nav.NavigateTo("Login");
         }
 
 

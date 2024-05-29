@@ -387,50 +387,11 @@
         };
     </script>
 
-    <script>
-        window.updateProgressExternally = function (value) {
-            updateCircularProgressBar(value);
-        };
-    </script>
 
 
 
-    <script>
 
-        function updateCircularProgressBar(value) {
-            const progress = document.getElementById("progress");
-            const circumference = 2 * Math.PI * progress.r.baseVal.value;
-            const targetOffset = circumference - (value / 100) * circumference;
-
-            // Set the initial state with the full circumference
-            progress.style.strokeDasharray = `${circumference} ${circumference}`;
-            progress.style.strokeDashoffset = circumference;
-
-            // Start the animation
-            animate(circumference, targetOffset, performance.now());
-        }
-
-        function animate(initialOffset, targetOffset, startTime) {
-            const progress = document.getElementById("progress");
-            const duration = 1000; // Animation duration in milliseconds (1 second in this example)
-
-            function frame(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progressPercentage = Math.min(elapsed / duration, 1);
-                const currentOffset = initialOffset - progressPercentage * (initialOffset - targetOffset);
-
-                progress.style.strokeDashoffset = currentOffset;
-
-                if (progressPercentage < 1) {
-                    requestAnimationFrame((time) => frame(time));
-                }
-            }
-
-            requestAnimationFrame((time) => frame(time));
-        }
-
-
-    </script>
+    
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -444,29 +405,7 @@
             }, 4000);
         });
     </script>
-    <script>
-        function nextStep() {
-            // Add logic to handle the transition to the next step
-            var currentStep = document.querySelector('.form-step.active');
-            var nextStep = currentStep.nextElementSibling;
-
-            if (nextStep) {
-                currentStep.classList.remove('active');
-                nextStep.classList.add('active');
-            }
-        }
-
-        function prevStep() {
-            var currentStep = document.querySelector('.form-step.active');
-            var prevStep = currentStep.previousElementSibling;
-
-            if (prevStep) {
-                currentStep.classList.remove('active');
-                prevStep.classList.add('active');
-            }
-        }
-        // Add similar functions for prevStep() and showStep(stepNumber) if not already defined.
-    </script>
+    
 
     <script>
         document.getElementById('toggleSidebarBtn').addEventListener('click', function () {

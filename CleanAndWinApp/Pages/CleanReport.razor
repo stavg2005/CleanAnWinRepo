@@ -3,6 +3,7 @@
 @using Services
 @inject UserService Userservice
 @inject NavigationManager NavManager
+@inject LeaderBoardService leaderboard;
 
 <link rel="stylesheet" href="css/cleanreport.css">
 
@@ -79,6 +80,7 @@
         {
 
             await ReportClean();
+
         }
     }
     private async Task ReportClean()

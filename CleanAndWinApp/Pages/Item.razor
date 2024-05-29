@@ -94,7 +94,10 @@
         {
             base64 = Convert.ToBase64String(p.ProductPicture);
         }
-
+        if (!AuthService.IsUserAuthenticated)
+        {
+            Nav.NavigateTo("/login");
+        }
 
 
     }

@@ -9,14 +9,8 @@
 @inject NavigationManager Nav;
 @inject LocationService locs;
 @using Services
- <p>error!!!: @error</p> 
-@* <input @bind-value="password"/> enter new password <button @onclick="UpdatatePassword">Change Password</button>
-<div>
-    change Profile Picture  
-    <InputFile OnChange="HandleFileChange" />
-</div>
 
-<input @bind-value="UserName" /> enter new UserName <button @onclick="UpdateUserName"> change UserName</button> *@
+
 <link rel="stylesheet" href="css/settings.css">
 <div class="wrapper bg-white mt-sm-5" style="position:relative;width:(@d.Width+200)px;height:(@d.Height)px">
     <h4 class="pb-4 border-bottom">Account settings</h4>
@@ -81,7 +75,6 @@
     public int Height { get; set; }
     public int Width { get; set; }
     string path = "data:image/png;base64,";
-    HttpClient Http = new HttpClient();
     string message = "InputFile";
     bool isDisabled = false;
     string query = "";
@@ -90,7 +83,6 @@
     bool Updatedphoto = false;
     Users copy;
     ApiServices a = new ApiServices();
-    private const string ApiBaseUrl = "http://192.168.1.64:5087";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -150,19 +142,24 @@
                 var imageData = memoryStream.ToArray();
 
                 // Create an ImageModel instance and upload the image
-                
+
                 path = path + Convert.ToBase64String(imageData);
 
-               
+
                 profilepic = imageData;
             }
         }
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
+        if (!AuthService.IsUserAuthenticated)
+        {
+            Nav.NavigateTo("/Login");
+        }
         copy = new Users(Userservice.CurrentUser);
         await InsertValuesToUserService();
+
 
     }
     private async Task InsertValuesToUserService()

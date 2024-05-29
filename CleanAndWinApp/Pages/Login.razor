@@ -45,7 +45,7 @@
                         <ion-icon class="show-hide" name="eye-outline"></ion-icon>
                     </div>
                 </div>
-                <button @onclick="LoginBitch" style=" background-color: #3e4684" class="login">Login </button>
+                <button @onclick="login" style=" background-color: #3e4684" class="login">Login </button>
         <div @onclick="Go2Step" style="position:absolute" class="footer"></div>
         <div style="position:relative" class="footer" @onclick="GoReg">register</div>
             </div>
@@ -143,7 +143,7 @@
         d.Width = dimension.Width;
     }
 
-    private async Task LoginBitch()
+    private async Task login()
     {
         // Perform authentication logic (replace this with your actual logic)
         bool isAuthenticated = await PerformLogin(Email, password);

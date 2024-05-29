@@ -12,7 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/shop.css">
     <link rel="stylesheet" href="css/settings.css">
-    <title>Your Web Page</title>
 </head>
 <body style="overflow-y:scroll">
 
@@ -163,6 +162,10 @@
         Products = Products;
         await GetDimensions();
         InsertProduct = false;
+        if (!AuthService.IsUserAuthenticated)
+        {
+            nav.NavigateTo("/Login");
+        }
     }
 
     private void GoStroe()
@@ -204,11 +207,7 @@
     {
         modalDisplay = "none";
     }
-    public async Task GetC(int id, bool isphone)
-    {
 
-        b = true;
-    }
 
     public void AddP()
     {

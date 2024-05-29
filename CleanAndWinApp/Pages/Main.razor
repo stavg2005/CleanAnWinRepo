@@ -29,12 +29,7 @@
 
                 <img @onclick="ToggleSidebar" class="profile-pic" src="@path"  />
                 <img style="left:0;width:50px;height:50px;position:absolute;top:5px" src="css/imags/shopping-cart.png" @onclick="GoCart"/>
-                <div class="progress-container" style="position:fixed;left:-100px;margin-top:20px">
-                    <svg viewBox="0 0 450 450" style="position:relative;overflow:visible" class="progress-circle" id="progressCircle" width="500px" height="500px">
-                        <circle cx="250" cy="250" r="150" stroke="#eee" stroke-width="10" fill="transparent"></circle>
-                        <circle id="progress" cx="250" cy="250" r="150" stroke="#6db7c1" stroke-width="10" fill="transparent"></circle>
-                    </svg>
-                </div>
+
                 <input style="opacity:0;" @bind-value="progressValue" />
                 <button style="opacity:0">Update Progress</button>
                 <div class="nav-bar" style="width:300px;height:50px;margin-top:615px;height:80px">
@@ -185,21 +180,15 @@ else
             //     Userservice.CurrentUser.orders = Orders;
             // }
         }
-
-
-    }
-
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
+        if (!AuthService.IsUserAuthenticated)
         {
-            
-                await UpdateProgressBar(progressValue);
+            nav.NavigateTo("/login");
         }
 
-
     }
+
+
+
     private async Task InsertValuesToUserService()
     {
         if (AuthService.IsUserAuthenticated)

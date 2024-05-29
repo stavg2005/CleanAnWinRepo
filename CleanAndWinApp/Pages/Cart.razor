@@ -6,6 +6,7 @@
 @inject Data.BrowserDimension d;
 @inject NavigationManager NavManager;
 @inject IJSRuntime JSRuntime;
+@inject AuthService AuthService
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -171,6 +172,10 @@
         // i do this again for sum reason
         int sum = Getsum();
 
+        if (!AuthService.IsUserAuthenticated)
+        {
+            NavManager.NavigateTo("/Login");
+        }
         if (UserService.CurrentUser.coins > sum)
         {
             int pay = UserService.CurrentUser.coins - sum;
