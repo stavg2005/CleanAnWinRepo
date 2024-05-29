@@ -115,7 +115,7 @@ namespace ApiServices.Controllers
         }
 
         [HttpGet("CheckForNewEntryAsync")]
-        public async Task<int> CheckForNewEntryAsync(int TrashCanID)
+        public async Task<float> CheckForNewEntryAsync(int TrashCanID)
         {
             try
             {

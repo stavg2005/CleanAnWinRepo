@@ -26,7 +26,7 @@ namespace Model
 
         public List<ReportClean> reportCleans { get; set; }
 
-        public int TotalKg { get;set; }
+        public float TotalKg { get;set; }
 
         public bool IsAdmin { get; set; }
 
@@ -122,9 +122,9 @@ namespace Model
             this.IsAdmin = u.IsAdmin;
 
         }
-        private int GetTotalKG(List<ReportClean> reportClean)
+        private float GetTotalKG(List<ReportClean> reportClean)
         {
-            int totalKG = 0;
+            float totalKG = 0;
             foreach( ReportClean r in reportClean)
             { 
                 totalKG = TotalKg +r.weight;

@@ -9,10 +9,10 @@ namespace Model
     public class LeaderboardUser
     {
         public string Name { get; set; }
-        public int KgCleaned { get; set; }
+        public float KgCleaned { get; set; }
 
         public LeaderboardUser() { }
-        public LeaderboardUser(string name,int kg)
+        public LeaderboardUser(string name,float kg)
         { 
             Name = name;
             KgCleaned = kg;

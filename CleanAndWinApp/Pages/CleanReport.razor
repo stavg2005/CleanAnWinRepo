@@ -56,10 +56,10 @@
 
 @code {
     int trashCanId;
-    int weight;
+    float weight;
     bool TrashCanEntered = false;
     bool WeightEntered = false;
-    int WeightChanged = -1;
+    float WeightChanged = -1;
     string error { get; set; }
     int coins { get; set; }
     ApiServices a = new ApiServices();
@@ -86,9 +86,9 @@
     private async Task ReportClean()
     {
         await a.ReportClean(WeightChanged, Userservice.CurrentUser.UserID, trashCanId);
-        int IntWeight = WeightChanged;
+        int IntWeight = (int)WeightChanged;
         Users copy = new Users(Userservice.CurrentUser);
-        copy.coins = Userservice.CurrentUser.coins + IntWeight * 100;
+        copy.coins = (Userservice.CurrentUser.coins + IntWeight * 100);
         coins = IntWeight * 10;
         copy.xp = Userservice.CurrentUser.xp + IntWeight * 15;
         await a.UpdateUser(copy);

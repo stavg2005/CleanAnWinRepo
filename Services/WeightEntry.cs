@@ -9,6 +9,6 @@ namespace Services
     public class WeightEntry
     {
         public int TrashCanID { get; set; }
-        public int Weight { get; set; }
+        public float Weight { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Model
 {
     public class ReportClean
     {
-        public ReportClean(int userid, int trashCanId, int weight,int reportid)
+        public ReportClean(int userid, int trashCanId, float weight,int reportid)
         {
             Userid = userid;
             TrashCanId = trashCanId;
@@ -19,7 +19,7 @@ namespace Model
 
         }
 
-        public ReportClean(int userid, int trashCanId, int weight)
+        public ReportClean(int userid, int trashCanId, float weight)
         { 
             Userid = userid;
             TrashCanId = trashCanId;
@@ -28,7 +28,7 @@ namespace Model
             this.ReportID = -1;
 
         }
-        public ReportClean(int userid, int trashCanId, int weight, DateTime date, int reportid) : this(userid, trashCanId, weight, reportid)
+        public ReportClean(int userid, int trashCanId, float weight, DateTime date, int reportid) : this(userid, trashCanId, weight, reportid)
         {
             this.date = date;
         }
@@ -37,7 +37,7 @@ namespace Model
         public int ReportID { get; set; }
         public int Userid { get; set; }
         public int TrashCanId { get; set; }
-        public int weight { get; set; }
+        public float weight { get; set; }
         public DateTime date { get; set; }
 
 

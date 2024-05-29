@@ -20,7 +20,7 @@ namespace DataLayer
 	
 		}
 
-        public async Task ReportClean(int userid,int weight,int trashcanID)
+        public async Task ReportClean(int userid,float weight,int trashcanID)
         {
             const string query = "INSERT INTO clean_report (UserID, TrashCanID, Weight, Date) VALUES (@UserId, @TrashCanId, @Weight, @Date)";
 
@@ -395,11 +395,10 @@ namespace DataLayer
             }
         }
 
-        public async Task<int> CheckForNewEntryAsync(int trashCanId)
+        public async Task<float> CheckForNewEntryAsync(int trashCanId)
         {
             try
             {
-                string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();
@@ -420,7 +419,7 @@ namespace DataLayer
 
                         if (result != null)
                         {
-                            return Convert.ToInt32(result);
+                            return (float)result;
                         }
                         else
                         {

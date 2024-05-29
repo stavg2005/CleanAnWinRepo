@@ -213,7 +213,7 @@ namespace Services
             }
         }
 
-        public async Task<string> ReportClean(int Weight, int userid, int trashcanid)
+        public async Task<string> ReportClean(float Weight, int userid, int trashcanid)
         {
             try
             {
@@ -783,7 +783,7 @@ namespace Services
 
         }
 
-        public async Task<string> AddWeight(int trashCanID, int weight)
+        public async Task<string> AddWeight(int trashCanID, float weight)
         {
             try
             {
@@ -807,12 +807,12 @@ namespace Services
             }
         }
 
-        public async Task<int> CheckForNewEntryAsync(int trashCanID)
+        public async Task<float> CheckForNewEntryAsync(int trashCanID)
         {
             try
             {
                 string url = $"{Apiurl}/api/TrashCan/CheckForNewEntryAsync?TrashCanID={trashCanID}";
-                return await _httpClient.GetFromJsonAsync<int>(url);
+                return await _httpClient.GetFromJsonAsync<float>(url);
             }
             catch (Exception ex)
             {
