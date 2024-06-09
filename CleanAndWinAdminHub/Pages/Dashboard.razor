@@ -257,7 +257,7 @@
     private void GoProfile(){
         nav.NavigateTo("/profile");
     }
-    private void GetSumOfAllCoins()
+    private async Task GetSumOfAllCoins()
     {
         foreach(Order o in Tables.Orders)
         {
@@ -268,9 +268,23 @@
             TotalOrders++;
         }
         TotalCoins = TotalCoins;
+        StateHasChanged();
     }
 
-    private void GetAmountOfAllusers()
+    private async Task GetAllCoins()
+    {
+        foreach (Order o in Tables.Orders)
+        {
+            foreach (Product P in o.Products)
+            {
+                TotalCoins = TotalCoins + P.ProductPrice;
+            }
+            TotalOrders++;
+        }
+        StateHasChanged();
+    }
+
+    private async Task GetAmountOfAllusers()
     {
         foreach(Users o in Tables.Users)
         {
@@ -278,17 +292,17 @@
         }
     }
 
-    private void GetTotalKG()
+    private async Task GetTotalKG()
     {
         foreach(ReportClean r in Tables.reports)
         {
-            totalkg = +r.weight;
+            totalkg =+(int)r.weight;
         }
     }
 
-    
 
-    
+
+
     private string UserName;
     string path = "data:image/png;base64,";
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -299,25 +313,26 @@
             if (name.Success)
             {
                 UserName = name.Value;
+
                 StateHasChanged();
+
             }
             else
-                nav.NavigateTo("/sign-in");
-
-
-
+                nav.NavigateTo("sign-in");
         }
 
     }
 
-
-
     protected override async Task OnInitializedAsync()
     {
-        GetSumOfAllCoins();
-        GetAmountOfAllusers();
-        GetTotalKG();
-        
-        StateHasChanged();
+        await GetAllCoins();
+        await GetAmountOfAllusers();
+        await GetTotalKG();
     }
+
+
+
+
+
+
 }

@@ -71,4 +71,6 @@
       </Content>
     </ItemGroup>
 
+    <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionCleanAndWinAppHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+
 </Project>

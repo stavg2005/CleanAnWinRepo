@@ -92,51 +92,61 @@
             <div class="step" onclick="showStep(2)">Step 2</div>
             <div class="step" onclick="showStep(3)">Step 3</div>
         </div>
+        <div>
+        @if(firststep)
+            {
+                <div>
+                    <h2>Enter Your Email</h2>
+                    <div class="form-group">
+                        <label for="firstName">Email:</label>
+                        <input @bind-value="Email" type="text" id="firstName">
+                    </div>
+                    @if (!EmailIsCorrect)
+                    {
+                        <button @onclick="CheakIfEmailCorrect"> cheak Email</button>
+                    }
+                    @if (EmailIsCorrect)
+                    {
+                        <button @onclick="StartSecondStep">Next</button>
+                    }
 
-        <div id="formSteps">
-            <div class="form-step active">
-                <h2>Enter Your Email</h2>
-                <div class="form-group">
-                    <label for="firstName">Email:</label>
-                    <input @bind-value="Email" type="text" id="firstName">
                 </div>
-                @if (!EmailIsCorrect)
-                {
-                    <button @onclick="CheakIfEmailCorrect"> cheak Email</button>
-                }
-                @if (EmailIsCorrect)
-                {
-                    <button onclick="nextStep()">Next</button>
-                }
-                
-            </div>
+            }
+            @if (secondstep)
+            {
+                <div>
+                    <h2>We Have sent you a Code </h2>
+                    <div class="form-group">
+                        <label for="email">Enter Code</label>
+                        <input @bind-value="code" type="email" id="email">
+                    </div>
+                    @if (!CodeIsCorrect)
+                    {
+                        <button @onclick="CheakIfCodeCorrect"> Cheak Code</button>
+                    }
+                    else
+                    {
+                        <button @onclick="StartLastStep">Next</button>
+                    }
 
-            <div class="form-step">
-                <h2>We Have sent you a Code </h2>
-                <div class="form-group">
-                    <label for="email">Enter Code</label>
-                    <input @bind-value="code" type="email" id="email">
                 </div>
-                @if (!CodeIsCorrect)
-                {
-                    <button @onclick="CheakIfCodeCorrect"> Cheak Code</button>
-                }
-                else
-                {
-                    <button onclick="nextStep()">Next</button>
-                }
-                
-            </div>
+            }
+            @if (laststep)
+            {
+                <div>
+                    <h2>Please Enter New Password</h2>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input @bind-value="Password" type="password" id="password">
+                    </div>
+                    <button onclick="prevStep()">Previous</button>
+                    <button @onclick="() => Reg()">Submit</button>
+                </div>
+            }
 
-            <div class="form-step">
-                <h2>Please Enter New Password</h2>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input @bind-value="Password" type="password" id="password">
-                </div>
-                <button onclick="prevStep()">Previous</button>
-                <button @onclick="() => Reg()">Submit</button>
-            </div>
+           
+
+            
         </div>
     </div>
 </body>
@@ -153,6 +163,9 @@
     bool EmailIsCorrect= false;
     string code { get; set; }
     string RandomCode { get; set; }
+    bool firststep = true;
+    bool secondstep = false;
+    bool laststep = false;
     ApiServices A = new ApiServices();
     private const string ApiBaseUrl = "http://10.0.0.27:5087";
     List<Locations> list;
@@ -168,6 +181,18 @@
 
     }
 
+    private void StartSecondStep()
+    {
+        firststep = false;
+        secondstep = true;
+        laststep = false;
+    }
+    private void StartLastStep()
+    {
+        laststep = true;
+        firststep = false;
+        secondstep = false;
+    }
     private async Task SendRandomCode()
     {
 

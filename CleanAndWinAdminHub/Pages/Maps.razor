@@ -61,10 +61,10 @@
     public async Task DeleteTrashCan(int id)
     {
 
-            await a.DeleteTrashCan(id);
+        await a.DeleteTrashCan(id);
 
-            nav.NavigateTo($"mapredirect");
-        
+        nav.NavigateTo($"mapredirect");
+
 
 
 
@@ -84,14 +84,14 @@
 
     private async Task InsertValuesToUserService()
     {
-        
+
 
     }
 
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         ApiServices a = new ApiServices();
 
 
@@ -137,11 +137,11 @@
     public async Task HandleMapClick(double latitude, double longitude)
     {
 
-            newTrash.latitude = latitude.ToString();
-            newTrash.longitude = longitude.ToString();
-            OpenModal();
-            StateHasChanged();
-        
+        newTrash.latitude = latitude.ToString();
+        newTrash.longitude = longitude.ToString();
+        OpenModal();
+        StateHasChanged();
+
 
     }
 
@@ -150,6 +150,7 @@
 
         await a.InsertTrashCan(newTrash);
         nav.NavigateTo($"mapredirect");
+        StateHasChanged();
         CloseModal();
 
 

@@ -36,98 +36,102 @@
     }
 
 
+    @if(leaderboard.TopUsers != null && leaderboard.TopUsersThisWeek!=null&&leaderboard.TopUsers!=null)
+    {
+        <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
 
-    <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
-        
-        @if (!TopAllDay)
-        {
+            @if (!TopAllDay)
+            {
+
+            }
+            else
+            {
+                <h2>Top Users Today</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Kg Cleaned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (LeaderboardUser user in leaderboard.TopUsersToday)
+                        {
+                            <tr>
+                                <td>@(leaderboard.TopUsersToday.IndexOf(user) + 1)</td>
+                                <td>@user.Name</td>
+                                <td>@user.KgCleaned</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
+
+            @if (!TopAllTime)
+            {
+
+            }
+            else
+            {
+                <h2>Top Users All Time</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Kg Cleaned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (LeaderboardUser user in leaderboard.TopUsers)
+                        {
+                            <tr>
+                                <td>@(leaderboard.TopUsers.IndexOf(user) + 1)</td>
+                                <td>@user.Name</td>
+                                <td>@user.KgCleaned</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
+
+            @if (!TopAllWeek)
+            {
+
+            }
+            else
+            {
+                <h2>Top Users This Week</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Kg Cleaned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (LeaderboardUser user in leaderboard.TopUsersThisWeek)
+                        {
+                            <tr>
+                                <td>@(leaderboard.TopUsersThisWeek.IndexOf(user) + 1)</td>
+                                <td>@user.Name</td>
+                                <td>@user.KgCleaned</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
             
-        }
-        else
-        {
-            <h2>Top Users Today</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Kg Cleaned</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (LeaderboardUser user in leaderboard.TopUsersToday)
-                    {
-                        <tr>
-                            <td>@(leaderboard.TopUsersToday.IndexOf(user) + 1)</td>
-                            <td>@user.Name</td>
-                            <td>@user.KgCleaned</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-
-    <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
-
-        @if (!TopAllTime)
-        {
-
-        }
-        else
-        {
-            <h2>Top Users All Time</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Kg Cleaned</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (LeaderboardUser user in leaderboard.TopUsers)
-                    {
-                        <tr>
-                            <td>@(leaderboard.TopUsers.IndexOf(user) + 1)</td>
-                            <td>@user.Name</td>
-                            <td>@user.KgCleaned</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-    <div class="leaderboard-section" style="min-width:(@d.Width)px;min-height:(@d.Height)px">
-        
-        @if (!TopAllWeek)
-        {
-           
-        }
-        else
-        {
-            <h2>Top Users This Week</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Kg Cleaned</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (LeaderboardUser user in leaderboard.TopUsersThisWeek)
-                    {
-                        <tr>
-                            <td>@(leaderboard.TopUsersThisWeek.IndexOf(user) + 1)</td>
-                            <td>@user.Name</td>
-                            <td>@user.KgCleaned</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
+        </div>
+    }
+    
 </div>
 <div class="navbar" style="margin-top:-100px;z-index:1;position:fixed">
 

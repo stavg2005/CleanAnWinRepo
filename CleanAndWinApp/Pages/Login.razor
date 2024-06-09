@@ -16,7 +16,7 @@
 <head>
   <meta charset="UTF-8">
 
-
+ 
 </head>
 @{
     
@@ -46,8 +46,8 @@
                     </div>
                 </div>
                 <button @onclick="login" style=" background-color: #3e4684" class="login">Login </button>
-        <div @onclick="Go2Step" style="position:absolute" class="footer"></div>
-        <div style="position:relative" class="footer" @onclick="GoReg">register</div>
+        <div @onclick="Go2Step" style="position:relative;left:250px" class="footer">forgot password</div>
+        <div style="position:absolute;bottom:20px" class="footer" @onclick="GoReg">register</div>
             </div>
             <!-- partial -->
 
@@ -122,9 +122,6 @@
         productservice.ProductList = products;
         var Locations = await api.GetAllLocations();
         locs.Locations = Locations;
-        leaderboard.TopUsers = await api.GetTopUsers();
-        leaderboard.TopUsersThisWeek = await api.GetTopUsersThisWeek();
-        leaderboard.TopUsersToday = await api.GetTopUsersToday();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

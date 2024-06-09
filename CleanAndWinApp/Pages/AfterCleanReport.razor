@@ -18,6 +18,8 @@
     [Parameter]
     public string Weight { get; set; }
 
+    ApiServices a = new ApiServices();
+
     int coins { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -26,15 +28,16 @@
         if (queryString.AllKeys.Contains("weight"))
         {
             Weight = (queryString["weight"]);
+            int IntWeight = int.Parse(Weight);
+            Tuple<int, int> coinxpval = await a.GetCoinAndXpValue();
+            Users copy = new Users(Userservice.CurrentUser);
+            copy.coins = Userservice.CurrentUser.coins + IntWeight * coinxpval.Item1;
+            coins = IntWeight * coinxpval.Item1;
+            copy.xp = Userservice.CurrentUser.xp + IntWeight * coinxpval.Item2;
+            await a.UpdateUser(copy);
         }
 
-        int IntWeight = int.Parse(Weight);
-        Users copy = new Users(Userservice.CurrentUser);
-        copy.coins = Userservice.CurrentUser.coins + IntWeight * 100;
-        coins = IntWeight * 100;
-        copy.xp = Userservice.CurrentUser.xp + IntWeight * 15;
-        ApiServices a = new ApiServices();
-        await a.UpdateUser(copy);
+        
 
 
     }

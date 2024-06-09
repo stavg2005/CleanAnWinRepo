@@ -94,6 +94,7 @@
     </div>
         @if (firststep)
         {
+            <h3>@error</h3>
             <div>
                 <div>
                     <h2>Please Enter Your ID and UserName</h2>
@@ -128,6 +129,7 @@
         }
                 @if (secondstep)
                 {
+                    <h3>@error</h3>
                     <div >
                         <h2>Please Enter Email</h2>
                         <div class="form-group">
@@ -167,6 +169,7 @@
     bool firststep = true;
     bool secondstep = false;
     bool laststep = false;
+    string error = "";
     ApiServices A = new ApiServices();
     List<Locations> list;
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -187,17 +190,47 @@
         b = true;
     }
 
-    private void StartSecondStep()
+    private async Task StartSecondStep()
     {
-        firststep = false;
-        secondstep = true;
-        laststep = false;
+        bool cheak = await A.CheakIfUserNameExist(UserName);
+        if (!cheak)
+        {
+            firststep = false;
+            secondstep = true;
+            laststep = false;
+        }
+        else
+        {
+            error = "UserName already Exist";
+        }
     }
-    private void StartLastStep()
+    private async Task<bool> CheakIfEmailCorrect(string Email)
     {
-        laststep = true;
-        firststep = false;
-        secondstep = false;
+        int id = await A.GetUserIDfromEmail(Email);
+        if (id != -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    private async Task StartLastStep()
+    {
+        bool cheak = await CheakIfEmailCorrect(Email);
+        if (!cheak)
+        {
+            laststep = true;
+            firststep = false;
+            secondstep = false;
+        }
+        else
+        {
+            error = "Email Already Exist";
+        }
     }
     public async Task Reg()
     {

@@ -54,9 +54,9 @@ namespace DataLayer
                             {
                                 Product product = new Product
                                 {
-                                    ProductID = reader.GetInt32("ProductID"),
+                                    ProductID = reader.GetInt32("ProductID"), 
                                     ProductName = reader.GetString("ProductName"),
-                                    ProductDescription = reader.GetString("ProductDes"),
+                                    ProductDescription = reader.GetString("ProductDes"), 
                                     ProductPrice = reader.GetInt32("ProductPrice")
                                 };
 
@@ -178,11 +178,11 @@ namespace DataLayer
             {
                 using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
-                    string sqlQuery = "SELECT * FROM `Order` WHERE OrderID = @orderid";
+                    string sqlQuery = "SELECT * FROM `order` WHERE OrderID = @orderid";
 
                     using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
                     {
-                        command.Parameters.AddWithValue("@UserId", orderid);
+                        command.Parameters.AddWithValue("@orderid", orderid);
                         connection.Open();
                         MySqlDataReader reader = command.ExecuteReader();
 
@@ -219,7 +219,7 @@ namespace DataLayer
             {
                 using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
-                    string sqlQuery = "SELECT * FROM `Order`";
+                    string sqlQuery = "SELECT * FROM `order`";
 
                     using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
                     {
@@ -244,6 +244,7 @@ namespace DataLayer
             {
                 Console.WriteLine(ex.Message);
                 return new List<Order>();
+                
             }
 
         }

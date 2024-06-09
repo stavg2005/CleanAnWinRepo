@@ -14,6 +14,8 @@ using DataLayer;
 using System.Drawing.Printing;
 using Services;
 using Org.BouncyCastle.Asn1.Crmf;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Services
 {
@@ -21,7 +23,7 @@ namespace Services
     {
         private readonly HttpClient _httpClient;
         private string IPV4;
-        private string Apiurl = "http://10.0.0.25:5087";
+        private string Apiurl = "http://192.168.1.64:5087";
         public ApiServices()
         {
             _httpClient = new HttpClient();
@@ -820,6 +822,34 @@ namespace Services
                 return -1;
             }
 
+        }
+
+        public async Task<Tuple<int,int>> GetCoinAndXpValue()
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Login/GetCoinAndXpValue";
+                return await _httpClient.GetFromJsonAsync<Tuple<int,int>>(url);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new Tuple<int, int>(0, 0);
+            }
+        }
+
+        public async Task<bool> CheakIfUserNameExist(string username)
+        {
+            try
+            {
+                string url = $"{Apiurl}/api/Login/CheakIfUserNameExist?username={username}";
+                return await _httpClient.GetFromJsonAsync<bool>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
         }
 
 

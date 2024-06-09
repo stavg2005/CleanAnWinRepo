@@ -872,7 +872,7 @@
     {
         foreach (ReportClean r in Tables.reports)
         {
-            totalkg = +r.weight;
+            totalkg = totalkg + (int)r.weight;
         }
     }
 

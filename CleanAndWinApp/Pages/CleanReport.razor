@@ -23,6 +23,7 @@
     }
     else if (!WeightEntered)
     {
+        // for testing with no actual trash can, add weight manually
         <div class="form-section">
             <h2>Please put Weight on TrashCan</h2>
             <div class="input-field">
@@ -87,10 +88,11 @@
     {
         await a.ReportClean(WeightChanged, Userservice.CurrentUser.UserID, trashCanId);
         int IntWeight = (int)WeightChanged;
+        Tuple<int, int> coinxpval = await a.GetCoinAndXpValue();
         Users copy = new Users(Userservice.CurrentUser);
-        copy.coins = (Userservice.CurrentUser.coins + IntWeight * 100);
-        coins = IntWeight * 10;
-        copy.xp = Userservice.CurrentUser.xp + IntWeight * 15;
+        copy.coins = Userservice.CurrentUser.coins + IntWeight * coinxpval.Item1;
+        coins = IntWeight * coinxpval.Item1;
+        copy.xp = Userservice.CurrentUser.xp + IntWeight * coinxpval.Item2;
         await a.UpdateUser(copy);
     }
     private async Task AddWeight()

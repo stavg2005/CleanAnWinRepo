@@ -259,8 +259,8 @@ namespace DataLayer
                 {
                     await connection.OpenAsync();
 
-                    string query = @"INSERT INTO users (UserEmail, userPassword, usercoin, UserName, Userxp, UserLocation, ProfilePicture) 
-                             VALUES (@UserEmail, @userPassword, @usercoin, @UserName, @Userxp, @UserLocation, @ProfilePicture)";
+                    string query = @"INSERT INTO users (UserEmail, userPassword, usercoin, UserName, Userxp, UserLocation, ProfilePicture,IsAdmin) 
+                             VALUES (@UserEmail, @userPassword, @usercoin, @UserName, @Userxp, @UserLocation, @ProfilePicture,0)";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -669,19 +669,22 @@ namespace DataLayer
             try
             {
                 string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+
                 // Define the start of the current week (assuming Monday as the first day of the week)
-                DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + 1);
+                DateTime today = DateTime.Today;
+                int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
+                DateTime startOfWeek = today.AddDays(-1 * diff).Date;
                 DateTime endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
 
                 // Query to get top users who cleaned the most this week
                 string query = @"
-            SELECT u.UserName, SUM(cr.Weight) AS TotalWeight
-            FROM clean_report cr
-            JOIN Users u ON cr.UserId = u.UserId
-            WHERE cr.Date >= @startOfWeek AND cr.Date <= @endOfWeek
-            GROUP BY u.UserName
-            ORDER BY TotalWeight DESC
-            LIMIT 5";
+        SELECT u.UserName, SUM(cr.Weight) AS TotalWeight
+        FROM clean_report cr
+        JOIN Users u ON cr.UserId = u.UserId
+        WHERE cr.Date >= @startOfWeek AND cr.Date <= @endOfWeek
+        GROUP BY u.UserName
+        ORDER BY TotalWeight DESC
+        LIMIT 5";
 
                 var topUsersThisWeek = new List<LeaderboardUser>();
 
@@ -714,11 +717,125 @@ namespace DataLayer
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw new Exception();
+                Console.WriteLine($"Error occurred: {ex.Message}");
+                throw;
             }
-           
+
         }
+
+        public async Task<List<LeaderboardUser>> GetTopUsersOfAllTime()
+        {
+            try
+            {
+                string _connectionString = @"server=localhost;user id=root;persistsecurityinfo=True;database=project;password=josh17rog";
+
+                // Query to get top users who cleaned the most of all time
+                string query = @"
+        SELECT u.UserName, SUM(cr.Weight) AS TotalWeight
+        FROM clean_report cr
+        JOIN Users u ON cr.UserId = u.UserId
+        GROUP BY u.UserName
+        ORDER BY TotalWeight DESC
+        LIMIT 5";
+
+                var topUsersOfAllTime = new List<LeaderboardUser>();
+
+                await using (var connection = new MySqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var name = reader.GetString(0);
+                                var totalWeight = reader.GetDecimal(1);
+
+                                topUsersOfAllTime.Add(new LeaderboardUser
+                                {
+                                    Name = name,
+                                    KgCleaned = Convert.ToInt32(totalWeight)
+                                });
+                            }
+                        }
+                    }
+                }
+                return topUsersOfAllTime;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred: {ex.Message}");
+                throw;
+            }
+        }
+        public async Task<Tuple<int,int>> GetCoinandxpValue()
+        {
+            try
+            {
+                using (MySqlConnection c = new MySqlConnection(_connectionString))
+                {
+                    await c.OpenAsync();
+
+                    string query = @"SELECT * FROM coinandxpvalue WHERE ID = @id";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, c))
+                    {
+
+                        cmd.Parameters.AddWithValue("@id", 1);
+
+                        using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                        {
+                            if (await r.ReadAsync())
+                            {
+                                return new Tuple<int,int>(r.GetInt32(1),r.GetInt32(2));
+                            }
+                        }
+                         return new Tuple<int, int>(0,0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new Tuple<int, int>(0, 0); 
+            }
+
+
+        }
+
+        public async Task<bool> CheakIfUserNameExist(string username)
+        {
+            try
+            {
+                using(MySqlConnection c = new MySqlConnection(_connectionString))
+                {
+                    await c.OpenAsync();
+                    string query = $"SELECT UserID FROM users WHERE UserName = '{username}'";
+                    using (MySqlCommand cmd = new MySqlCommand(query, c))
+                    {
+
+                        
+
+                        using (MySqlDataReader r = await cmd.ExecuteReaderAsync())
+                        {
+                            if (r.HasRows)
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        
     }
 }
 

@@ -8,13 +8,13 @@ namespace ApiServices.Controllers
     [ApiController]
     public class Admin : ControllerBase
     {
-        private readonly AdminDTO u;
+        private readonly AdminDTO u =new AdminDTO();
         [HttpGet("Login")]
         public async Task<Users> Login(string Email, string Password)
         {
             try
             {
-                Users us = await u.Login(Email, Password  );
+                Users us = await u.Login(Email, Password);
                 if(us != null && us.IsAdmin)
                 { 
                     return us;

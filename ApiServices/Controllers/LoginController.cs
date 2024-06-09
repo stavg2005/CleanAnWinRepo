@@ -134,15 +134,15 @@ namespace ApiServices.Controllers
         [HttpGet("GetTopUsers")]
         public async Task<List<LeaderboardUser>> GetTopUsers()
         {
-            List<Users> all = await GetAllUsers();
-            all.Sort((user1,user2) => user1.TotalKg.CompareTo(user2.TotalKg));
-            List<LeaderboardUser> TopUsers = new List<LeaderboardUser>();
-            foreach(Users user in all)
+            try
             {
-                TopUsers.Add(new LeaderboardUser(user.UserName,user.TotalKg));
+                return await u.GetTopUsersOfAllTime();
             }
-            TopUsers.Reverse();
-            return TopUsers;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<LeaderboardUser>(0);
+            }
 
         }
 
@@ -162,6 +162,8 @@ namespace ApiServices.Controllers
 
         }
 
+        
+
         [HttpGet("GetTopUsersThisWeek")]
         public async Task<List<LeaderboardUser>> GetTopUsersThisWeek()
         {
@@ -173,6 +175,34 @@ namespace ApiServices.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return new List<LeaderboardUser>(0);
+            }
+        }
+
+        [HttpGet("GetCoinAndXpValue")]
+        public async Task<Tuple<int,int>> GetCoinValue()
+        {
+            try
+            {
+                return await u.GetCoinandxpValue();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new Tuple<int, int>(0, 0);
+            }
+        }
+
+        [HttpGet("CheakIfUserNameExist")]
+        public async Task<bool> CheakIfUserNameExist(string username)
+        {
+            try
+            {
+                return await u.CheakIfUserNameExist(username);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }

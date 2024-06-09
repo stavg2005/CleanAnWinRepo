@@ -140,7 +140,7 @@ namespace DataLayer
                 {
                     await connection.OpenAsync();
 
-                    string query = "INSERT INTO cart (ProductID, UserID, quantity) VALUES (@productId, @userId, 1)";
+                    string query = "INSERT INTO cart (ProductID, UserID) VALUES (@productId, @userId)";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
